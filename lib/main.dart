@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           children: <Widget>[
             TextFieldButton("Username",Icons.account_circle,false),
             TextFieldButton("Password",Icons.lock,true),
-            BlueButton("Login", _loginFunction)
+            BlueButton("Login", _loginFunction, Icons.language)
           ],
           )
       ),
