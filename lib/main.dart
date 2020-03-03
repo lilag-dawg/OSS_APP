@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import './TextFieldButton.dart';
+import 'constants.dart' as Constants;
+// Pour utiliser constants => Constants.appWidth
 
 
 void main() => runApp(MyApp());
