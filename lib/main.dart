@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-import './homepage.dart';
-import './loginpage.dart';
+
+import './navigationbar.dart';
 
 
-import 'constants.dart' as Constants;
-// Pour utiliser constants => Constants.appWidth
 
 
 void main() => runApp(MyApp());
@@ -17,11 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title:"testing routes",
-      initialRoute: "/",
-      routes: {
-        "/" : (context) => HomeScreen(),
-        "/login" : (context) => LoginScreen(),
-      },
+      home: MyNavigationBar(),
 
   );
   }

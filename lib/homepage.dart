@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './loginpage.dart';
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,8 +12,11 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: RaisedButton(
           child: Text("Lauch screen"),
-          onPressed: (){
-            Navigator.pushNamed(context,"/login");
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
           },),
         ),
       
