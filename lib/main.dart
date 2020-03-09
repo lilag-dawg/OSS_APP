@@ -23,11 +23,16 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Welcome to Flutter'),
         ),
-        body: Column(
+        body: Wrap(
+          spacing: 20,
           children: <Widget>[
             TextFieldButton("Username",Icons.account_circle,false),
             TextFieldButton("Password",Icons.lock,true),
-            BlueButton("Login", _loginFunction, Icons.language)
+            BlueButton("Language", _loginFunction, Icons.language, 40, Constants.appWidth-50),
+            BlueButton("Share", _loginFunction, Icons.share, 40, Constants.appWidth-50),
+            BlueButton("OSS on facebook", _loginFunction, Icons.thumb_up, 40, Constants.appWidth-50),
+            BlueButton("Logout", _loginFunction, Icons.exit_to_app, 40, Constants.appWidth-50),
+            BlueButton("Notifications", _loginFunction, Icons.add_alarm, 40, Constants.appWidth-50)
           ],
           )
       ),

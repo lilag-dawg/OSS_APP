@@ -5,25 +5,31 @@ class BlueButton extends StatelessWidget {
   final String inputText;
   final Function selectHandler;
   final IconData inputIcon;
+  final double buttonWidth;
+  final double buttonHeight;
 
-  BlueButton(this.inputText, this.selectHandler, this.inputIcon);
+  BlueButton(this.inputText, this.selectHandler, this.inputIcon, this.buttonHeight, this.buttonWidth);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Constants.appWidth/2,
-      height: Constants.appHeight/16,
+      width: buttonWidth,
+      height: buttonHeight,
       child: RaisedButton(
         color: Colors.blue[900] , // changer la couleur
         child: Row(children: <Widget>[
             Icon(inputIcon),
-            Text(
-            inputText,
-            style: 
-            TextStyle(
-              color: Colors.white
+            SizedBox(
+              width: buttonWidth*0.05, 
               ),
-            ), 
+            Text(
+              inputText,
+              style: 
+              TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                ),
+              ), 
           ],
         ),
         onPressed: selectHandler,
