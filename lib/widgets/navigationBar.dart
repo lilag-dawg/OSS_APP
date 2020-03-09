@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import './activitiespage.dart';
-import './homepage.dart';
-import './settingspage.dart';
+import '../screens/activities_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MyNavigationBar extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
   final List<Widget> _children =[
     ActivitiesScreen(),
     HomeScreen(),
-    SettingScreen()
+    SettingsScreen()
   ];
 
   void _onItemTapped(int index) {

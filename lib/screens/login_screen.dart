@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './TextFieldButton.dart';
+import '../widgets/TextFieldButton.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
