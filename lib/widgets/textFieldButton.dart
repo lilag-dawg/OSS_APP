@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
+
 
 // Define a custom Form widget.
 class TextFieldButton extends StatefulWidget {
@@ -36,10 +38,13 @@ class _MyCustomTextFieldState extends State<TextFieldButton> {
         controller: myController,
         decoration: InputDecoration(
           hintText: widget.textDisplay,
+          hintStyle: TextStyle(
+            color: Colors.white,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          fillColor: Colors.grey[200],
+          fillColor: Color(paleBlue),
           filled:true,
           prefixIcon:Icon(
             widget.iconName,

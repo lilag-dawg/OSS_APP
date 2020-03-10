@@ -5,6 +5,7 @@ import './blueButton.dart';
 import 'constants.dart' as Constants;
 // Pour utiliser constants => Constants.appWidth
 
+import './widgets/navigationBar.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,27 +19,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-        ),
-        body: Column(
-          children: <Widget>[
-            TextFieldButton("Username",Icons.account_circle,false),
-            TextFieldButton("Password",Icons.lock,true),
-            BlueButton("Language", _loginFunction, Icons.language, 40, Constants.appWidth-50),
-            SizedBox(height: Constants.appHeight*0.01, ),
-            BlueButton("Share", _loginFunction, Icons.share, 40, Constants.appWidth-50),
-            SizedBox(height: Constants.appHeight*0.01, ),
-            BlueButton("OSS on facebook", _loginFunction, Icons.thumb_up, 40, Constants.appWidth-50),
-            SizedBox(height: Constants.appHeight*0.01, ),
-            BlueButton("Logout", _loginFunction, Icons.exit_to_app, 40, Constants.appWidth-50),
-            SizedBox(height: Constants.appHeight*0.01, ),
-            BlueButton("Notifications", _loginFunction, Icons.add_alarm, 40, Constants.appWidth-50)
-          ],
-          )
-      ),
-    );
+      title:"testing routes",
+      home: MyNavigationBar(),
+
+  );
   }
 }
