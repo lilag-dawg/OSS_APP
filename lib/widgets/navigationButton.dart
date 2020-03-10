@@ -22,12 +22,20 @@ class NavigationButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10)
         ),
         padding: EdgeInsets.all(0.0),
-        color: Color(Constants.paleBlue),
+        color: Color(Constants.blueButtonColor),
         onPressed: selectHandler, 
         child: Column(
           children: <Widget>[
-            Text(inputText),
             SizedBox(width: buttonWidth*0.05, ),
+            Text(
+              inputText,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(width: 50),
             Image.asset(url)
           ],
         ),
