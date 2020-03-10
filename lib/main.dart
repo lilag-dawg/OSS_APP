@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './TextFieldButton.dart';
-import 'constants.dart' as Constants;
-// Pour utiliser constants => Constants.appWidth
 
+import './widgets/navigationBar.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,18 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-        ),
-        body: Column(
-          children: <Widget>[
-            TextFieldButton("Username",Icons.account_circle,false),
-            TextFieldButton("Password",Icons.lock,true),
-          ],
-          )
-      ),
-    );
+      title:"testing routes",
+      home: MyNavigationBar(),
+
+  );
   }
 }
