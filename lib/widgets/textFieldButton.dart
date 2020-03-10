@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import '../constants.dart' as Constants;
 
 
 // Define a custom Form widget.
@@ -44,7 +44,7 @@ class _MyCustomTextFieldState extends State<TextFieldButton> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          fillColor: Color(paleBlue),
+          fillColor: Color(Constants.paleBlue),
           filled:true,
           prefixIcon:Icon(
             widget.iconName,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'constants.dart' as Constants;
+import '../constants.dart' as Constants;
 
 class BlueButton extends StatelessWidget {
   final String inputText;
@@ -16,7 +16,7 @@ class BlueButton extends StatelessWidget {
       width: buttonWidth,
       height: buttonHeight,
       child: RaisedButton(
-        color: Colors.blue[900] , // changer la couleur
+        color: Color(Constants.paleBlue) , // changer la couleur
         child: Row(children: <Widget>[
             Icon(inputIcon),
             SizedBox(width: buttonWidth*0.05, ),
@@ -25,7 +25,7 @@ class BlueButton extends StatelessWidget {
               style: 
               TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 25,
               ),
             ), 
           ],

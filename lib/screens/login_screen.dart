@@ -10,6 +10,8 @@ class LoginScreen extends StatelessWidget {
         title:Text("Login Screen"),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFieldButton("Username",Icons.account_circle,false),
           TextFieldButton("Password",Icons.lock,true),
