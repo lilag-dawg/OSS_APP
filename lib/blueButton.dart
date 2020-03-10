@@ -19,17 +19,15 @@ class BlueButton extends StatelessWidget {
         color: Colors.blue[900] , // changer la couleur
         child: Row(children: <Widget>[
             Icon(inputIcon),
-            SizedBox(
-              width: buttonWidth*0.05, 
-              ),
+            SizedBox(width: buttonWidth*0.05, ),
             Text(
               inputText,
               style: 
               TextStyle(
                 color: Colors.white,
                 fontSize: 20,
-                ),
-              ), 
+              ),
+            ), 
           ],
         ),
         onPressed: selectHandler,
