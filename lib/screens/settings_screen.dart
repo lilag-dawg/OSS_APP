@@ -10,10 +10,10 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(Constants.blueButtonColor),
+      backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text("Settings page"),
-        backgroundColor: Color(Constants.backGroundBlue),
+        backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: 
       Padding(

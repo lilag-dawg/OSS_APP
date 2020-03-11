@@ -26,7 +26,7 @@ class NavigationButton extends StatelessWidget {
         onPressed: selectHandler, 
         child: Column(
           children: <Widget>[
-            SizedBox(width: buttonWidth*0.05, ),
+            SizedBox(height: buttonWidth*0.05),
             Text(
               inputText,
               style: TextStyle(
@@ -35,8 +35,12 @@ class NavigationButton extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            SizedBox(width: 50),
-            Image.asset(url)
+            SizedBox(height: buttonWidth*0.05),
+            Image.asset(
+              url,
+              width: buttonWidth-20,
+              height: buttonWidth-20,
+            )
           ],
         ),
       )
