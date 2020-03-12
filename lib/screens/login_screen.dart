@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/TextFieldButton.dart';
+import '../constants.dart' as Constants;
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
+        backgroundColor: Color(Constants.blueButtonColor),
         title:Text("Login Screen"),
       ),
       body: Column(
