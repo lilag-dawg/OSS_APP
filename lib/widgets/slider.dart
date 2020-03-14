@@ -4,6 +4,10 @@ import '../constants.dart' as Constants;
 
 class SlideBar extends StatefulWidget {
 
+  final List<String> selectionMenu;
+
+  SlideBar(this.selectionMenu);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -17,30 +21,29 @@ class SlideBarState extends State<SlideBar> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
-      width: 300,
-      height: 150,
       child: SliderTheme(
         data: SliderTheme.of(context).copyWith(
           activeTrackColor: Color(Constants.blueButtonColor),
-          inactiveTrackColor: Colors.white,
+          inactiveTrackColor: Colors.grey[300],
           trackHeight: 20.0,
-          thumbColor: Colors.yellow,
+          thumbColor: Colors.white,
           thumbShape: RoundSliderThumbShape(enabledThumbRadius: 20.0),
-          overlayColor: Colors.purple.withAlpha(32),
+          overlayColor: Colors.grey,
           overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
         ), 
         child: Slider(
           min: 0,
-          max: 4,
+          max: 3,
           value: values, 
           onChanged: (newValues) {
             setState(() {
               values = newValues;
             });
           },
-          divisions: 4,
-          label: "$values",
+          divisions: 3,
+          label: widget.selectionMenu[values.toInt()],
         ),
       )
     );
