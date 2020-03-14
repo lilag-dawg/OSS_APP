@@ -23,10 +23,6 @@ class SpecificationScreen extends StatelessWidget {
       },
     ];
 
-    var selectionMenu = (sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
-      return selectionMenu;
-    }).toList();
-
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -34,7 +30,9 @@ class SpecificationScreen extends StatelessWidget {
         title: Text("Specification page")
       ),
       body: Center(
-        child: SlideBar(selectionMenu)
+        child: SlideBar((sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
+          return selectionMenu;
+        }).toList())
       ), 
     );
   }
