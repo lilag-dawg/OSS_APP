@@ -19,7 +19,7 @@ class BlueButton extends StatelessWidget {
         color: Color(Constants.blueButtonColor) , // changer la couleur
         child: Row(children: <Widget>[
             Icon(inputIcon),
-            SizedBox(width: buttonWidth*0.05, ),
+            SizedBox(width: buttonWidth*0.05),
             Text(
               inputText,
               style: 
