@@ -27,9 +27,9 @@ class SlideBarState extends State<SlideBar> {
         data: SliderTheme.of(context).copyWith(
           activeTrackColor: Color(Constants.blueButtonColor),
           inactiveTrackColor: Colors.grey[300],
-          trackHeight: 20.0,
+          trackHeight: 15.0,
           thumbColor: Colors.white,
-          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 20.0),
+          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15.0),
           overlayColor: Colors.grey,
           overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
         ), 
