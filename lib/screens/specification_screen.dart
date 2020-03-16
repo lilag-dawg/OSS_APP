@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/componentTitle.dart';
 import '../constants.dart' as Constants;
 
 class SpecificationScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class SpecificationScreen extends StatelessWidget {
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Specification page")
       ),
-      
+      body: ComponentTitle("Desired efforts"),
     );
   }
 }
