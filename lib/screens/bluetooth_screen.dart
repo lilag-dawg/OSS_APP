@@ -34,13 +34,9 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
   }
 
   void scanForDevices() async {
-    flutterBlue.connectedDevices.asStream().listen((paired) {
-      print('paired device: $paired');
-    });
     scanSubscription = flutterBlue.scan().listen((scanResult) async {
     if (scanResult.device.name == "Ride SenseV01 BACU2Q55") {
       print("found device");
-      print(state);
       //Assigning bluetooth device
       device = scanResult.device; 
       //After that we stop the scanning for device
