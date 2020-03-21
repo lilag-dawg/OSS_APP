@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/blueButton.dart';
+import '../widgets/navigationBar.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {

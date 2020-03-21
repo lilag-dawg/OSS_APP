@@ -44,9 +44,8 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
             icon: Icon(Icons.settings),
             title: Text("Setting")
           ),         
-      ]
+        ]
       ),
-      
     );
   }
 }
