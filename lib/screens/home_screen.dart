@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisSpacing: 20.0,
           children: <Widget>[
             NavigationButton( 150, 150, "Activities", "assets/activities.png", _activitiesPressed),
-            NavigationButton( 150, 150, "Statistique", "assets/stats.png", _statsPressed),
+            NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
             NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
           ],

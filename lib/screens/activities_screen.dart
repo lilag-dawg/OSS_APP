@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/navigationButton.dart';
+import '../widgets/navigationBar.dart';
 import '../screens/login_screen.dart';
 
 class ActivitiesScreen extends StatelessWidget {
