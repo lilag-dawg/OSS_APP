@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart' as Constants;
-import '../widgets/navigationButton.dart';
-import '../widgets/navigationBar.dart';
-import '../screens/login_screen.dart';
+import '../widgets/stopWatch.dart';
 
-class ActivitiesScreen extends StatelessWidget {
+class CalibrationScreen extends StatelessWidget {
 
 
   @override
@@ -14,8 +12,9 @@ class ActivitiesScreen extends StatelessWidget {
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),
-        title: Text("Activities page")
+        title: Text("Calibration page")
       ),
+      body: MyStopWatch(),
     );
   }
 }
