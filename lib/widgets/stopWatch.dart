@@ -39,12 +39,24 @@ class StopWatchState extends State<MyStopWatch>{
   }
 
   void startStopWatch(){
+    print('$isStopPressed');
+    if (isStopPressed == true){
       setState(() {
         isStopPressed = false;
+        isResetPressed = true;
         iconPlayPause = Icons.pause;
       });
       _stopWatch.start();
       startTimer();
+    }
+    else if (isStopPressed == false){
+      setState(() {
+        isStopPressed = true;
+        isResetPressed = false;
+        iconPlayPause = Icons.play_arrow;
+      });
+    _stopWatch.stop();
+    }
   }
 
   void stopStopWatch(){
@@ -118,7 +130,7 @@ class StopWatchState extends State<MyStopWatch>{
                     ),
                   ),
                   color: Colors.purple[900],
-                  onPressed: isStopPressed? null : stopStopWatch,
+                  onPressed: isStartPressed? startStopWatch : null,
                 ),
                 RaisedButton(
                   shape: RoundedRectangleBorder(
