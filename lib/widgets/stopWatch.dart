@@ -15,16 +15,17 @@ class MyStopWatch extends StatefulWidget {
 
 class StopWatchState extends State<MyStopWatch>{
 
-  IconData iconPlayPause = Icons.play_arrow;
-  String bigButtonText = 'Start';
+  IconData _iconPlayPause = Icons.play_arrow;
+  String _bigButtonText = 'Start';
   bool isStartPressed = true;
   bool isStopPressed = true;
   bool isResetPressed = true;
+  bool isStartShown = true;
   var _stopWatch = Stopwatch();
-  final dur = const Duration(seconds: 1);
+  final _dur = const Duration(milliseconds: 1);
 
   void startTimer(){
-    Timer(dur, keepRunning);
+    Timer(_dur, keepRunning);
   }
 
   void keepRunning(){
@@ -32,48 +33,43 @@ class StopWatchState extends State<MyStopWatch>{
       startTimer();
     }
     setState(() {
-      bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') + ':'
-                      + (_stopWatch.elapsed.inMinutes%60).toString().padLeft(2, '0') + ':'
-                      + (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2, '0');
+      _bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') + ' : '
+                      + (_stopWatch.elapsed.inMinutes%60).toString().padLeft(2, '0') + ' : '
+                      + (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2, '0') + ' : '
+                      + (_stopWatch.elapsed.inMilliseconds%60).toString().padLeft(2, '0');
     });
   }
 
   void startStopWatch(){
-    print('$isStopPressed');
     if (isStopPressed == true){
       setState(() {
+        isStartShown = false;
         isStopPressed = false;
         isResetPressed = true;
-        iconPlayPause = Icons.pause;
+        _iconPlayPause = Icons.pause;
       });
       _stopWatch.start();
       startTimer();
     }
     else if (isStopPressed == false){
       setState(() {
+        isStartShown = false;
         isStopPressed = true;
         isResetPressed = false;
-        iconPlayPause = Icons.play_arrow;
+        _iconPlayPause = Icons.play_arrow;
       });
     _stopWatch.stop();
     }
   }
 
-  void stopStopWatch(){
-    setState(() {
-      isStopPressed = true;
-      isResetPressed = false;
-    });
-    _stopWatch.stop();
-  }
-
   void resetStopWatch(){
     setState(() {
+      isStartShown = true;
+      _bigButtonText = 'Start';
       isStartPressed = true;
       isResetPressed = true;
     });
     _stopWatch.reset();
-    bigButtonText = 'Start';
   }
 
   @override
@@ -97,12 +93,28 @@ class StopWatchState extends State<MyStopWatch>{
                   )
                 ),
                 color: Color(Constants.backGroundBlue),
-                child: Text(
-                  bigButtonText,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      _bigButtonText,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40
+                      ),
+                    ),
+                    Visibility(
+                      visible: isStartShown? false:true,
+                      child: Text(
+                        'Hrs      Min     Sec      Ms',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 onPressed: isStartPressed? startStopWatch : null,
               ),
@@ -125,7 +137,7 @@ class StopWatchState extends State<MyStopWatch>{
                     width: 80,
                     height: 80,
                     child: Icon(
-                      iconPlayPause,
+                      _iconPlayPause,
                       size: 50,
                     ),
                   ),
