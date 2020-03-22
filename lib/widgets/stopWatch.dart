@@ -108,7 +108,7 @@ class StopWatchState extends State<MyStopWatch>{
               ),
             ),
             SizedBox(
-              height: 70
+              height: 40
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
