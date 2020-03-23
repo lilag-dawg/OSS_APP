@@ -63,7 +63,7 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
         print("service trouve");
         service.characteristics.forEach((characteristic){
           if('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}' == "0x2A5B"){
-            print("caracteristique trouve");
+            print("0x2A5B trouve");
             listStream = characteristic.value;
             characteristic.setNotifyValue(!characteristic.isNotifying);
             setState(() {
@@ -71,9 +71,19 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
             });
           }
         });
+      }
+      /*if('0x${service.uuid.toString().toUpperCase().substring(4, 8)}' == "0x180F"){
+        service.characteristics.forEach((characteristic){
+        if('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}' == "0x2A19"){
+          print("0x2A19 trouve");
+          c =characteristic;
+          batteryLevel();
+          }
+        });
+      }*/
+        
   
 
-      }
 
     });
   }
@@ -99,6 +109,8 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
 
       bool wheelRevFlag = (flags & 0x01 > 0);
       bool crankRevFlag = (flags & 0x02 > 0);
+
+      //todo
 
       if(wheelRevFlag){
         int wheelRev = 0;
@@ -138,6 +150,11 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
     return rpm;
     
 
+  }
+
+  void batteryLevel() async {
+    List<int> batteryLevel =  await c.read();
+    print(batteryLevel);
   }
 
 
