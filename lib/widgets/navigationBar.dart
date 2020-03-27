@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oss_app/screens/calibration_screen.dart';
 
-import '../screens/activities_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/settings_screen.dart';
 
@@ -13,7 +13,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
   int _selectedIndex = 1;
   final List<Widget> _children =[
-    ActivitiesScreen(),
+    CalibrationScreen(),
     HomeScreen(),
     SettingsScreen()
   ];
@@ -44,9 +44,8 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
             icon: Icon(Icons.settings),
             title: Text("Setting")
           ),         
-      ]
+        ]
       ),
-      
     );
   }
 }

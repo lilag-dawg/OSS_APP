@@ -16,10 +16,13 @@ class BlueButton extends StatelessWidget {
       width: buttonWidth,
       height: buttonHeight,
       child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
         color: Color(Constants.blueButtonColor) , // changer la couleur
         child: Row(children: <Widget>[
             Icon(inputIcon),
-            SizedBox(width: buttonWidth*0.05, ),
+            SizedBox(width: buttonWidth*0.05),
             Text(
               inputText,
               style: 
