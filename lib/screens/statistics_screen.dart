@@ -2,20 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
-import '../widgets/stopWatch.dart';
 
-class StatisticsScreen extends StatefulWidget {
+class StatisticsScreen extends StatelessWidget {
 
   String time = "00:00:00";
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return StatisticScreenState();
-  }
-}
-
-class StatisticScreenState extends State<StatisticsScreen>{
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +15,36 @@ class StatisticScreenState extends State<StatisticsScreen>{
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Statistics page")
       ),
-      body: StatisticBox(150, 125, 'Moving time:', widget.time),
+      body: Column(
+        children: <Widget>[
+          SizedBox(height: 20),
+          StatisticBox(370, 185, 'Moving time:', time),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              StatisticBox(175, 120, 'Heart rate', '88 Bpm'),
+              StatisticBox(175, 120, 'Speed', '12,8 kmph'),
+            ]
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              StatisticBox(175, 120, 'Cadence', '62 Rpm'),
+              StatisticBox(175, 120, 'Power', '90 Watts'),
+            ]
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              StatisticBox(175, 120, 'Calories', '582 cal'),
+              StatisticBox(175, 120, 'Distance', '30 Km'),
+            ]
+          )
+        ],
+      ),
     );
   }
 }

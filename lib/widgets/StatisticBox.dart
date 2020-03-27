@@ -2,7 +2,7 @@ import '../constants.dart' as Constants;
 
 import 'package:flutter/material.dart';
 
-class StatisticBox extends StatefulWidget {
+class StatisticBox extends StatelessWidget {
   final double boxWidth;
   final double boxHeight;
   final String boxTitle;
@@ -11,14 +11,6 @@ class StatisticBox extends StatefulWidget {
   StatisticBox(this.boxWidth, this.boxHeight, this.boxTitle, this.boxContent);
 
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return StatisticBoxState();
-  }
-}
-
-class StatisticBoxState extends State<StatisticBox>{
-  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -26,29 +18,29 @@ class StatisticBoxState extends State<StatisticBox>{
         color: Color(Constants.blueButtonColor)
       ),
       child: SizedBox(
-        width: widget.boxWidth,
-        height: widget.boxHeight,
+        width: boxWidth,
+        height: boxHeight,
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: widget.boxHeight/12.5
+              height: boxHeight/12.5
             ),
             Text(
-              widget.boxTitle,
+              boxTitle,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: widget.boxWidth/7.5,
+                fontSize: boxWidth/7.5,
               ),
             ),
             SizedBox(
               height: 125/8.33
             ),
             Text(
-              widget.boxContent,
+              boxContent,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.green[300],
-                fontSize: widget.boxWidth/4.3,
+                fontSize: boxWidth/6,
               ),
             )
           ],
