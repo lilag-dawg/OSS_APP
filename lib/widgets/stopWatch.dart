@@ -14,9 +14,8 @@ class MyStopWatch extends StatefulWidget {
 }
 
 class StopWatchState extends State<MyStopWatch>{
-
+  String bigButtonText = 'Start';
   IconData _iconPlayPause = Icons.play_arrow;
-  String _bigButtonText = 'Start';
   bool isStartPressed = true;
   bool isStopPressed = true;
   bool isResetPressed = true;
@@ -33,10 +32,9 @@ class StopWatchState extends State<MyStopWatch>{
       startTimer();
     }
     setState(() {
-      _bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') + ' : '
+      bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') + ' : '
                       + (_stopWatch.elapsed.inMinutes%60).toString().padLeft(2, '0') + ' : '
-                      + (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2, '0') + ' : '
-                      + (_stopWatch.elapsed.inMilliseconds%60).toString().padLeft(2, '0');
+                      + (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2, '0');
     });
   }
 
@@ -65,7 +63,7 @@ class StopWatchState extends State<MyStopWatch>{
   void resetStopWatch(){
     setState(() {
       isStartShown = true;
-      _bigButtonText = 'Start';
+      bigButtonText = 'Start';
       isStartPressed = true;
       isResetPressed = true;
     });
@@ -98,7 +96,7 @@ class StopWatchState extends State<MyStopWatch>{
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      _bigButtonText,
+                      bigButtonText,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 40
@@ -107,7 +105,7 @@ class StopWatchState extends State<MyStopWatch>{
                     Visibility(
                       visible: isStartShown? false:true,
                       child: Text(
-                        'Hrs      Min     Sec      Ms',
+                        'Hrs      Min     Sec',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25
