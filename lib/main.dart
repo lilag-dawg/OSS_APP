@@ -182,27 +182,50 @@ class DiscoverServices extends StatelessWidget {
 
   final BluetoothDevice device;
 
-  List<BluetoothService> _filterResult(data) {
+  List<BluetoothService> _filterService(data) {
     //return data;
     List<BluetoothService> filteredResult = [];
     if (data.length != 0) {
       for (int i = 0; i < data.length; i++) {
         //print(data[i].device.name);
         if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "1816") {
+          // Cycling Speed and Cadence
           filteredResult.add(data[i]);
-          //print(data[i].device.state);
         }
         if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "180F") {
+          // Battery Service
           filteredResult.add(data[i]);
-          //print(data[i].device.state);
         }
         if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "1818") {
+          // Cycling Power
           filteredResult.add(data[i]);
-          //print(data[i].device.state);
         }
       }
     }
+    return filteredResult;
+  }
 
+  List<BluetoothCharacteristic> _filterCharacteristic(data) {
+    List<BluetoothCharacteristic> filteredResult = [];
+    if (data.length != 0) {
+      for (int i = 0; i < data.length; i++) {
+        if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A19") {
+          // Battery Level
+          //data[i].read();
+          filteredResult.add(data[i]);
+        }
+        if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A5B") {
+          // CSC Measurement
+          data[i].setNotifyValue(!data[i].isNotifying);
+          filteredResult.add(data[i]);
+        }
+        if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A63") {
+          // Cycling Power Measurement
+          data[i].setNotifyValue(!data[i].isNotifying);
+          filteredResult.add(data[i]);
+        }
+      }
+    }
     return filteredResult;
   }
 
@@ -263,14 +286,27 @@ class DiscoverServices extends StatelessWidget {
             stream: device.services,
             initialData: [],
             builder: (c, snapshot) => Column(
-              children: _filterResult(snapshot.data)
+              children: _filterService(snapshot.data)
                   .map((s) => Container(
                         child: Column(
                           children: <Widget>[
                             ListTile(
                               title: Text(
                                   '0x${s.uuid.toString().toUpperCase().substring(4, 8)}'),
-                            )
+                            ),
+                            Column(
+                                children:
+                                    _filterCharacteristic(s.characteristics)
+                                        .map((c) => Container(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  CharacteristicTile(
+                                                    characteristic: c,
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                        .toList()),
                           ],
                         ),
                       ))
@@ -288,5 +324,48 @@ class DiscoverServices extends StatelessWidget {
       return Icon(Icons.bluetooth_connected);
     }
     return Icon(Icons.bluetooth_disabled);
+  }
+}
+
+class CharacteristicTile extends StatelessWidget {
+  final BluetoothCharacteristic characteristic;
+  final VoidCallback onReadPressed;
+  final VoidCallback onWritePressed;
+  final VoidCallback onNotificationPressed;
+
+  const CharacteristicTile(
+      {Key key,
+      this.characteristic,
+      this.onReadPressed,
+      this.onWritePressed,
+      this.onNotificationPressed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<int>>(
+      stream: characteristic.value,
+      initialData: characteristic.lastValue,
+      builder: (c, snapshot) {
+        final value = snapshot.data;
+        return ExpansionTile(
+          title: ListTile(
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Characteristic'),
+                Text(
+                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
+                    style: Theme.of(context).textTheme.body1.copyWith(
+                        color: Theme.of(context).textTheme.caption.color))
+              ],
+            ),
+            subtitle: Text(value.toString()),
+            contentPadding: EdgeInsets.all(0.0),
+          ),
+        );
+      },
+    );
   }
 }
