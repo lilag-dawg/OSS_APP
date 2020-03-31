@@ -67,8 +67,8 @@ class FindDeviesScreen extends StatefulWidget {
 
 class _FindDeviesScreenState extends State<FindDeviesScreen> {
   Map<ScanResult, bool> devicesStatus = {};
+  List<BluetoothDevice> connectedDevices = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
-  BluetoothDevice device;
   var scanSubscription;
 
   bool isDoneScanning;
@@ -84,6 +84,28 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
     });
   }
 
+  void connectToCheckedDevices(ScanResult key, bool value){
+    if(value){
+      connectedDevices.add(key.device);
+    }
+  }
+  Future<void> connectAsync() async{
+    for(ScanResult s in devicesStatus.keys){
+      if(devicesStatus[s] == true){
+         await s.device.connect();
+         print("connected to");
+         print(s.device.name);
+         //mydeviceServices(s.device);
+      }
+    }
+  }
+  /*Future<void> mydeviceServices(BluetoothDevice d) async{
+    List<BluetoothService> services = await d.discoverServices();
+    services.forEach((s){
+      print('0x${s.uuid.toString().toUpperCase().substring(4, 8)}');
+    });
+  }*/
+
   @override
   void initState() {
     isDoneScanning = true;
@@ -98,19 +120,35 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
         title: Text("Select Devices to connect"),
       ),
       body: Column(
-        children: devicesStatus.entries
-            .map(
-              (result) => CheckboxListTile(
-                  title: Text(result.key.device.name),
-                  subtitle: Text(result.key.device.id.toString()),
-                  value: result.value,
-                  onChanged: (bool value) {
-                    setState(() {
-                      devicesStatus[result.key] = value;
-                    });
-                  }),
-            )
-            .toList(),
+        children: <Widget>[
+          Column(
+              children: devicesStatus.entries
+                  .map(
+                    (result) => CheckboxListTile(
+                        title: Text(result.key.device.name),
+                        subtitle: Text(result.key.device.id.toString()),
+                        value: result.value,
+                        onChanged: (bool value) {
+                          setState(() {
+                            devicesStatus[result.key] = value;
+                          });
+                        }),
+                  )
+                  .toList()),
+          Center(
+            child: RaisedButton(
+              child: Text("Show Data"),
+              textColor: Colors.white,
+              color: Colors.blue,
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) {
+                devicesStatus.forEach(connectToCheckedDevices);
+                connectAsync();
+                return StatisticsScreen(devices: connectedDevices);
+              })),
+            ),
+          )
+        ],
       ),
       floatingActionButton: StreamBuilder<bool>(
         stream: FlutterBlue.instance.isScanning,
@@ -137,7 +175,7 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
   }
 }
 
-//----------------------------------OLD STRUFF----------------------------------------------------------------------------------//
+//----------------------------------OLD STUFF----------------------------------------------------------------------------------//
 
 /*class FindDevicesScreen extends StatelessWidget {
   List<ScanResult> _filterResult(data) {

@@ -12,9 +12,7 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
 
   FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice device;
-  BluetoothState state;
-  BluetoothDeviceState deviceState;
-  BluetoothCharacteristic c;
+
   Stream<List<int>> listStream; 
   var scanSubscription;
   List<int> lastdata = [];
@@ -149,10 +147,6 @@ class _BluetoothStuffState extends State<BluetoothStuff> {
 
   }
 
-  void batteryLevel() async {
-    List<int> batteryLevel =  await c.read();
-    print(batteryLevel);
-  }
 
 
   

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
@@ -6,7 +7,9 @@ import '../widgets/rpm.dart';
 
 class StatisticsScreen extends StatelessWidget {
 
-  String time = "00:00:00";
+  const StatisticsScreen({Key key, this.devices}) : super(key: key);
+
+  final List<BluetoothDevice> devices;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class StatisticsScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           SizedBox(height: 20),
-          StatisticBox(370, 185, 'Moving time:', time),
+          StatisticBox(370, 185, 'Moving time:', "00:00:00"),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -36,6 +39,7 @@ class StatisticsScreen extends StatelessWidget {
                 boxWidth: 175,
                 boxHeight: 120,
                 boxTitle: "RPM",
+                devices: devices[0],
               ),
               StatisticBox(175, 120, 'Power', '90 Watts'),
             ]
