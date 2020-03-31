@@ -46,6 +46,8 @@ flutter:
    - assets/setting.png
    - assets/specifications.png
    - assets/stats.png
+   - assets/batterieLevel.png
+   - assets/profil.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

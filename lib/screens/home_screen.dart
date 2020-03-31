@@ -40,6 +40,19 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
+    void _batterieLevelPressed(){
+      // Navigator.push(
+      // context,
+      // MaterialPageRoute(builder: (context) => SettingsScreen()),
+      // );
+    }
+
+    void _profilePressed(){
+      // Navigator.push(
+      // context,
+      // MaterialPageRoute(builder: (context) => SettingsScreen()),
+      // );
+    }
     
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
@@ -58,6 +71,8 @@ class HomeScreen extends StatelessWidget {
             NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
             NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
+            NavigationButton( 150, 150, "Batterie level", "assets/batterieLevel.png", _batterieLevelPressed),
+            NavigationButton( 150, 150, "Your profil", "assets/profil.png", _profilePressed),
           ],
         )
       ),
