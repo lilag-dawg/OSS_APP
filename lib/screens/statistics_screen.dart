@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
+import '../widgets/rpm.dart';
 
 class StatisticsScreen extends StatelessWidget {
 
@@ -31,7 +32,11 @@ class StatisticsScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              StatisticBox(175, 120, 'Cadence', '62 Rpm'),
+              Rpm(
+                boxWidth: 175,
+                boxHeight: 120,
+                boxTitle: "RPM",
+              ),
               StatisticBox(175, 120, 'Power', '90 Watts'),
             ]
           ),

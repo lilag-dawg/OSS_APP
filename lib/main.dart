@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-//import 'package:flutter_blue_example/widgets.dart';
+
+import './screens/statistics_screen.dart';
 
 void main() {
   runApp(FlutterBlueApp());
@@ -17,7 +20,7 @@ class FlutterBlueApp extends StatelessWidget {
           builder: (c, snapshot) {
             final state = snapshot.data;
             if (state == BluetoothState.on) {
-              return FindDevicesScreen();
+              return FindDeviesScreen();
             }
             return BluetoothOffScreen(state: state);
           }),
@@ -57,7 +60,86 @@ class BluetoothOffScreen extends StatelessWidget {
   }
 }
 
-class FindDevicesScreen extends StatelessWidget {
+class FindDeviesScreen extends StatefulWidget {
+  @override
+  _FindDeviesScreenState createState() => _FindDeviesScreenState();
+}
+
+class _FindDeviesScreenState extends State<FindDeviesScreen> {
+  Map<ScanResult, bool> devicesStatus = {};
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  BluetoothDevice device;
+  var scanSubscription;
+
+  bool isDoneScanning;
+
+  void scanForDevices() async {
+    scanSubscription = flutterBlue.scan(timeout: Duration(seconds: 4)).listen(
+        (scanResult) async {
+      devicesStatus[scanResult] = false;
+    }, onDone: () {
+      setState(() {
+        isDoneScanning = true;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    isDoneScanning = true;
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Select Devices to connect"),
+      ),
+      body: Column(
+        children: devicesStatus.entries
+            .map(
+              (result) => CheckboxListTile(
+                  title: Text(result.key.device.name),
+                  subtitle: Text(result.key.device.id.toString()),
+                  value: result.value,
+                  onChanged: (bool value) {
+                    setState(() {
+                      devicesStatus[result.key] = value;
+                    });
+                  }),
+            )
+            .toList(),
+      ),
+      floatingActionButton: StreamBuilder<bool>(
+        stream: FlutterBlue.instance.isScanning,
+        initialData: false,
+        builder: (c, snapshot) {
+          if (snapshot.data) {
+            return FloatingActionButton(
+              child: Icon(Icons.stop),
+              onPressed: () => FlutterBlue.instance.stopScan(),
+              backgroundColor: Colors.red,
+            );
+          } else {
+            return FloatingActionButton(
+              child: Icon(Icons.search),
+              onPressed: () {
+                scanForDevices();
+                isDoneScanning = false;
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+//----------------------------------OLD STRUFF----------------------------------------------------------------------------------//
+
+/*class FindDevicesScreen extends StatelessWidget {
   List<ScanResult> _filterResult(data) {
     return data;
     List<ScanResult> filteredResult = [];
@@ -209,19 +291,16 @@ class DiscoverServices extends StatelessWidget {
     List<BluetoothCharacteristic> filteredResult = [];
     if (data.length != 0) {
       for (int i = 0; i < data.length; i++) {
-        if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A19") {
+        /*if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A19") {
           // Battery Level
-          //data[i].read();
           filteredResult.add(data[i]);
-        }
+        }*/
         if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A5B") {
           // CSC Measurement
-          data[i].setNotifyValue(!data[i].isNotifying);
           filteredResult.add(data[i]);
         }
         if (data[i].uuid.toString().toUpperCase().substring(4, 8) == "2A63") {
           // Cycling Power Measurement
-          data[i].setNotifyValue(!data[i].isNotifying);
           filteredResult.add(data[i]);
         }
       }
@@ -302,6 +381,8 @@ class DiscoverServices extends StatelessWidget {
                                                 children: <Widget>[
                                                   CharacteristicTile(
                                                     characteristic: c,
+                                                    charName:
+                                                        '0x${c.uuid.toString().toUpperCase().substring(4, 8)}',
                                                   ),
                                                 ],
                                               ),
@@ -327,45 +408,130 @@ class DiscoverServices extends StatelessWidget {
   }
 }
 
-class CharacteristicTile extends StatelessWidget {
+/*class CharacteristicTile extends StatelessWidget {
   final BluetoothCharacteristic characteristic;
-  final VoidCallback onReadPressed;
-  final VoidCallback onWritePressed;
-  final VoidCallback onNotificationPressed;
+  final String charName;
 
-  const CharacteristicTile(
-      {Key key,
+
+   CharacteristicTile({Key key,
       this.characteristic,
-      this.onReadPressed,
-      this.onWritePressed,
-      this.onNotificationPressed})
-      : super(key: key);
+      this.charName,});
+
 
   @override
   Widget build(BuildContext context) {
+
+    //return Text('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}');
+
     return StreamBuilder<List<int>>(
       stream: characteristic.value,
       initialData: characteristic.lastValue,
       builder: (c, snapshot) {
         final value = snapshot.data;
+        /*if(!snapshot.hasData){
+          if(charName == "0x2A19"){
+            print(value.toString());
+          }
+          else{
+            characteristic.setNotifyValue(!characteristic.isNotifying);
+          }
+        }*/
+        switch(snapshot.connectionState){
+          case ConnectionState.none:
+            print("no connection");
+            break;
+          case ConnectionState.waiting:
+            print("waiting");
+            break;
+          case ConnectionState.active:
+            print("active");
+            if(value.length == 0){
+              if(charName == "0x2A19"){
+                characteristic.read();
+              }
+              else{
+                characteristic.setNotifyValue(!characteristic.isNotifying);
+              }
+            }
+            
+
+            break;
+          case ConnectionState.done:
+            print("finish");
+            break;
+        }
         return ExpansionTile(
           title: ListTile(
             title: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text('Characteristic'),
                 Text(
-                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
-                    style: Theme.of(context).textTheme.body1.copyWith(
-                        color: Theme.of(context).textTheme.caption.color))
+                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}')
               ],
             ),
             subtitle: Text(value.toString()),
-            contentPadding: EdgeInsets.all(0.0),
           ),
         );
       },
     );
   }
+}*/
+
+class CharacteristicTile extends StatefulWidget {
+  final BluetoothCharacteristic characteristic;
+  final String charName;
+
+  CharacteristicTile({this.characteristic, this.charName});
+  @override
+  _CharacteristicTileState createState() => _CharacteristicTileState();
 }
+
+class _CharacteristicTileState extends State<CharacteristicTile> {
+  var data;
+  Stream<List<int>> _stream;
+
+  @override
+  void initState() {
+    _stream = widget.characteristic.value;
+    /*_asyncMethode().then((result){
+      print(widget.charName);
+    });*/
+
+
+    super.initState();
+  }
+
+  /*Future<bool> _asyncMethode() async {
+    if(widget.charName == "0x2A5B" || widget.charName == "0x2A63"){
+      await widget.characteristic.setNotifyValue(true);
+    }
+    
+    return true;
+  }*/
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(data.toString());
+    /*StreamBuilder<List<int>>(
+            stream: widget.characteristic.value,
+            initialData: widget.characteristic.lastValue,
+            builder: (c, snapshot) {
+              final value = snapshot.data;
+              //print(value.toString());
+              return ExpansionTile(
+                title: ListTile(
+                  title: Column(
+                    children: <Widget>[
+                      Text('Characteristic'),
+                      Text(
+                          '0x${widget.characteristic.uuid.toString().toUpperCase().substring(4, 8)}')
+                    ],
+                  ),
+                  subtitle: Text(value.toString()),
+                ),
+              );
+            },
+          );*/
+  }
+}*/
