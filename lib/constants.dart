@@ -1,7 +1,5 @@
 library constants;
 
-import 'package:flutter/material.dart';
-
 const double appWidth = 410;
 const double appHeight = 700;
 
