@@ -5,7 +5,6 @@ class SexDialog extends StatefulWidget {
   SexDialog(this._sexString);
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return SexDialogState();
   }
 }
@@ -35,19 +34,19 @@ class SexDialogState extends State<SexDialog> {
     _isFemale = false;
     _isOther = false;
     setState(() {
-    if (widget._sexString.contains('Male')) {
-      _isMale = true;
-    } else if (widget._sexString.contains('Female')) {
-      _isFemale = true;
-    } else if (widget._sexString.contains('Other')) {
-      _isOther = true;
-    }
+      if (widget._sexString != null) {
+        if (widget._sexString.contains('Male')) {
+          _isMale = true;
+        } else if (widget._sexString.contains('Female')) {
+          _isFemale = true;
+        } else if (widget._sexString.contains('Other')) {
+          _isOther = true;
+        }
+      } else {
+        _isMale = true;
+        widget._sexString = 'Male';
+      }
     });
-
-    if(!_isMale && !_isFemale && !_isOther) {
-      _isMale = true;
-      widget._sexString = 'Male';
-    }
   }
 
   @override
