@@ -7,6 +7,7 @@ import '../screens/calibration_screen.dart';
 import '../screens/statistics_screen.dart';
 import '../screens/specification_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/batteryLevel_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -41,10 +42,10 @@ class HomeScreen extends StatelessWidget {
     }
 
     void _batterieLevelPressed(){
-      // Navigator.push(
-      // context,
-      // MaterialPageRoute(builder: (context) => SettingsScreen()),
-      // );
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
+      );
     }
 
     void _profilePressed(){
@@ -71,7 +72,7 @@ class HomeScreen extends StatelessWidget {
             NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
             NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
-            NavigationButton( 150, 150, "Batterie level", "assets/batterieLevel.png", _batterieLevelPressed),
+            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
             NavigationButton( 150, 150, "Your profil", "assets/profil.png", _profilePressed),
           ],
         )
