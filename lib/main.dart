@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+
 import './screens/statistics_screen.dart';
+import './widgets/customCheckbox.dart';
 
 void main() {
   runApp(MyApp());
@@ -161,6 +163,15 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
     List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
     return devices;
   }
+
+
+  /*List<Widget> _buildCheckboxServiceTiles(Map<ScanResult,bool> services){
+    return services
+        .map(
+          (result) => CustomCheckboxTile(),
+        )
+        .toList();
+  }*/
 
   @override
   void initState() {
