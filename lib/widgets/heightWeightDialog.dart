@@ -7,7 +7,6 @@ class HeightWeightDialog extends StatefulWidget {
   HeightWeightDialog({this.measureString, @required this.popHeight});
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return HeightWeightDialogState();
   }
 }
@@ -116,21 +115,23 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
   }
 
   void _setHeight() {
-    if (widget.measureString.contains('\'')) {
-      _isMetric = false;
-      int feetIndex = widget.measureString.indexOf('\'');
-      String _feetHeightTemp = widget.measureString.substring(0, feetIndex);
-      int inchIndex = widget.measureString.indexOf('\"');
-      String _inchHeightTemp =
-          widget.measureString.substring(feetIndex + 1, inchIndex);
-      _measure = double.parse(_feetHeightTemp) *
-              feetToInch *
-              _imperialToMetric[_impToMetIdx] +
-          double.parse(_inchHeightTemp) * _imperialToMetric[_impToMetIdx];
-    } else if (widget.measureString.contains('cm')) {
-      _isMetric = true;
-      int index = widget.measureString.indexOf(' ');
-      _measure = double.parse(widget.measureString.substring(0, index));
+    if (widget.measureString != null) {
+      if (widget.measureString.contains('\'')) {
+        _isMetric = false;
+        int feetIndex = widget.measureString.indexOf('\'');
+        String _feetHeightTemp = widget.measureString.substring(0, feetIndex);
+        int inchIndex = widget.measureString.indexOf('\"');
+        String _inchHeightTemp =
+            widget.measureString.substring(feetIndex + 1, inchIndex);
+        _measure = double.parse(_feetHeightTemp) *
+                feetToInch *
+                _imperialToMetric[_impToMetIdx] +
+            double.parse(_inchHeightTemp) * _imperialToMetric[_impToMetIdx];
+      } else if (widget.measureString.contains('cm')) {
+        _isMetric = true;
+        int index = widget.measureString.indexOf(' ');
+        _measure = double.parse(widget.measureString.substring(0, index));
+      }
     } else {
       _isMetric = true;
       _measure = _defaultHeight;
@@ -138,16 +139,18 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
   }
 
   void _setWeight() {
-    if (widget.measureString.contains('lbs')) {
-      _isMetric = false;
-      int index = widget.measureString.indexOf(' ');
-      String _weightTemp = widget.measureString.substring(0, index);
-      _measure = double.parse(_weightTemp) * _imperialToMetric[_impToMetIdx];
-    } else if (widget.measureString.contains('kg')) {
-      _isMetric = true;
-      int index = widget.measureString.indexOf(' ');
-      String _weightTemp = widget.measureString.substring(0, index);
-      _measure = double.parse(_weightTemp);
+    if (widget.measureString != null) {
+      if (widget.measureString.contains('lbs')) {
+        _isMetric = false;
+        int index = widget.measureString.indexOf(' ');
+        String _weightTemp = widget.measureString.substring(0, index);
+        _measure = double.parse(_weightTemp) * _imperialToMetric[_impToMetIdx];
+      } else if (widget.measureString.contains('kg')) {
+        _isMetric = true;
+        int index = widget.measureString.indexOf(' ');
+        String _weightTemp = widget.measureString.substring(0, index);
+        _measure = double.parse(_weightTemp);
+      }
     } else {
       _isMetric = true;
       _measure = _defaultWeight;

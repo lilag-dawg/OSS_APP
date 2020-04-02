@@ -11,29 +11,26 @@ import 'dart:io';
 class UserSettingsScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return UserSettingsScreenState();
   }
 }
 
 class UserSettingsScreenState extends State<UserSettingsScreen> {
   static DateTime _birthdate;
-  String _birthdateString = '';
+  String _birthdateString;
   String _birthdateStringComplete = 'Birthday';
-  String _sexString = '';
+  String _sexString;
   String _sexStringComplete = 'Sex';
-  String _heightString = '';
+  String _heightString;
   String _heightStringComplete = 'Height';
-  String _weightString = '';
+  String _weightString;
   String _weightStringComplete = 'Weight';
 
   bool _isProfileInitialized = false;
-  bool _isProfileSelected = false;
-  
 
   void _birthdateButtonClicked() async {
     DateTime initialDate;
-    if (_birthdateString != '') {
+    if (_birthdateString != null) {
       initialDate = DateTime.parse(_birthdateString);
     } else {
       initialDate = DateTime.now();
@@ -103,44 +100,48 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
   }
 
   String _extractData(String string) {
-    if (string.contains(':')) {
-      String data = string.substring(string.indexOf(':') + 2);
-      return data;
+    if (string != null) {
+      if (string.contains(':')) {
+        String data = string.substring(string.indexOf(':') + 2);
+        return data;
+      }
     }
+    return null;
   }
 
   void _loadProfile() async {
     String _profileString = await readFile();
-    if (_profileString.contains('1.')) {
-      int index1 = _profileString.indexOf('1.');
-      int index2 = _profileString.indexOf('2.');
-      int index3 = _profileString.indexOf('3.');
-      int index4 = _profileString.indexOf('4.');
+    if (_profileString != null) {
+      if (_profileString.contains('1.')) {
+        int index1 = _profileString.indexOf('1.');
+        int index2 = _profileString.indexOf('2.');
+        int index3 = _profileString.indexOf('3.');
+        int index4 = _profileString.indexOf('4.');
 
-      setState(() {
-        _birthdateStringComplete =
-            _profileString.substring(index1 + 2, index2 - 1);
-        _sexStringComplete = _profileString.substring(index2 + 2, index3 - 1);
-        _heightStringComplete =
-            _profileString.substring(index3 + 2, index4 - 1);
-        _weightStringComplete = _profileString.substring(index4 + 2);
-      });
+        setState(() {
+          _birthdateStringComplete =
+              _profileString.substring(index1 + 2, index2 - 1);
+          _sexStringComplete = _profileString.substring(index2 + 2, index3 - 1);
+          _heightStringComplete =
+              _profileString.substring(index3 + 2, index4 - 1);
+          _weightStringComplete = _profileString.substring(index4 + 2);
+        });
 
-      _birthdateString = _extractData(_birthdateStringComplete);
-      _sexString = _extractData(_sexStringComplete);
-      _heightString = _extractData(_heightStringComplete);
-      _weightString = _extractData(_weightStringComplete);
+        _birthdateString = _extractData(_birthdateStringComplete);
+        _sexString = _extractData(_sexStringComplete);
+        _heightString = _extractData(_heightStringComplete);
+        _weightString = _extractData(_weightStringComplete);
+      }
     } else {
       _saveProfile();
     }
   }
 
   void _resetProfile() {
-
-    _birthdateString = '';
-    _sexString = '';
-    _heightString = '';
-    _weightString = '';
+    _birthdateString = null;
+    _sexString = null;
+    _heightString = null;
+    _weightString = null;
 
     setState(() {
       _birthdateStringComplete = 'Birthday';
@@ -227,8 +228,8 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
               BlueButton(_weightStringComplete, _weightButtonClicked,
                   Icons.assessment, 70, Constants.appWidth - 50),
               SizedBox(height: Constants.appHeight * 0.1),
-              BlueButton('Reset Profile', _resetProfile,
-                  Icons.delete, 70, Constants.appWidth - 50),
+              BlueButton('Reset Profile', _resetProfile, Icons.delete, 70,
+                  Constants.appWidth - 50),
             ],
           ),
         ));
