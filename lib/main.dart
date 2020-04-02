@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-
 import './screens/statistics_screen.dart';
 
 void main() {
-  runApp(FlutterBlueApp());
+  runApp(MyApp());
 }
 
-class FlutterBlueApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,48 +66,106 @@ class FindDeviesScreen extends StatefulWidget {
 
 class _FindDeviesScreenState extends State<FindDeviesScreen> {
   Map<ScanResult, bool> devicesStatus = {};
-  List<BluetoothDevice> connectedDevices = [];
+  List<BluetoothDevice> connectToDevices = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
-  var scanSubscription;
+  List<BluetoothDevice> alreadyConnectedDevices;
 
   bool isDoneScanning;
+  bool isBackButtonPress;
 
-  void scanForDevices() async {
-    scanSubscription = flutterBlue.scan(timeout: Duration(seconds: 4)).listen(
-        (scanResult) async {
-      devicesStatus[scanResult] = false;
-    }, onDone: () {
+  Future<void> scanForDevices() async {
+    flutterBlue.scan(timeout: Duration(seconds: 4)).listen((scanResult) {
+      devicesStatus.putIfAbsent(scanResult, () => false);
+    }, onDone: () async {
+      flutterBlue.stopScan();
+      alreadyConnectedDevices = await getConnectedDevice();
+      //compareMapToList(devicesStatus, alreadyConnectedDevices);
       setState(() {
         isDoneScanning = true;
       });
     });
   }
 
-  void connectToCheckedDevices(ScanResult key, bool value){
-    if(value){
-      connectedDevices.add(key.device);
+  /*Future<void> connectOrDisconnectAsync(
+      List<BluetoothDevice> deviceToConnect) async {
+    for (ScanResult s in devicesStatus.keys) {
+      if (devicesStatus[s] == true) {
+        connectToDevices.add(s.device);
+        await s.device.connect();
+        print("connected to");
+        print(s.device.name);
+      }
     }
-  }
-  Future<void> connectAsync() async{
-    for(ScanResult s in devicesStatus.keys){
-      if(devicesStatus[s] == true){
-         await s.device.connect();
-         print("connected to");
-         print(s.device.name);
-         //mydeviceServices(s.device);
+  }*/
+
+  /*List<BluetoothDevice> compareMapToList(Map<ScanResult, bool> scannedDevices,
+      List<BluetoothDevice> alreadyConnectedToDevices) {
+    List<BluetoothDevice> listOfScannedDevice = [];
+    List<BluetoothDevice> result = [];
+
+    scannedDevices.forEach((k, v) {
+      listOfScannedDevice.add(k.device);
+      result.add(k.device);
+    });
+    for (BluetoothDevice scanned in listOfScannedDevice) {
+      for (BluetoothDevice connected in alreadyConnectedToDevices) {
+        if (scanned.name == connected.name || scanned.id == connected.id) {
+          result.remove(scanned);
+        }
+      }
+    }
+    return result;
+  }*/
+
+  Future<void> connectOrDisconnectToSelectedDevices() async {
+    List<BluetoothDevice> listOfScannedDevice = [];
+    List<BluetoothDevice> unConnectedAvailableDevices = [];
+    devicesStatus.forEach((k, v) {
+      listOfScannedDevice.add(k.device);
+      unConnectedAvailableDevices.add(k.device);
+    });
+
+    for (BluetoothDevice scanned in listOfScannedDevice) {
+      for (BluetoothDevice connected in alreadyConnectedDevices) {
+        if (scanned.name == connected.name || scanned.id == connected.id) {
+          unConnectedAvailableDevices.remove(scanned);
+        }
+      }
+    }
+
+    for (ScanResult s in devicesStatus.keys) {
+      for (BluetoothDevice d in alreadyConnectedDevices) {
+        if (devicesStatus[s] == false) {
+          if (s.device.name == d.name || s.device.id == d.id) {
+            connectToDevices.remove(s.device);
+            await d.disconnect();
+            print("disconnedted from ${d.name}");
+          }
+        }
+      }
+    }
+    for (ScanResult s in devicesStatus.keys) {
+      for (BluetoothDevice d in unConnectedAvailableDevices) {
+        if (devicesStatus[s] == true) {
+          if (s.device.name == d.name || s.device.id == d.id) {
+            connectToDevices.add(s.device);
+            await d.connect();
+            print("connected to ${d.name}");
+          }
+        }
       }
     }
   }
-  /*Future<void> mydeviceServices(BluetoothDevice d) async{
-    List<BluetoothService> services = await d.discoverServices();
-    services.forEach((s){
-      print('0x${s.uuid.toString().toUpperCase().substring(4, 8)}');
-    });
-  }*/
+
+  Future<List<BluetoothDevice>> getConnectedDevice() async {
+    List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
+    return devices;
+  }
 
   @override
   void initState() {
     isDoneScanning = true;
+    scanForDevices();
     // TODO: implement initState
     super.initState();
   }
@@ -140,12 +197,16 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
               child: Text("Show Data"),
               textColor: Colors.white,
               color: Colors.blue,
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) {
-                devicesStatus.forEach(connectToCheckedDevices);
-                connectAsync();
-                return StatisticsScreen(devices: connectedDevices);
-              })),
+              onPressed: () async {
+                await connectOrDisconnectToSelectedDevices();
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            StatisticsScreen(devices: connectToDevices)));
+                isDoneScanning = false;
+                scanForDevices();
+              },
             ),
           )
         ],

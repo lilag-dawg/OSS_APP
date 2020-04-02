@@ -147,6 +147,7 @@ class _RpmState extends State<Rpm> {
                   final value = snapshot.data;
                   if (snapshot.connectionState == ConnectionState.active &&
                       value.length != 0) {
+                      print(value.toString());
                       final rpm = interpretReceivedData(value);
                     return Text(
                       rpm.toStringAsFixed(0),
