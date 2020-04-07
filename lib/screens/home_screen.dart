@@ -3,41 +3,40 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../screens/calibration_screen.dart';
 import '../screens/statistics_screen.dart';
 import '../screens/specification_screen.dart';
-import '../screens/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+
+  final PageController _currentPage;
+  final Function selectHandler;
+
+  HomeScreen(this._currentPage, this.selectHandler);
+
+
   @override
   Widget build(BuildContext context) {
 
     void _calibrationPressed(){
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CalibrationScreen()),
-      );
+      selectHandler(0);
     }
 
     void _statsPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => StatisticsScreen()),
+      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler)),
       );
     }
 
     void _specificationPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen()),
+      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
       );
     }
 
     void _settingPressed(){
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SettingsScreen()),
-      );
+      selectHandler(2);
     }
 
     
