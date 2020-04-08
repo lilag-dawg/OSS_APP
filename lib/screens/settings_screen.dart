@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/blueButton.dart';
-import '../widgets/navigationBar.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
-  void _buttonClicked(){
+  void _buttonClicked() {
     print("Button Clicked");
   }
 
@@ -16,8 +15,7 @@ class SettingsScreen extends StatelessWidget {
         title: Text("Settings page"),
         backgroundColor: Color(Constants.blueButtonColor),
       ),
-      body: 
-      Padding(
+      body: Padding(
         padding: EdgeInsets.all(25.0),
         child: SingleChildScrollView(
           child: Column(     
