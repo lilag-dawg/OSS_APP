@@ -3,6 +3,8 @@ import 'package:oss_app/screens/calibration_screen.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/settings_screen.dart';
+import '../widgets/lowerNavigationBar.dart';
+import '../constants.dart' as Constants;
 
 class MyNavigationBar extends StatefulWidget {
   @override
@@ -10,42 +12,32 @@ class MyNavigationBar extends StatefulWidget {
 }
 
 class _MyNavigationBarState extends State<MyNavigationBar> {
+  static var _currentPage =
+      PageController(initialPage: Constants.defaultPageIndex);
 
-  int _selectedIndex = 1;
-  final List<Widget> _children =[
-    CalibrationScreen(),
-    HomeScreen(),
-    SettingsScreen()
-  ];
+  List<Widget> _children;
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int selected) {
     setState(() {
-      _selectedIndex = index;
+      _currentPage.jumpToPage(selected);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _children = [
+      CalibrationScreen(),
+      HomeScreen(_currentPage, _onItemTapped),
+      SettingsScreen(),
+    ];
+
     return Scaffold(
-      body:_children[_selectedIndex],   
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: _onItemTapped,
-        currentIndex: _selectedIndex,
-        items:[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_bike),
-            title: Text("Activities")
-          ),
-           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text("Home")
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            title: Text("Setting")
-          ),         
-        ]
+      body: PageView(
+        children: _children,
+        controller: _currentPage,
       ),
+      bottomNavigationBar:
+          LowerNavigationBar(_currentPage, null, _onItemTapped),
     );
   }
 }

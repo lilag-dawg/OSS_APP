@@ -3,43 +3,57 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../screens/calibration_screen.dart';
 import '../screens/statistics_screen.dart';
 import '../screens/specification_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/batteryLevel_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+
+  final PageController _currentPage;
+  final Function selectHandler;
+
+  HomeScreen(this._currentPage, this.selectHandler);
+
+
   @override
   Widget build(BuildContext context) {
 
     void _calibrationPressed(){
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CalibrationScreen()),
-      );
+      selectHandler(0);
     }
 
     void _statsPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => StatisticsScreen()),
+      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler)),
       );
     }
 
     void _specificationPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen()),
+      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
       );
     }
 
     void _settingPressed(){
+      selectHandler(2);
+    }
+
+    void _batterieLevelPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SettingsScreen()),
+      MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
       );
     }
 
+    void _profilePressed(){
+      // Navigator.push(
+      // context,
+      // MaterialPageRoute(builder: (context) => SettingsScreen()),
+      // );
+    }
     
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
@@ -58,6 +72,8 @@ class HomeScreen extends StatelessWidget {
             NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
             NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
+            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
+            NavigationButton( 150, 150, "Your profil", "assets/profil.png", _profilePressed),
           ],
         )
       ),

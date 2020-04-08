@@ -4,7 +4,7 @@ import '../screens/user_settings_screen.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
-  void _buttonClicked(){
+  void _buttonClicked() {
     print("Button Clicked");
   }
 
@@ -26,24 +26,23 @@ class SettingsScreen extends StatelessWidget {
         title: Text("Settings page"),
         backgroundColor: Color(Constants.blueButtonColor),
       ),
-      body: 
-      Padding(
+      body: Padding(
         padding: EdgeInsets.all(25.0),
-        child: Column(     
-          children: <Widget>[
-          BlueButton("Language", _buttonClicked, Icons.language, 70, Constants.appWidth-50),
-          SizedBox(height: Constants.appHeight*0.03),
-          BlueButton("Share", _buttonClicked, Icons.share, 70, Constants.appWidth-50),
-          SizedBox(height: Constants.appHeight*0.03),
-          BlueButton("OSS on Facebook", _buttonClicked, Icons.thumb_up, 70, Constants.appWidth-50),
-          SizedBox(height: Constants.appHeight*0.03),
-          BlueButton("Logout", _buttonClicked, Icons.exit_to_app, 70, Constants.appWidth-50),
-          SizedBox(height: Constants.appHeight*0.03),
-          BlueButton("Notifications", _buttonClicked, Icons.add_alarm, 70, Constants.appWidth-50),
-          SizedBox(height: Constants.appHeight*0.03),
-          BlueButton("User Settings", _userSettingsPressed, Icons.person, 70, Constants.appWidth-50),
-        ],
+        child: SingleChildScrollView(
+          child: Column(     
+            children: <Widget>[
+            BlueButton("Language", _buttonClicked, Icons.language, 70, Constants.appWidth-50),
+            SizedBox(height: Constants.appHeight*0.03),
+            BlueButton("Share", _buttonClicked, Icons.share, 70, Constants.appWidth-50),
+            SizedBox(height: Constants.appHeight*0.03),
+            BlueButton("OSS on Facebook", _buttonClicked, Icons.thumb_up, 70, Constants.appWidth-50),
+            SizedBox(height: Constants.appHeight*0.03),
+            BlueButton("Logout", _buttonClicked, Icons.exit_to_app, 70, Constants.appWidth-50),
+            SizedBox(height: Constants.appHeight*0.03),
+            BlueButton("Notifications", _buttonClicked, Icons.add_alarm, 70, Constants.appWidth-50),
+          ],
       ),
+        ),
       ) 
     );
   }

@@ -14,7 +14,9 @@ class CalibrationScreen extends StatelessWidget {
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Calibration page")
       ),
-      body: MyStopWatch(),
+      body: SingleChildScrollView(
+        child: MyStopWatch()
+      ),
     );
   }
 }

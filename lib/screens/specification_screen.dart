@@ -4,8 +4,15 @@ import '../constants.dart' as Constants;
 
 import '../widgets/componentTitle.dart';
 import '../widgets/slider.dart';
+import '../widgets/navigationBar.dart';
+import '../widgets/lowerNavigationBar.dart';
 
 class SpecificationScreen extends StatelessWidget {
+
+  final PageController _currentPage;
+  final Function selectHandler;
+  SpecificationScreen(this._currentPage, this.selectHandler);
+
   @override
   Widget build(BuildContext context) {
 
@@ -29,6 +36,7 @@ class SpecificationScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),
@@ -36,28 +44,30 @@ class SpecificationScreen extends StatelessWidget {
       ),
       body: Container(
         margin: EdgeInsets.only(left: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: spaceTopItem),
-            ComponentTitle(sliderStepsMap[0]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[0]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-            SizedBox(height: spaceItem1Item2),
-            ComponentTitle(sliderStepsMap[1]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-            SizedBox(height: spaceItem1Item2),
-            ComponentTitle(sliderStepsMap[2]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[2]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: spaceTopItem),
+              ComponentTitle(sliderStepsMap[0]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[0]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+              SizedBox(height: spaceItem1Item2),
+              ComponentTitle(sliderStepsMap[1]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+              SizedBox(height: spaceItem1Item2),
+              ComponentTitle(sliderStepsMap[2]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[2]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+            ],
+          ),
         ),
       ), 
     );
