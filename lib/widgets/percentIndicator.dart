@@ -1,95 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 import '../constants.dart' as Constants;
 
 class RoutinePage extends StatefulWidget {
+
+  final String title;
+  final bool isConnected;
+  final double percentProgress;
+
+  RoutinePage(this.title, this.isConnected, this.percentProgress);
+
   @override
   _RoutinePageState createState() => _RoutinePageState();
 }
 
 class _RoutinePageState extends State<RoutinePage> {
   double progress = 0;
+  double percProgress = 0;
+  String connectedOrNot = "Connected";
+  Color connectColor = Colors.green;
+
   currentProgressColor() {
-    if (progress >= 0.6 && progress < 0.8) {
+    if (percProgress >= 0.3 && percProgress < 0.6) {
       return Colors.orange;
     }
-    if(progress >= 0.8){
-      return Colors.red;
+    if(percProgress >= 0.6){
+      return Colors.green;
     }
     else{
-      return Colors.green;
+      return Colors.red;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+
+    if (widget.isConnected == false){
+      connectedOrNot = "Disconnected";
+      progress = 0;
+      connectColor = Colors.red;
+    }
+    else{
+      progress = widget.percentProgress;
+      percProgress = progress/100;
+    }
+
+    return Column(
       children: <Widget>[
-        Container(
-          alignment: Alignment(0, 0),
-          child: CircularPercentIndicator(
-            animationDuration: 200,
-            animateFromLastPercent: true,
-            arcType: ArcType.HALF,
-            arcBackgroundColor: Color(Constants.blueButtonColor),
-            backgroundColor: Color(Constants.backGroundBlue),
-            progressColor: currentProgressColor(),
-            percent: progress,
-            animation: true,
-            radius: 250.0,
-            lineWidth: 12.0,
-            circularStrokeCap: CircularStrokeCap.butt,
+        Text(
+          connectedOrNot,
+          style: TextStyle(
+            color: connectColor,
+            fontSize: 20,
           ),
         ),
-        Container(
-          alignment: Alignment(0, 0),
-          child: Text(
-            "${this.progress * 100}%",
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
+        SizedBox(height: 10),
+        Text(
+          widget.title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
           ),
         ),
-        Container(
-          alignment: Alignment(0.3, 0.5),
-          child: RaisedButton(
-              color: Colors.green,
-              onPressed: () {
-                final updated = ((this.progress + 0.1).clamp(0.0, 1.0) * 100);
-                setState(() {
-                  this.progress = updated.round() / 100;
-                });
-                print(progress);
-              },
-              child: Text(
-                '+10%',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              )),
-        ),
-        Container(
-          alignment: Alignment(-0.3, 0.5),
-          child: RaisedButton(
-              color: Colors.red,
-              onPressed: () {
-                final updated = ((this.progress - 0.1).clamp(0.0, 1.0) * 100);
-                setState(() {
-                  this.progress = updated.round() / 100;
-                });
-                print(progress);
-              },
-              child: Text(
-                '-10%',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              )),
-        ),
+        SizedBox(height: 10),
+        LinearPercentIndicator(
+          width: 360.0,
+          lineHeight: 30.0,
+          percent: progress/100,
+          center: Text(
+            widget.isConnected == true? "$progress" + "%": "Not connected",
+            style: new TextStyle(fontSize: 20.0),
+          ),
+          linearStrokeCap: LinearStrokeCap.roundAll,
+          backgroundColor: Colors.grey,
+          progressColor: currentProgressColor(),
+        )
       ],
     );
   }
