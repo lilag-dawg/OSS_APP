@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
         title: Text("Home Screen"),
         backgroundColor: Color(Constants.blueButtonColor),
       ),
-      body: SingleChildScrollView(
+      body: Container(
         child: GridView.count(
           crossAxisCount: 2,
           padding: const EdgeInsets.all(20.0),
