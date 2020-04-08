@@ -44,28 +44,30 @@ class SpecificationScreen extends StatelessWidget {
       ),
       body: Container(
         margin: EdgeInsets.only(left: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: spaceTopItem),
-            ComponentTitle(sliderStepsMap[0]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[0]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-            SizedBox(height: spaceItem1Item2),
-            ComponentTitle(sliderStepsMap[1]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-            SizedBox(height: spaceItem1Item2),
-            ComponentTitle(sliderStepsMap[2]['typeOfData']),
-            SizedBox(height: spaceTitleSlider),
-            SlideBar((sliderStepsMap[2]['selectionMenu'] as List<String>).map((selectionMenu){
-              return selectionMenu;
-            }).toList()),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: spaceTopItem),
+              ComponentTitle(sliderStepsMap[0]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[0]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+              SizedBox(height: spaceItem1Item2),
+              ComponentTitle(sliderStepsMap[1]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[1]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+              SizedBox(height: spaceItem1Item2),
+              ComponentTitle(sliderStepsMap[2]['typeOfData']),
+              SizedBox(height: spaceTitleSlider),
+              SlideBar((sliderStepsMap[2]['selectionMenu'] as List<String>).map((selectionMenu){
+                return selectionMenu;
+              }).toList()),
+            ],
+          ),
         ),
       ), 
     );
