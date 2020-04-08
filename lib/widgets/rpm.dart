@@ -94,7 +94,7 @@ class _RpmState extends State<Rpm> {
               (crankEventTime - lastCrankEventTime);
           return rpm; // bonne nouvelle valeur
         } else if (crankEventTime == lastCrankEventTime) {
-          return rpm = 0; // on detecte que le rpm n a pas change
+          return rpm = 0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
         }
         return rpm; // on retourne la derniere valeur ajouter
       } else if (flag == 2 && lastdata.length == currentdata.length) {
@@ -110,7 +110,7 @@ class _RpmState extends State<Rpm> {
               (crankEventTime - lastCrankEventTime);
           return rpm; // bonne nouvelle valeur
         } else if (crankEventTime == lastCrankEventTime) {
-          return rpm = 0; // on detecte que le rpm n a pas change
+          return rpm = 0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
         }
         return rpm; // on retourne la derniere valeur ajouter
       } else {
