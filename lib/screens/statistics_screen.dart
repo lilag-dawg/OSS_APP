@@ -3,6 +3,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
+import '../widgets/lowerNavigationBar.dart';
 import '../widgets/rpm.dart';
 
 class StatisticsScreen extends StatelessWidget {
@@ -13,9 +14,14 @@ class StatisticsScreen extends StatelessWidget {
 
 
 
+  final PageController _currentPage;
+  final Function selectHandler;
+  StatisticsScreen(this._currentPage, this.selectHandler);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),

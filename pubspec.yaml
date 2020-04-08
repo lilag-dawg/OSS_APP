@@ -19,11 +19,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  percent_indicator: ^2.1.1+1
   flutter_blue: ^0.6.3+1
 
   intl: ^0.15.8
-
-  floor: ^0.12.0
   
   path_provider: ^1.6.5
 
@@ -53,6 +52,8 @@ flutter:
    - assets/setting.png
    - assets/specifications.png
    - assets/stats.png
+   - assets/batterieLevel.png
+   - assets/profil.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
