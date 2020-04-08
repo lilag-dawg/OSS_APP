@@ -160,7 +160,9 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
           return SexDialog(_sexString);
         });
     setState(() {
-      _sexStringComplete = 'Sex : ' + _sexString;
+      if (_sexString != null) {
+        _sexStringComplete = 'Sex : ' + _sexString;
+      }
     });
     _saveProfile();
   }
