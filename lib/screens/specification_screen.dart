@@ -4,7 +4,6 @@ import '../constants.dart' as Constants;
 
 import '../widgets/componentTitle.dart';
 import '../widgets/slider.dart';
-import '../widgets/navigationBar.dart';
 import '../widgets/lowerNavigationBar.dart';
 
 class SpecificationScreen extends StatelessWidget {

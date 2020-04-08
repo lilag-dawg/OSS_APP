@@ -6,7 +6,7 @@ import '../widgets/lowerNavigationBar.dart';
 
 class StatisticsScreen extends StatelessWidget {
 
-  String time = "00:00:00";
+  final String time = "00:00:00";
 
   final PageController _currentPage;
   final Function selectHandler;
