@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/blueButton.dart';
+import '../screens/user_settings_screen.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
@@ -7,8 +8,18 @@ class SettingsScreen extends StatelessWidget {
     print("Button Clicked");
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+
+    void _userSettingsPressed(){
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UserSettingsScreen()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
