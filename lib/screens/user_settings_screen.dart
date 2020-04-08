@@ -60,7 +60,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
   Future<File> _localFile() async {
     final path = await _localPath();
     print(path);
-    return new File('$path/counter.txt');
+    return new File('$path/user_settings.txt');
   }
 
   Future<String> readFile() async {
