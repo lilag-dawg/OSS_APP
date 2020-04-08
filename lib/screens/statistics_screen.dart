@@ -6,9 +6,12 @@ import '../widgets/StatisticBox.dart';
 import '../widgets/rpm.dart';
 
 class StatisticsScreen extends StatelessWidget {
-  const StatisticsScreen({Key key, this.devices}) : super(key: key);
+
 
   final List<BluetoothDevice> devices;
+  const StatisticsScreen({Key key, this.devices}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class StatisticsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Statistics page"),
-        leading: IconButton( // peut etre pas necassaire
+        leading: IconButton( 
           icon: Icon(Icons.chevron_left),
           onPressed: () async {
             Navigator.pop(context);
@@ -43,7 +46,7 @@ class StatisticsScreen extends StatelessWidget {
                   boxWidth: 175,
                   boxHeight: 120,
                   boxTitle: "RPM",
-                  devices: devices[0],
+                  devices: devices,
                 ),
                 StatisticBox(175, 120, 'Power', '90 Watts'),
               ]),
@@ -59,3 +62,19 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 }
+
+/*class StatisticsScreen extends StatefulWidget {
+  final List<BluetoothDevice> devices;
+  const StatisticsScreen({Key key, this.devices}) : super(key: key);
+  @override
+  _StatisticsScreenState createState() => _StatisticsScreenState();
+}
+
+class _StatisticsScreenState extends State<StatisticsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+}*/

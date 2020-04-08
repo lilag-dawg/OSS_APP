@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import '../models/deviceCharac.dart';
 
 import '../constants.dart' as Constants;
 
 class Rpm extends StatefulWidget {
   Rpm({this.devices, this.boxWidth, this.boxTitle, this.boxHeight}) {}
 
-  final BluetoothDevice devices;
+  final List<BluetoothDevice> devices;
   final double boxWidth;
   final double boxHeight;
   final String boxTitle;
@@ -18,39 +19,49 @@ class Rpm extends StatefulWidget {
 class _RpmState extends State<Rpm> {
   //for stream setup
   Stream<List<int>> listStream;
+  List<DeviceCharacteristic> rpmDevices = [];
   bool isNotificationOn;
+  bool isRpmDevicesEmpty;
 
   //for calculation
   List<int> lastdata = [];
   List<int> currentdata = [];
-  double lastRpm = 0;
-  double currentRpm = 0;
+  double rpm = 0;
 
   Future<void> checkConnection() async {
-    await for (BluetoothDeviceState state in widget.devices.state) {
-      if (state == BluetoothDeviceState.connected) {
-        print("still connected");
-        mydeviceServices();
+    for (BluetoothDevice d in widget.devices) {
+      await for (BluetoothDeviceState state in d.state) {
+        if (state == BluetoothDeviceState.connected) {
+          print("device ${d.name} still connected");
+          await mydeviceServices(d);
+        }
       }
     }
   }
 
-  Future<void> mydeviceServices() async {
-    List<BluetoothService> services = await widget.devices.discoverServices();
+  Future<void> mydeviceServices(BluetoothDevice d) async {
+    List<BluetoothService> services = await d.discoverServices();
     services.forEach((s) {
       if ('0x${s.uuid.toString().toUpperCase().substring(4, 8)}' == "0x1816") {
         s.characteristics.forEach((c) {
           if ('0x${c.uuid.toString().toUpperCase().substring(4, 8)}' ==
               "0x2A5B") {
-            listStream = c.value;
-            c.setNotifyValue(true);
-            print("caracteristique set pour notification");
+            rpmDevices.add(DeviceCharacteristic(device: d, characteristic: c));
+            print("charact found");
             setState(() {
-              isNotificationOn = true;
+              isRpmDevicesEmpty = false;
             });
           }
         });
       }
+    });
+  }
+
+  void _setListener(DeviceCharacteristic d) {
+    listStream = d.characteristic.value;
+    d.characteristic.setNotifyValue(true);
+    setState(() {
+      isNotificationOn = true;
     });
   }
 
@@ -65,23 +76,11 @@ class _RpmState extends State<Rpm> {
   }
 
   double interpretReceivedData(List<int> data) {
-    double rpm = 0;
-
     setLastAndCurrentData(data);
-    if (lastdata != null && currentdata != null) {
-      int flags = currentdata[0];
+    if (lastdata.length > 0 && currentdata.length > 0) {
+      int flag = currentdata[0];
 
-      bool wheelRevFlag = (flags & 0x01 > 0);
-      bool crankRevFlag = (flags & 0x02 > 0);
-
-      //todo
-
-      if (wheelRevFlag) {
-        int wheelRev = 0;
-        int lasWheelRev = 0;
-      }
-      if (crankRevFlag) {
-        //convert little to big endian
+      if (flag == 3 && lastdata.length == currentdata.length) {
         int crankRev = (currentdata[8] << 8) + (currentdata[7]);
         int lastCrankRev = (lastdata[8] << 8) + (lastdata[7]);
         double crankEventTime =
@@ -89,26 +88,153 @@ class _RpmState extends State<Rpm> {
         double lastCrankEventTime =
             ((lastdata[10] << 8) + (lastdata[9])) * (1 / 1024);
 
-        if (crankEventTime != lastCrankEventTime && crankRev != lastCrankRev) {
-          currentRpm = 60 *
+        if (crankEventTime > lastCrankEventTime && crankRev > lastCrankRev) {
+          rpm = 60 *
               (crankRev - lastCrankRev) /
-              ((crankEventTime - lastCrankEventTime));
-        } else {
-          currentRpm = 0;
+              (crankEventTime - lastCrankEventTime);
+          return rpm; // bonne nouvelle valeur
+        } else if (crankEventTime == lastCrankEventTime) {
+          return rpm = 0; // on detecte que le rpm n a pas change
         }
-
-        if (lastRpm == 0) {
-          lastRpm = currentRpm;
+        return rpm; // on retourne la derniere valeur ajouter
+      } else if (flag == 2 && lastdata.length == currentdata.length) {
+        int crankRev = (currentdata[2] << 8) + (currentdata[1]);
+        int lastCrankRev = (lastdata[2] << 8) + (lastdata[1]);
+        double crankEventTime =
+            ((currentdata[4] << 8) + (currentdata[3])) * (1 / 1024);
+        double lastCrankEventTime =
+            ((lastdata[4] << 8) + (lastdata[3])) * (1 / 1024);
+        if (crankEventTime > lastCrankEventTime && crankRev > lastCrankRev) {
+          rpm = 60 *
+              (crankRev - lastCrankRev) /
+              (crankEventTime - lastCrankEventTime);
+          return rpm; // bonne nouvelle valeur
+        } else if (crankEventTime == lastCrankEventTime) {
+          return rpm = 0; // on detecte que le rpm n a pas change
         }
-        if (lastRpm == currentRpm || currentRpm < 0) {
-          rpm = lastRpm;
-        } else {
-          rpm = currentRpm;
-          currentRpm = lastRpm;
-        }
+        return rpm; // on retourne la derniere valeur ajouter
+      } else {
+        return rpm; // rpm va être la même valeur qu'au dernier call
       }
+    } else {
+      return rpm; // rpm egale 0 (valeur pas encore charge)
     }
-    return rpm;
+  }
+
+  Widget _buildPopUp(BuildContext context) {
+    return AlertDialog(
+      title: Text("Select ${widget.boxTitle} device to read from"),
+      content: Container(
+        height: MediaQuery.of(context).size.height / 3,
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: rpmDevices
+                  .map(
+                    (d) => RaisedButton(
+                      color: Color(Constants.blueButtonColor),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _setListener(d);
+                      },
+                      child: Text(d.device.name,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  )
+                  .toList()),
+        ),
+      ),
+    );
+  }
+
+  /*Widget _test(BuildContext context) {
+    return !isNotificationOn
+        ? Material(
+            color: Color(Constants.blueButtonColor),
+            child: RaisedButton(
+              elevation: 4,
+              child: Text(
+                "Pick Device",
+                style: TextStyle(color: Colors.black),
+              ),
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              ),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => _buildPopUp(context));
+              },
+            ),
+          )
+        : _buildStream();
+  }*/
+
+  Widget _buildStructure(
+      BuildContext context, List<DeviceCharacteristic> devices) {
+    if (devices.length > 1) {
+      return !isNotificationOn
+          ? Material(
+              color: Color(Constants.blueButtonColor),
+              child: RaisedButton(
+                child: Text(
+                  "Pick Device",
+                  style: TextStyle(color: Colors.black),
+                ),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => _buildPopUp(context));
+                },
+              ),
+            )
+          : _buildStream();
+    }
+    if (devices.length == 1) {
+      _setListener(devices[0]);
+      return _buildStream();
+    } else {
+      return Text("");
+    }
+  }
+
+  Widget _buildStream() {
+    //_setListener(d);
+    return StreamBuilder<List<int>>(
+      stream: listStream,
+      initialData: [],
+      builder: (c, snapshot) {
+        final value = snapshot.data;
+        if (snapshot.connectionState == ConnectionState.active &&
+            value.length != 0) {
+          print(value.toString());
+          final rpm = interpretReceivedData(value);
+          return Text(
+            rpm.toStringAsFixed(0),
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green[300],
+              fontSize: widget.boxWidth / 6,
+            ),
+          );
+        } else {
+          return Text(
+            "N/A",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green[300],
+              fontSize: widget.boxWidth / 6,
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -116,7 +242,7 @@ class _RpmState extends State<Rpm> {
     // TODO: implement initState
     super.initState();
     isNotificationOn = false;
-
+    isRpmDevicesEmpty = true;
     checkConnection();
   }
 
@@ -140,36 +266,7 @@ class _RpmState extends State<Rpm> {
                 ),
               ),
               SizedBox(height: 125 / 8.33),
-              StreamBuilder<List<int>>(
-                stream: listStream,
-                initialData: [],
-                builder: (c, snapshot) {
-                  final value = snapshot.data;
-                  if (snapshot.connectionState == ConnectionState.active &&
-                      value.length != 0) {
-                      print(value.toString());
-                      final rpm = interpretReceivedData(value);
-                    return Text(
-                      rpm.toStringAsFixed(0),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[300],
-                        fontSize: widget.boxWidth / 6,
-                      ),
-                    );
-                  } else {
-                    return Text(
-                      "N/A",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[300],
-                        fontSize: widget.boxWidth / 6,
-                      ),
-                    );
-                  }
-                },
-              ),
+              _buildStructure(context, rpmDevices)
             ],
           )),
     );

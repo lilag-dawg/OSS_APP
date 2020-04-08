@@ -130,7 +130,7 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
     });
   }
 
-  List<Widget> _buildCheckboxServiceTiles(List<DeviceInfo> result) {
+  List<Widget> _buildCustomTiles(List<DeviceInfo> result) {
     return result
         .map(
           (d) => CustomTile(
@@ -175,7 +175,7 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
           : SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Column(children: _buildCheckboxServiceTiles(devicesInfos)),
+                  Column(children: _buildCustomTiles(devicesInfos)),
                   Center(
                     child: RaisedButton(
                       child: Text("Show Data"),
@@ -187,6 +187,7 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
                             MaterialPageRoute(
                                 builder: (context) => StatisticsScreen(
                                     devices: connectToDevices)));
+
                         isDoneScanning = false;
                         scanForDevices();
                       },
