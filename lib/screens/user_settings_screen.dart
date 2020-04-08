@@ -171,7 +171,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            measureString: _heightString,
+            initialMeasure: _heightString,
             popHeight: true,
           );
         });
@@ -187,7 +187,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            measureString: _weightString,
+            initialMeasure: _weightString,
             popHeight: false,
           );
         });

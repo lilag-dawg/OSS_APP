@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SexDialog extends StatefulWidget {
-  String _sexString = 'Undefined';
-  SexDialog(this._sexString);
+  final String _initialSexString;
+  SexDialog(this._initialSexString);
   @override
   State<StatefulWidget> createState() {
     return SexDialogState();
@@ -10,48 +10,19 @@ class SexDialog extends StatefulWidget {
 }
 
 class SexDialogState extends State<SexDialog> {
-  bool _isMale = false;
-  bool _isFemale = false;
-  bool _isOther = false;
+  String _sexString;
+  bool _isSexInitialized = false;
 
-  void _sexMaleCheckboxClicked(bool state) {
-    widget._sexString = 'Male';
-    _setSex();
-  }
-
-  void _sexFemaleCheckboxClicked(bool state) {
-    widget._sexString = 'Female';
-    _setSex();
-  }
-
-  void _sexOtherCheckboxClicked(bool state) {
-    widget._sexString = 'Other';
-    _setSex();
-  }
-
-  void _setSex() {
-    _isMale = false;
-    _isFemale = false;
-    _isOther = false;
-    setState(() {
-      if (widget._sexString != null) {
-        if (widget._sexString.contains('Male')) {
-          _isMale = true;
-        } else if (widget._sexString.contains('Female')) {
-          _isFemale = true;
-        } else if (widget._sexString.contains('Other')) {
-          _isOther = true;
-        }
-      } else {
-        _isMale = true;
-        widget._sexString = 'Male';
-      }
-    });
-  }
+  void _sexMaleCheckboxClicked(bool state) => setState(() { _sexString = 'Male';});
+  void _sexFemaleCheckboxClicked(bool state) => setState(() { _sexString = 'Female';});
+  void _sexOtherCheckboxClicked(bool state) => setState(() { _sexString = 'Other';});
 
   @override
   Widget build(BuildContext context) {
-    _setSex();
+    if (!_isSexInitialized) {
+      _sexString = widget._initialSexString;
+      _isSexInitialized = true;
+    }
 
     return AlertDialog(
       content: Column(
@@ -71,10 +42,15 @@ class SexDialogState extends State<SexDialog> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Checkbox(value: _isMale, onChanged: _sexMaleCheckboxClicked),
                 Checkbox(
-                    value: _isFemale, onChanged: _sexFemaleCheckboxClicked),
-                Checkbox(value: _isOther, onChanged: _sexOtherCheckboxClicked)
+                    value: _sexString == 'Male',
+                    onChanged: _sexMaleCheckboxClicked),
+                Checkbox(
+                    value: _sexString == 'Female',
+                    onChanged: _sexFemaleCheckboxClicked),
+                Checkbox(
+                    value: _sexString == 'Other',
+                    onChanged: _sexOtherCheckboxClicked)
               ],
             ),
           ]),
@@ -83,8 +59,7 @@ class SexDialogState extends State<SexDialog> {
             child: RaisedButton(
               child: Text("Submit"),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(widget._sexString);
+                Navigator.of(context, rootNavigator: true).pop(_sexString);
               },
             ),
           ),
