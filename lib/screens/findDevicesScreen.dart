@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 
-import './statistics_screen.dart';
+import '../constants.dart' as Constants;
 import '../widgets/customCheckbox.dart';
 import '../models/deviceInfo.dart';
+import '../models/connectedDevices.dart';
 
-
-class FindDeviesScreen extends StatefulWidget {
+class FindDevicesScreen extends StatefulWidget {
   @override
-  _FindDeviesScreenState createState() => _FindDeviesScreenState();
+  _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
 
-class _FindDeviesScreenState extends State<FindDeviesScreen> {
-  Map<ScanResult, bool> devicesStatus = {};
+class _FindDevicesScreenState extends State<FindDevicesScreen> {
   List<BluetoothDevice> connectToDevices = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
-  List<BluetoothDevice> alreadyConnectedDevices;
+  List<BluetoothDevice> alreadyConnectedDevices = [];
 
   List<DeviceInfo> devicesInfos = [];
 
@@ -23,7 +23,6 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
 
   Future<void> scanForDevices() async {
     flutterBlue.scan(timeout: Duration(seconds: 4)).listen((scanResult) {
-      devicesStatus.putIfAbsent(scanResult, () => false);
       bool isDeviceAlreadyAdded =
           devicesInfos.any((d) => d.getDevice == scanResult.device);
       if (!isDeviceAlreadyAdded) {
@@ -35,7 +34,13 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
     }, onDone: () async {
       flutterBlue.stopScan();
       alreadyConnectedDevices = await getConnectedDevice();
-      //compareMapToList(devicesStatus, alreadyConnectedDevices);
+      if (alreadyConnectedDevices.length != 0) {
+        for (BluetoothDevice d in alreadyConnectedDevices) {
+          devicesInfos.add(DeviceInfo(
+              device: d, connexionStatus: true, checkboxStatus: true));
+        }
+        connectToDevices = [...alreadyConnectedDevices];
+      }
       setState(() {
         isDoneScanning = true;
       });
@@ -66,12 +71,19 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
         devicesInfos.firstWhere((item) => item.getDevice == device);
     if (selectedDevice.connexionStatus) {
       await selectedDevice.device.disconnect();
+      connectToDevices.removeWhere((d) => d == device);
     } else {
       await selectedDevice.device.connect();
     }
     setState(() {
       selectedDevice.setConnexionStatus = newStatus;
     });
+  }
+
+  void myPressHandler(BuildContext context,ConnectedDevices cd) {
+    cd.copy(connectToDevices);
+    Navigator.of(context).pop();
+
   }
 
   List<Widget> _buildCustomTiles(List<DeviceInfo> result) {
@@ -110,9 +122,16 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cd = Provider.of<ConnectedDevices>(context);
     return Scaffold(
+      backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text("Select Devices to connect"),
+        backgroundColor: Color(Constants.blueButtonColor),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => myPressHandler(context,cd)
+          ),
       ),
       body: !isDoneScanning
           ? _circularProgressIndicator()
@@ -125,15 +144,8 @@ class _FindDeviesScreenState extends State<FindDeviesScreen> {
                       child: Text("Show Data"),
                       textColor: Colors.white,
                       color: Colors.blue,
-                      onPressed: () async {
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => StatisticsScreen(
-                                    devices: connectToDevices)));
-
-                        isDoneScanning = false;
-                        scanForDevices();
+                      onPressed: () {
+                        myPressHandler(context,cd);
                       },
                     ),
                   )

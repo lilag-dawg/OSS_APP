@@ -48,9 +48,11 @@ class _RpmState extends State<Rpm> {
               "0x2A5B") {
             rpmDevices.add(DeviceCharacteristic(device: d, characteristic: c));
             print("charact found");
-            setState(() {
-              isRpmDevicesEmpty = false;
-            });
+            if(mounted){
+              setState(() {
+                isRpmDevicesEmpty = false;
+              });
+            }
           }
         });
       }
@@ -146,31 +148,6 @@ class _RpmState extends State<Rpm> {
       ),
     );
   }
-
-  /*Widget _test(BuildContext context) {
-    return !isNotificationOn
-        ? Material(
-            color: Color(Constants.blueButtonColor),
-            child: RaisedButton(
-              elevation: 4,
-              child: Text(
-                "Pick Device",
-                style: TextStyle(color: Colors.black),
-              ),
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) => _buildPopUp(context));
-              },
-            ),
-          )
-        : _buildStream();
-  }*/
-
   Widget _buildStructure(
       BuildContext context, List<DeviceCharacteristic> devices) {
     if (devices.length > 1) {
@@ -245,6 +222,12 @@ class _RpmState extends State<Rpm> {
     isRpmDevicesEmpty = true;
     checkConnection();
   }
+
+/*@override
+void dispose() {
+  super.dispose();
+  checkConnection();
+}*/
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oss_app/screens/calibration_screen.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/settings_screen.dart';
@@ -16,6 +17,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
       PageController(initialPage: Constants.defaultPageIndex);
 
   List<Widget> _children;
+  List<BluetoothDevice> _connectedDevices = [];
 
   void _onItemTapped(int selected) {
     setState(() {
@@ -23,12 +25,18 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
     });
   }
 
+  /*void _onConnectedDevices(List<BluetoothDevice> devices){
+    setState(() {
+      _connectedDevices = [...devices];
+    });
+  }*/
+
   @override
   Widget build(BuildContext context) {
     _children = [
       CalibrationScreen(),
-      HomeScreen(_currentPage, _onItemTapped),
-      SettingsScreen(),
+      //HomeScreen(_currentPage, _onItemTapped,_connectedDevices),
+      //SettingsScreen(),
     ];
 
     return Scaffold(

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import '../widgets/blueButton.dart';
 import '../screens/user_settings_screen.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
+
+  final List<BluetoothDevice> connectedDevices;
+
+  const SettingsScreen({Key key, @required this.connectedDevices}) : super(key: key);
+
   void _buttonClicked() {
     print("Button Clicked");
   }
@@ -14,6 +20,11 @@ class SettingsScreen extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => UserSettingsScreen()),
+      );
+    }
+    void _deviceManagementPressed() {
+     Navigator.of(context).pushNamed(
+        "/settings/manage"
       );
     }
 
@@ -40,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                 BlueButton("Logout", _buttonClicked, Icons.exit_to_app, 70,
                     Constants.appWidth - 50),
                 SizedBox(height: Constants.appHeight * 0.03),
-                BlueButton("Notifications", _buttonClicked, Icons.add_alarm, 70,
+                BlueButton("Device management", _deviceManagementPressed, Icons.device_unknown, 70,
                     Constants.appWidth - 50),
                 SizedBox(height: Constants.appHeight * 0.03),
                 BlueButton("User Settings", _userSettingsPressed, Icons.person,

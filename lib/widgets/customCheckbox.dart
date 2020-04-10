@@ -21,15 +21,15 @@ class CustomTile extends StatelessWidget {
     onChanged(currentDevice.device, value);
   }
 
-  Widget _buildTitle(BuildContext context) {
+  Widget _buildTitle() {
     if (currentDevice.device.name.length > 0) {
-      return Text(currentDevice.device.name);
+      return Text(currentDevice.device.name, style: TextStyle(color: Colors.white));
     } else {
-      return Text(currentDevice.device.id.toString());
+      return Text(currentDevice.device.id.toString(), style: TextStyle(color:Colors.white));
     }
   }
 
-  Widget _buildLeading(BuildContext context) {
+  Widget _buildLeading() {
     if (currentDevice.connexionStatus) {
       return Icon(Icons.bluetooth_connected, color: Colors.green,);
     } else {
@@ -37,15 +37,15 @@ class CustomTile extends StatelessWidget {
     }
   }
 
-  Widget _buildSubtitle(BuildContext context) {
+  Widget _buildSubtitle() {
     if (currentDevice.connexionStatus) {
-      return Text("Enabled");
+      return Text("Enabled", style: TextStyle(color: Colors.green));
     } else {
-      return Text("Disabled");
+      return Text("Disabled", style: TextStyle(color: Colors.red));
     }
   }
 
-  Widget _buildTrailing(BuildContext context) {
+  Widget _buildTrailing() {
     if (currentDevice.connexionStatus) {
       return Checkbox(
         value: checkStatus,
@@ -60,14 +60,15 @@ class CustomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: _buildLeading(context),
-        title: _buildTitle(context),
-        subtitle: _buildSubtitle(context),
+        leading: _buildLeading(),
+        title: _buildTitle(),
+        subtitle: _buildSubtitle(),
         onTap: () {
           _handlePress();
         },
-        trailing: _buildTrailing(context),
+        trailing: _buildTrailing(),
       ),
+      color: Color(Constants.blueButtonColor),
     );
   }
 }

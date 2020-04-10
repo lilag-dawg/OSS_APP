@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 import '../constants.dart' as Constants;
 
@@ -10,35 +11,47 @@ import '../screens/batteryLevel_screen.dart';
 
 class HomeScreen extends StatelessWidget {
 
-  final PageController _currentPage;
-  final Function selectHandler;
+  //final PageController _currentPage;
+  //final Function selectHandler;
+  final List<BluetoothDevice> connectedDevices;
 
-  HomeScreen(this._currentPage, this.selectHandler);
+ const HomeScreen({Key key, @required this.connectedDevices}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
 
+
+
     void _calibrationPressed(){
-      selectHandler(0);
+      //selectHandler(0);
     }
 
     void _statsPressed(){
-      Navigator.push(
+      /*Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler)),
+      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler, devicesHandler)),
+      );*/
+      Navigator.of(context).pushNamed(
+        "/statistics",
+        arguments: connectedDevices,
       );
+
     }
 
     void _specificationPressed(){
-      Navigator.push(
+     /* Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
-      );
+      );*/
     }
 
     void _settingPressed(){
-      selectHandler(2);
+     // selectHandler(2);
+     Navigator.of(context).pushNamed(
+       "/settings",
+       arguments: connectedDevices,
+     );
     }
 
     void _batterieLevelPressed(){
