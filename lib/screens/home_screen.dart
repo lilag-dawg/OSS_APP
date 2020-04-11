@@ -4,7 +4,7 @@ import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
 import '../screens/statistics_screen.dart';
-import '../screens/specification_screen.dart';
+import '../screens/preferences_screen.dart';
 import '../screens/batteryLevel_screen.dart';
 import '../screens/user_settings_screen.dart';
 
@@ -70,7 +70,7 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             NavigationButton( 150, 150, "Calibration", "assets/activities.png", _calibrationPressed),
             NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
-            NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
+            NavigationButton( 150, 150, "Preferences", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
             NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
             NavigationButton( 150, 150, "Your profile", "assets/profil.png", _profilePressed),

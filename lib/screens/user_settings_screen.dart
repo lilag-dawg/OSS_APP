@@ -5,8 +5,11 @@ import '../widgets/sexDialog.dart';
 import '../widgets/heightWeightDialog.dart';
 import '../constants.dart' as Constants;
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import '../databases/db_user_settings_model.dart';
+import '../databases/db.dart';
+
+var _db = new
+    DB(dbFormat: UserSettingsModel.dbFormat, dbName: UserSettingsModel.dbName);
 
 class UserSettingsScreen extends StatefulWidget {
   @override
@@ -16,26 +19,29 @@ class UserSettingsScreen extends StatefulWidget {
 }
 
 class UserSettingsScreenState extends State<UserSettingsScreen> {
-  static DateTime _birthdate;
-  String _birthdateString;
-  String _birthdateStringComplete = 'Birthday';
-  String _sexString;
-  String _sexStringComplete = 'Sex';
-  String _heightString;
-  String _heightStringComplete = 'Height';
-  String _weightString;
-  String _weightStringComplete = 'Weight';
+  var _birthdateParameter =
+      UserSettingsModel(parameter: 'Birthday', parameterValue: null);
 
-  bool _isProfileInitialized = false;
+  var _sexParameter =
+      UserSettingsModel(parameter: 'Sex', parameterValue: null);
+
+  var _heightParameter =
+      UserSettingsModel(parameter: 'Height', parameterValue: null);
+
+  var _weightParameter =
+      UserSettingsModel(parameter: 'Weight', parameterValue: null);
+
+
 
   void _birthdateButtonClicked() async {
     DateTime initialDate;
-    if (_birthdateString != null) {
-      initialDate = DateTime.parse(_birthdateString);
+    if (_birthdateParameter.parameterValue != null) {
+      initialDate = DateTime.parse(_birthdateParameter.parameterValue);
     } else {
       initialDate = DateTime.now();
     }
 
+    DateTime _birthdate;
     _birthdate = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -44,168 +50,129 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     );
     if (_birthdate != null) {
       setState(() {
-        _birthdateString = DateFormat('yyyy-MM-dd').format(_birthdate);
-        _birthdateStringComplete = 'Birthday : ' + _birthdateString;
+        _birthdateParameter.parameterValue =
+            DateFormat('yyyy-MM-dd').format(_birthdate);
       });
     }
-    _saveProfile();
-  }
-
-  Future<String> _localPath() async {
-    final directory = await getApplicationDocumentsDirectory();
-    print(directory.path);
-    return directory.path;
-  }
-
-  Future<File> _localFile() async {
-    final path = await _localPath();
-    print(path);
-    return new File('$path/user_settings.txt');
-  }
-
-  Future<String> readFile() async {
-    try {
-      final file = await _localFile();
-
-      // Read the file.
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0.
-      return null;
-    }
-  }
-
-  Future<File> writeToFile(String profile) async {
-    final file = await _localFile();
-
-    // Write the file.
-    return file.writeAsString(profile);
-  }
-
-  void _saveProfile() async {
-    String _profileString = '1.' +
-        _birthdateStringComplete +
-        '\n' +
-        '2.' +
-        _sexStringComplete +
-        '\n' +
-        '3.' +
-        _heightStringComplete +
-        '\n' +
-        '4.' +
-        _weightStringComplete;
-    writeToFile(_profileString);
-  }
-
-  String _extractData(String string) {
-    if (string != null) {
-      if (string.contains(':')) {
-        String data = string.substring(string.indexOf(':') + 2);
-        return data;
-      }
-    }
-    return null;
-  }
-
-  void _loadProfile() async {
-    String _profileString = await readFile();
-    if (_profileString != null) {
-      if (_profileString.contains('1.')) {
-        int index1 = _profileString.indexOf('1.');
-        int index2 = _profileString.indexOf('2.');
-        int index3 = _profileString.indexOf('3.');
-        int index4 = _profileString.indexOf('4.');
-
-        setState(() {
-          _birthdateStringComplete =
-              _profileString.substring(index1 + 2, index2 - 1);
-          _sexStringComplete = _profileString.substring(index2 + 2, index3 - 1);
-          _heightStringComplete =
-              _profileString.substring(index3 + 2, index4 - 1);
-          _weightStringComplete = _profileString.substring(index4 + 2);
-        });
-
-        _birthdateString = _extractData(_birthdateStringComplete);
-        _sexString = _extractData(_sexStringComplete);
-        _heightString = _extractData(_heightStringComplete);
-        _weightString = _extractData(_weightStringComplete);
-      }
-    } else {
-      _saveProfile();
-    }
-  }
-
-  void _resetProfile() {
-    _birthdateString = null;
-    _sexString = null;
-    _heightString = null;
-    _weightString = null;
-
-    setState(() {
-      _birthdateStringComplete = 'Birthday';
-      _sexStringComplete = 'Sex';
-      _heightStringComplete = 'Height';
-      _weightStringComplete = 'Weight';
-    });
-    _saveProfile();
+    await _saveParameter(_birthdateParameter);
   }
 
   void _sexButtonClicked() async {
-    _sexString = await showDialog(
+    var _sex = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return SexDialog(_sexString);
+          return SexDialog(_sexParameter.parameterValue);
         });
     setState(() {
-      if (_sexString != null) {
-        _sexStringComplete = 'Sex : ' + _sexString;
-      }
+      _sexParameter.parameterValue = _sex;
     });
-    _saveProfile();
+    await _saveParameter(_sexParameter);
   }
 
   void _heightButtonClicked() async {
-    _heightString = await showDialog(
+    var _height = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: _heightString,
+            initialMeasure: _heightParameter.parameterValue,
             popHeight: true,
           );
         });
     setState(() {
-      _heightStringComplete = 'Height : ' + _heightString;
+      _heightParameter.parameterValue = _height;
     });
-    _saveProfile();
+    await _saveParameter(_heightParameter);
   }
 
   void _weightButtonClicked() async {
-    _weightString = await showDialog(
+    var _weight = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: _weightString,
+            initialMeasure: _weightParameter.parameterValue,
             popHeight: false,
           );
         });
     setState(() {
-      _weightStringComplete = 'Weight : ' + _weightString;
+      _weightParameter.parameterValue = _weight;
     });
-    _saveProfile();
+    await _saveParameter(_weightParameter);
+  }
+
+  String _generateString(UserSettingsModel parameter) {
+    if (parameter.parameterValue == null) {
+      return parameter.parameter;
+    } else {
+      return parameter.parameter + ' : ' + parameter.parameterValue;
+    }
+  }
+
+    Future<void> _saveParameter(UserSettingsModel parameter) async {
+    if (await _db.queryByParameter(UserSettingsModel.dbName, parameter.parameter) ==
+        null) {
+      await _db.insert(UserSettingsModel.dbName, parameter);
+    } else {
+      await _db.updateByParameter(UserSettingsModel.dbName, parameter);
+    }
+  }
+
+  Future<void> _saveProfileDb() async {
+    await _saveParameter(_birthdateParameter);
+    await _saveParameter(_sexParameter);
+    await _saveParameter(_heightParameter);
+    await _saveParameter(_weightParameter);
+  }
+
+  Future<UserSettingsModel> _loadParameter(UserSettingsModel parameter) async {
+    var loadedParameter =
+        await _db.queryByParameter(UserSettingsModel.dbName, parameter.parameter);
+
+    if (loadedParameter != null) {
+      return UserSettingsModel.fromMap(loadedParameter);
+    } else {
+      return parameter;
+    }
+  }
+
+  Future<void> _loadProfileDb() async {
+    await _db.init();
+    _birthdateParameter = await _loadParameter(_birthdateParameter);
+    _sexParameter = await _loadParameter(_sexParameter);
+    _heightParameter = await _loadParameter(_heightParameter);
+    _weightParameter = await _loadParameter(_weightParameter);
+  }
+
+  void _resetProfileDb() async {
+    await _db.delete(UserSettingsModel.dbName);
+    setState(() {
+      _birthdateParameter = UserSettingsModel(
+          parameter: 'Birthday', parameterValue: null);
+
+      _sexParameter =
+          UserSettingsModel(parameter: 'Sex', parameterValue: null);
+
+      _heightParameter = UserSettingsModel(
+          parameter: 'Height', parameterValue: null);
+
+      _weightParameter = UserSettingsModel(
+          parameter: 'Weight', parameterValue: null);
+    });
+    await _saveProfileDb();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileDb().then((_) => setState(() {
+          _weightParameter = _weightParameter;
+        }));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_isProfileInitialized) {
-      _loadProfile();
-      _isProfileInitialized = true;
-    }
-
     return Scaffold(
         backgroundColor: Color(Constants.backGroundBlue),
         appBar: AppBar(
@@ -218,19 +185,31 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              BlueButton(_birthdateStringComplete, _birthdateButtonClicked,
+              BlueButton(
+                  _generateString(_birthdateParameter),
+                  _birthdateButtonClicked,
+                  Icons.date_range,
+                  70,
+                  Constants.appWidth - 50),
+              SizedBox(height: Constants.appHeight * 0.03),
+              BlueButton(_generateString(_sexParameter), _sexButtonClicked,
                   Icons.date_range, 70, Constants.appWidth - 50),
               SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(_sexStringComplete, _sexButtonClicked,
-                  Icons.date_range, 70, Constants.appWidth - 50),
+              BlueButton(
+                  _generateString(_heightParameter),
+                  _heightButtonClicked,
+                  Icons.assessment,
+                  70,
+                  Constants.appWidth - 50),
               SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(_heightStringComplete, _heightButtonClicked,
-                  Icons.assessment, 70, Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(_weightStringComplete, _weightButtonClicked,
-                  Icons.assessment, 70, Constants.appWidth - 50),
+              BlueButton(
+                  _generateString(_weightParameter),
+                  _weightButtonClicked,
+                  Icons.assessment,
+                  70,
+                  Constants.appWidth - 50),
               SizedBox(height: Constants.appHeight * 0.1),
-              BlueButton('Reset Profile', _resetProfile, Icons.delete, 70,
+              BlueButton('Reset Profile', _resetProfileDb, Icons.delete, 70,
                   Constants.appWidth - 50),
             ],
           ),

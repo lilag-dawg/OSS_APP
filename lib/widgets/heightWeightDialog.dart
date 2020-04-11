@@ -51,7 +51,6 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
     if (_isMetric) {
       measureString = _measure.round().toString() + ' cm';
     } else {
-      print(_measure);
       int _feetHeightTemp =
           (_measure / feetToInch / _imperialToMetric[_impToMetIdx]).floor();
       int _inchHeightTemp = ((_measure.round() -
