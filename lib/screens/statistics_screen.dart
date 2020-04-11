@@ -49,19 +49,27 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDataNotPresentBody(BuildContext context){
-    return Center(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Text("No device Connected"),
-            RaisedButton(
-              child: Text("Manage Devices"),
-              onPressed: () => Navigator.of(context).pushNamed("/settings/manage"), 
+  Widget _buildDataNotPresentBody(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("No device Connected",
+              style: TextStyle(
+                fontSize: 30.0,
+                color: Colors.white
+              )),
+              RaisedButton(
+                color: Colors.red,
+                child: Text("Manage Devices"),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/settings/manage"),
               )
-          ],),
-      ),
-    );
+            ],
+          ),
+        ],);
   }
 
   @override

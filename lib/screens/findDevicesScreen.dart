@@ -12,13 +12,12 @@ class FindDevicesScreen extends StatefulWidget {
   _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
 
-class _FindDevicesScreenState extends State<FindDevicesScreen> {
-  List<BluetoothDevice> connectToDevices = [];
+class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProviderStateMixin  {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> alreadyConnectedDevices = [];
-
   List<DeviceInfo> devicesInfos = [];
 
+  AnimationController _controller;
   bool isDoneScanning;
 
   Future<void> scanForDevices() async {
@@ -27,19 +26,24 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
           devicesInfos.any((d) => d.getDevice == scanResult.device);
       if (!isDeviceAlreadyAdded) {
         devicesInfos.add(DeviceInfo(
-            device: scanResult.device,
-            connexionStatus: false,
-            checkboxStatus: false));
+          device: scanResult.device,
+          connexionStatus: false,
+        ));
       }
     }, onDone: () async {
       flutterBlue.stopScan();
       alreadyConnectedDevices = await getConnectedDevice();
       if (alreadyConnectedDevices.length != 0) {
         for (BluetoothDevice d in alreadyConnectedDevices) {
-          devicesInfos.add(DeviceInfo(
-              device: d, connexionStatus: true, checkboxStatus: true));
+          bool isDeviceAlreadyAdded =
+              devicesInfos.any((device) => device.getDevice == d);
+          if (!isDeviceAlreadyAdded) {
+            devicesInfos.add(DeviceInfo(
+              device: d,
+              connexionStatus: true,
+            ));
+          }
         }
-        connectToDevices = [...alreadyConnectedDevices];
       }
       setState(() {
         isDoneScanning = true;
@@ -52,107 +56,55 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     return devices;
   }
 
-  void _handleTapboxChanged(BluetoothDevice device, bool isCheckboxChecked) {
-    final selectedDevice =
-        devicesInfos.firstWhere((item) => item.getDevice == device);
-    if (isCheckboxChecked) {
-      connectToDevices.add(selectedDevice.device);
-    } else {
-      connectToDevices.removeWhere((d) => d == device);
-    }
-    setState(() {
-      selectedDevice.setCheckboxStatus = isCheckboxChecked;
-    });
-  }
-
   Future<void> _handleOnpressChanged(
-      BluetoothDevice device, bool newStatus) async {
+      BluetoothDevice device, bool newStatus, ConnectedDevices cd) async {
     final selectedDevice =
         devicesInfos.firstWhere((item) => item.getDevice == device);
     if (selectedDevice.connexionStatus) {
       await selectedDevice.device.disconnect();
-      connectToDevices.removeWhere((d) => d == device);
+      cd.remove(device);
     } else {
       await selectedDevice.device.connect();
+      cd.add(device);
     }
     setState(() {
       selectedDevice.setConnexionStatus = newStatus;
     });
   }
 
-  void myPressHandler(BuildContext context,ConnectedDevices cd) {
-    cd.copy(connectToDevices);
-    Navigator.of(context).pop();
-
-  }
-
-  List<Widget> _buildCustomTiles(List<DeviceInfo> result) {
+  List<Widget> _buildCustomTiles(List<DeviceInfo> result, ConnectedDevices cd) {
     return result
         .map(
           (d) => CustomTile(
             currentDevice: d,
-            checkStatus: d.checkboxStatus,
-            onChanged: (BluetoothDevice d, bool val) {
-              _handleTapboxChanged(d, val);
-            },
             onPressed: (BluetoothDevice d, bool status) async {
-              await _handleOnpressChanged(d, status);
+              await _handleOnpressChanged(d, status, cd);
             },
           ),
         )
         .toList();
   }
 
-  Widget _circularProgressIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        backgroundColor: Colors.cyan,
-        strokeWidth: 5,
+  Widget _buildBody(ConnectedDevices cd) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Column(children: _buildCustomTiles(devicesInfos, cd)),
+          Center(
+            child: RaisedButton(
+              child: Text("Show Data"),
+              textColor: Colors.white,
+              color: Colors.blue,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  @override
-  void initState() {
-    isDoneScanning = false;
-    scanForDevices();
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cd = Provider.of<ConnectedDevices>(context);
-    return Scaffold(
-      backgroundColor: Color(Constants.backGroundBlue),
-      appBar: AppBar(
-        title: Text("Select Devices to connect"),
-        backgroundColor: Color(Constants.blueButtonColor),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => myPressHandler(context,cd)
-          ),
-      ),
-      body: !isDoneScanning
-          ? _circularProgressIndicator()
-          : SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Column(children: _buildCustomTiles(devicesInfos)),
-                  Center(
-                    child: RaisedButton(
-                      child: Text("Show Data"),
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      onPressed: () {
-                        myPressHandler(context,cd);
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-      floatingActionButton: StreamBuilder<bool>(
+  Widget _buildFloatingButton(){
+    return StreamBuilder<bool>(
         stream: FlutterBlue.instance.isScanning,
         initialData: false,
         builder: (c, snapshot) {
@@ -174,7 +126,64 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
             );
           }
         },
+      );
+  }
+
+  Widget _circularProgressIndicator() {
+    return Center(
+      child: CircularProgressIndicator(
+        backgroundColor: Colors.cyan,
+        strokeWidth: 5,
       ),
+    );
+  }
+  Widget _buildAnimations(){
+    return RotationTransition(
+      turns: Tween(
+        begin: 0.0,
+        end: 2.0
+      ).animate(_controller),
+      child: Center(
+        child: Container(
+          child: Image.asset("assets/oss_logo.png"),
+          height: 120.0,
+          width: 120.0,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 4000),
+      vsync:this,
+    );
+    _controller.repeat();
+    isDoneScanning = false;
+    scanForDevices();
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+void dispose() {
+  _controller.dispose();
+  super.dispose();
+}
+
+  @override
+  Widget build(BuildContext context) {
+    final cd = Provider.of<ConnectedDevices>(context);
+    return Scaffold(
+      backgroundColor: Color(Constants.backGroundBlue),
+      appBar: AppBar(
+        title: Text("Manage your Devices"),
+        backgroundColor: Color(Constants.blueButtonColor),
+      ),
+      body: !isDoneScanning
+          ? _buildAnimations()
+          : _buildBody(cd),
+      floatingActionButton: _buildFloatingButton()
     );
   }
 }

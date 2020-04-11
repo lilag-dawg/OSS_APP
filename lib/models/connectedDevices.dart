@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class ConnectedDevices extends ChangeNotifier{
-  List<BluetoothDevice> _devices;
+  final List<BluetoothDevice> _devices;
 
   ConnectedDevices(this._devices);
 
@@ -20,13 +20,14 @@ class ConnectedDevices extends ChangeNotifier{
     notifyListeners();
   }
 
-  void copy(List<BluetoothDevice> d){
-    _devices = [...d];
-    notifyListeners();
-  }
-
   int deviceCount(){
     return _devices.length;
+  }
+
+  bool contains(BluetoothDevice d){
+    if(_devices.contains(d))
+      return true;
+    return false;
   }
 
 }

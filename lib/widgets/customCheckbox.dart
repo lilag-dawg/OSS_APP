@@ -3,37 +3,37 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:oss_app/models/deviceInfo.dart';
 import '../constants.dart' as Constants;
 
-
 class CustomTile extends StatelessWidget {
   final DeviceInfo currentDevice;
   final Function(BluetoothDevice, bool) onPressed;
-  final Function(BluetoothDevice, bool) onChanged;
-  final bool checkStatus;
 
-  const CustomTile(
-      {this.currentDevice, this.onPressed, this.onChanged, this.checkStatus});
+  const CustomTile({this.currentDevice, this.onPressed});
 
   void _handlePress() {
     onPressed(currentDevice.device, !currentDevice.connexionStatus);
   }
 
-  void _handleOnChanged(bool value) {
-    onChanged(currentDevice.device, value);
-  }
-
   Widget _buildTitle() {
     if (currentDevice.device.name.length > 0) {
-      return Text(currentDevice.device.name, style: TextStyle(color: Colors.white));
+      return Text(currentDevice.device.name,
+          style: TextStyle(color: Colors.white));
     } else {
-      return Text(currentDevice.device.id.toString(), style: TextStyle(color:Colors.white));
+      return Text(currentDevice.device.id.toString(),
+          style: TextStyle(color: Colors.white));
     }
   }
 
   Widget _buildLeading() {
     if (currentDevice.connexionStatus) {
-      return Icon(Icons.bluetooth_connected, color: Colors.green,);
+      return Icon(
+        Icons.bluetooth_connected,
+        color: Colors.green,
+      );
     } else {
-      return Icon(Icons.bluetooth_disabled, color: Colors.red,);
+      return Icon(
+        Icons.bluetooth_disabled,
+        color: Colors.red,
+      );
     }
   }
 
@@ -47,12 +47,9 @@ class CustomTile extends StatelessWidget {
 
   Widget _buildTrailing() {
     if (currentDevice.connexionStatus) {
-      return Checkbox(
-        value: checkStatus,
-        onChanged: _handleOnChanged,
-      );
+      return Icon(Icons.mood);
     } else {
-      return null;
+      return Icon(Icons.mood_bad);
     }
   }
 
@@ -68,7 +65,7 @@ class CustomTile extends StatelessWidget {
         },
         trailing: _buildTrailing(),
       ),
-      color: Color(Constants.blueButtonColor),
+      color: currentDevice.connexionStatus ? Colors.green[100] : Colors.red[100],
     );
   }
 }
