@@ -6,8 +6,8 @@ import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/rpm.dart';
-import './findDevicesScreen.dart';
 import '../models/connectedDevices.dart';
+import './bluetoothOffScreen.dart';
 
 class StatisticsScreen extends StatelessWidget {
   final List<BluetoothDevice> connectedDevices;
@@ -51,40 +51,43 @@ class StatisticsScreen extends StatelessWidget {
 
   Widget _buildDataNotPresentBody(BuildContext context) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("No device Connected",
-              style: TextStyle(
-                fontSize: 30.0,
-                color: Colors.white
-              )),
-              RaisedButton(
-                color: Colors.red,
-                child: Text("Manage Devices"),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed("/settings/manage"),
-              )
-            ],
-          ),
-        ],);
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("No device Connected",
+                style: TextStyle(fontSize: 30.0, color: Colors.white)),
+            RaisedButton(
+              color: Colors.red,
+              child: Text("Manage Devices"),
+              onPressed: () =>
+                   Navigator.of(context).pushNamed("/settings/manage"),
+            )
+          ],
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final cd = Provider.of<ConnectedDevices>(context);
-    return Scaffold(
+
+        return Scaffold(
       //bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Statistics page"),
       ),
-      body: (cd.deviceCount() > 0)
+      body: SingleChildScrollView(
+        child: (Constants.isRunningOnEmulator)
           ? _buildDataPresentBody(cd)
-          : _buildDataNotPresentBody(context),
+          : (cd.deviceCount() > 0)
+            ? _buildDataPresentBody(cd)
+            : _buildDataNotPresentBody(context),
+      ),
     );
   }
 }

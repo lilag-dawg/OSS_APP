@@ -5,7 +5,7 @@ import '../models/deviceCharac.dart';
 import '../constants.dart' as Constants;
 
 class Rpm extends StatefulWidget {
-  Rpm({this.devices, this.boxWidth, this.boxTitle, this.boxHeight}) {}
+  Rpm({this.devices, this.boxWidth, this.boxTitle, this.boxHeight});
 
   final List<BluetoothDevice> devices;
   final double boxWidth;
@@ -22,13 +22,14 @@ class _RpmState extends State<Rpm> {
   List<DeviceCharacteristic> rpmDevices = [];
   bool isNotificationOn;
   bool isRpmDevicesEmpty;
+  bool isConnected;
 
   //for calculation
   List<int> lastdata = [];
   List<int> currentdata = [];
   double rpm = 0;
 
-  Future<void> checkConnection() async {
+  /*Future<void> checkConnection() async {
     for (BluetoothDevice d in widget.devices) {
       await for (BluetoothDeviceState state in d.state) {
         if (state == BluetoothDeviceState.connected) {
@@ -37,6 +38,29 @@ class _RpmState extends State<Rpm> {
         }
       }
     }
+  }*/
+
+  /*Future<bool> checkC() async {
+    await for(BluetoothDeviceState state in widget.devices[0].state){
+      if(state == BluetoothDeviceState.connected){
+        return true;
+      }
+    }
+    return false;
+  }*/
+  Future<void> checkC() async {
+    widget.devices[0].state.listen((onData) async {
+      if (onData == BluetoothDeviceState.connected) {
+        await mydeviceServices(widget.devices[0]);
+        setState(() {
+          isConnected = true;
+        });
+      } else {
+        setState(() {
+          isConnected = false;
+        });
+      }
+    });
   }
 
   Future<void> mydeviceServices(BluetoothDevice d) async {
@@ -46,13 +70,11 @@ class _RpmState extends State<Rpm> {
         s.characteristics.forEach((c) {
           if ('0x${c.uuid.toString().toUpperCase().substring(4, 8)}' ==
               "0x2A5B") {
-            rpmDevices.add(DeviceCharacteristic(device: d, characteristic: c));
-            print("charact found");
-            if(mounted){
-              setState(() {
-                isRpmDevicesEmpty = false;
-              });
+            bool isDeviceAlreadyAdded = rpmDevices.any((device) => device.getDevice == d);
+            if (!isDeviceAlreadyAdded){
+              rpmDevices.add(DeviceCharacteristic(device: d, characteristic: c));
             }
+            print("charact found");
           }
         });
       }
@@ -96,7 +118,8 @@ class _RpmState extends State<Rpm> {
               (crankEventTime - lastCrankEventTime);
           return rpm; // bonne nouvelle valeur
         } else if (crankEventTime == lastCrankEventTime) {
-          return rpm = 0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
+          return rpm =
+              0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
         }
         return rpm; // on retourne la derniere valeur ajouter
       } else if (flag == 2 && lastdata.length == currentdata.length) {
@@ -112,7 +135,8 @@ class _RpmState extends State<Rpm> {
               (crankEventTime - lastCrankEventTime);
           return rpm; // bonne nouvelle valeur
         } else if (crankEventTime == lastCrankEventTime) {
-          return rpm = 0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
+          return rpm =
+              0; // on detecte que le temps entre les revolutions n a pas change, on reset a 0
         }
         return rpm; // on retourne la derniere valeur ajouter
       } else {
@@ -148,6 +172,7 @@ class _RpmState extends State<Rpm> {
       ),
     );
   }
+
   Widget _buildStructure(
       BuildContext context, List<DeviceCharacteristic> devices) {
     if (devices.length > 1) {
@@ -174,14 +199,20 @@ class _RpmState extends State<Rpm> {
     }
     if (devices.length == 1) {
       _setListener(devices[0]);
-      return _buildStream();
+      return (isConnected) ? _buildStream() : Icon(Icons.bluetooth_disabled);
     } else {
-      return Text("");
+      return Text(
+        "N/A",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.green[300],
+          fontSize: widget.boxWidth / 6,
+        ),
+      );
     }
   }
 
   Widget _buildStream() {
-    //_setListener(d);
     return StreamBuilder<List<int>>(
       stream: listStream,
       initialData: [],
@@ -214,19 +245,28 @@ class _RpmState extends State<Rpm> {
     );
   }
 
+  Widget _buildTesing() {
+    return Text(isConnected.toString());
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isNotificationOn = false;
     isRpmDevicesEmpty = true;
-    checkConnection();
+    isConnected = false;
+    if (mounted) {
+      //checkConnection();
+      checkC();
+    }
   }
 
 /*@override
 void dispose() {
   super.dispose();
-  checkConnection();
+  checkC();
+  print("disposed function");
 }*/
 
   @override
@@ -249,6 +289,7 @@ void dispose() {
                 ),
               ),
               SizedBox(height: 125 / 8.33),
+              //_buildTesing()
               _buildStructure(context, rpmDevices)
             ],
           )),
