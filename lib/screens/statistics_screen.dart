@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
 import '../widgets/lowerNavigationBar.dart';
+import '../widgets/cyclingPowerMeasurement.dart';
 
 class StatisticsScreen extends StatelessWidget {
 
   final String time = "00:00:00";
+  final List<bool> isInfo0x2A62 = [false, false, true];
+  final List<bool> isInfo0x2A5B = [false, true];
 
   final PageController _currentPage;
   final Function selectHandler;
@@ -27,27 +30,13 @@ class StatisticsScreen extends StatelessWidget {
             SizedBox(height: 20),
             StatisticBox(370, 185, 'Moving time:', time),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                StatisticBox(175, 120, 'Heart rate', '88 Bpm'),
-                StatisticBox(175, 120, 'Speed', '12,8 kmph'),
-              ]
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                StatisticBox(175, 120, 'Cadence', '62 Rpm'),
-                StatisticBox(175, 120, 'Power', '90 Watts'),
-              ]
-            ),
+            CyclingPowerMeasurement(isInfo0x2A62, isInfo0x2A5B),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 StatisticBox(175, 120, 'Calories', '582 cal'),
-                StatisticBox(175, 120, 'Distance', '30 Km'),
+                StatisticBox(175, 120, 'Heart rate', '130 Bpm'),
               ]
             )
           ],
