@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart' as Constants;
 
-class CyclingPowerMeasurement extends StatelessWidget {
+class CSCMeasurement extends StatelessWidget {
   final List<bool> isInfo0x2A62; // [RPM, Speed, Power]
   final List<bool> isInfo0x2A5B; // [RPM, Speed]
   final double boxWidth = 175;
   final double boxHeight = 120;
 
-
-  CyclingPowerMeasurement(this.isInfo0x2A62, this.isInfo0x2A5B);
+  CSCMeasurement(this.isInfo0x2A62, this.isInfo0x2A5B);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Opacity(
-                opacity: !isInfo0x2A62[1] & isInfo0x2A5B[1]? 0:1,
+                opacity: !isInfo0x2A62[1] & isInfo0x2A5B[1]? 1:0,
                 child: Container( // DISTANCE
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -47,7 +46,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
                           height: 125/8.33
                         ),
                         Text(
-                          '0 km',
+                          '88 km',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.green[300],
@@ -60,7 +59,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
                 ),
               ),
               Opacity(
-                opacity: !isInfo0x2A62[1] & isInfo0x2A5B[1]? 0:1,
+                opacity: !isInfo0x2A62[1] & isInfo0x2A5B[1]? 1:0,
                 child: Container( // SPEED
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -85,7 +84,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
                           height: 125/8.33
                         ),
                         Text(
-                          '0 kmph',
+                          '12,8 kmph',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.green[300],
@@ -104,7 +103,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Opacity(
-                opacity: !isInfo0x2A62[0] & isInfo0x2A5B[0]? 0:1,
+                opacity: !isInfo0x2A62[0] & isInfo0x2A5B[0]? 1:0,
                 child: Container( // CADENCE
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -129,7 +128,7 @@ class CyclingPowerMeasurement extends StatelessWidget {
                           height: 125/8.33
                         ),
                         Text(
-                          '0 Rpm',
+                          '62 Rpm',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.green[300],
@@ -141,39 +140,42 @@ class CyclingPowerMeasurement extends StatelessWidget {
                   ),
                 ),
               ),
-              Container( // POWER
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(Constants.blueButtonColor)
-                ),
-                child: SizedBox(
-                  width: boxWidth,
-                  height: boxHeight,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: boxHeight/12.5
-                      ),
-                      Text(
-                        'Power',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: boxWidth/7.5,
+              Opacity(
+                opacity: 0,
+                child: Container( // POWER
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(Constants.blueButtonColor)
+                  ),
+                  child: SizedBox(
+                    width: boxWidth,
+                    height: boxHeight,
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: boxHeight/12.5
                         ),
-                      ),
-                      SizedBox(
-                        height: 125/8.33
-                      ),
-                      Text(
-                        '0 W',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[300],
-                          fontSize: boxWidth/6,
+                        Text(
+                          'Power',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: boxWidth/7.5,
+                          ),
                         ),
-                      )
-                    ],
-                  )
+                        SizedBox(
+                          height: 125/8.33
+                        ),
+                        Text(
+                          '99 W',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[300],
+                            fontSize: boxWidth/6,
+                          ),
+                        )
+                      ],
+                    )
+                  ),
                 ),
               ),
             ],

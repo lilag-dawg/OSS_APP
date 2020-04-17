@@ -4,12 +4,13 @@ import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/cyclingPowerMeasurement.dart';
+import '../widgets/cscMeasurement.dart';
 
 class StatisticsScreen extends StatelessWidget {
 
   final String time = "00:00:00";
   final List<bool> isInfo0x2A62 = [false, false, true];
-  final List<bool> isInfo0x2A5B = [false, true];
+  final List<bool> isInfo0x2A5B = [true, true];
 
   final PageController _currentPage;
   final Function selectHandler;
@@ -30,7 +31,12 @@ class StatisticsScreen extends StatelessWidget {
             SizedBox(height: 20),
             StatisticBox(370, 185, 'Moving time:', time),
             SizedBox(height: 20),
-            CyclingPowerMeasurement(isInfo0x2A62, isInfo0x2A5B),
+            Stack(
+              children: <Widget>[
+                CSCMeasurement(isInfo0x2A62, isInfo0x2A5B),
+                CyclingPowerMeasurement(isInfo0x2A62, isInfo0x2A5B),
+              ],
+            ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
