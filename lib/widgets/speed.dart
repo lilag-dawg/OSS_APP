@@ -3,8 +3,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import '../constants.dart' as Constants;
 
-class Rpm extends StatelessWidget {
-  Rpm(
+class Speed extends StatelessWidget {
+  Speed(
       {this.device,
       this.boxWidth,
       this.boxTitle,

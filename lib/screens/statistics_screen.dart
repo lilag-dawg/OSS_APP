@@ -6,6 +6,7 @@ import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/rpm.dart';
+import '../widgets/speed.dart';
 import '../models/connectedDevices.dart';
 import './bluetoothOffScreen.dart';
 
@@ -24,7 +25,12 @@ class StatisticsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               StatisticBox(175, 120, 'Heart rate', '88 Bpm'),
-              StatisticBox(175, 120, 'Speed', '12,8 kmph'),
+              Speed(
+                boxWidth: 175,
+                boxHeight: 120,
+                boxTitle: "Speed",
+                device: null,
+              ),
             ]),
         SizedBox(height: 20),
         Row(
@@ -34,7 +40,7 @@ class StatisticsScreen extends StatelessWidget {
                 boxWidth: 175,
                 boxHeight: 120,
                 boxTitle: "RPM",
-                devices: cd.getConnectedDevices(),
+                device: null,
               ),
               StatisticBox(175, 120, 'Power', '90 Watts'),
             ]),
@@ -62,7 +68,7 @@ class StatisticsScreen extends StatelessWidget {
               color: Colors.red,
               child: Text("Manage Devices"),
               onPressed: () =>
-                   Navigator.of(context).pushNamed("/settings/manage"),
+                   Navigator.of(context).popAndPushNamed("/settings/manage"),
             )
           ],
         ),

@@ -1,22 +1,21 @@
-import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import './customBluetoothDevice.dart';
 
 class ConnectedDevices extends ChangeNotifier{
-  final List<BluetoothDevice> _devices;
+  final List<CustomBluetoothDevice> _devices;
 
   ConnectedDevices(this._devices);
 
-  getConnectedDevices() => _devices;
-
-  void add(BluetoothDevice d){
+  void add(CustomBluetoothDevice d){
     _devices.add(d);
     notifyListeners();
   }
 
+
   void remove(BluetoothDevice d){
-    _devices.remove(d);
+    _devices.removeWhere((element) => element.getDevice == d);
     notifyListeners();
   }
 
@@ -24,10 +23,5 @@ class ConnectedDevices extends ChangeNotifier{
     return _devices.length;
   }
 
-  bool contains(BluetoothDevice d){
-    if(_devices.contains(d))
-      return true;
-    return false;
-  }
 
 }

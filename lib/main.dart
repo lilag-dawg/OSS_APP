@@ -12,7 +12,25 @@ import './models/connectedDevices.dart';
 
 void main() => runApp(MyApp());
 
+
 class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ConnectedDevices>(
+          create: (context) => ConnectedDevices([]),
+        ),
+      ],
+      child: MaterialApp(
+        title: "testing routes",
+        initialRoute: "/",
+        onGenerateRoute: RouteGenerator.generateRoute,
+      ),
+    );
+  }
+}
+/*class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ConnectedDevices>(
@@ -24,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 /*void main() {
   runApp(MyApp());
 }

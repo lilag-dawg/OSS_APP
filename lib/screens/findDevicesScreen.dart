@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 
 import '../constants.dart' as Constants;
 import '../widgets/customCheckbox.dart';
-import '../models/deviceInfo.dart';
+import '../models/deviceResult.dart';
 import '../models/connectedDevices.dart';
+import '../utile/deviceDataHandling.dart';
+
+import '../models/customBluetoothDevice.dart';
+
 
 class FindDevicesScreen extends StatefulWidget {
   @override
@@ -15,7 +19,7 @@ class FindDevicesScreen extends StatefulWidget {
 class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProviderStateMixin  {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> alreadyConnectedDevices = [];
-  List<DeviceInfo> devicesInfos = [];
+  List<DeviceResult> devicesInfos = [];
 
   AnimationController _controller;
   bool isDoneScanning;
@@ -25,7 +29,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
       bool isDeviceAlreadyAdded =
           devicesInfos.any((d) => d.getDevice == scanResult.device);
       if (!isDeviceAlreadyAdded) {
-        devicesInfos.add(DeviceInfo(
+        devicesInfos.add(DeviceResult(
           device: scanResult.device,
           connexionStatus: false,
         ));
@@ -38,7 +42,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
           bool isDeviceAlreadyAdded =
               devicesInfos.any((device) => device.getDevice == d);
           if (!isDeviceAlreadyAdded) {
-            devicesInfos.add(DeviceInfo(
+            devicesInfos.add(DeviceResult(
               device: d,
               connexionStatus: true,
             ));
@@ -56,6 +60,15 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
     return devices;
   }
 
+
+  Future<List<int>> getCharacteristic(BluetoothCharacteristic c) async {
+    List<int> value;
+    if('0x${c.uuid.toString().toUpperCase().substring(4, 8)}' == "0x2A5C"){
+      value = await c.read();
+    }
+    return value;
+  }
+
   Future<void> _handleOnpressChanged(
       BluetoothDevice device, bool newStatus, ConnectedDevices cd) async {
     final selectedDevice =
@@ -65,14 +78,19 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
       cd.remove(device);
     } else {
       await selectedDevice.device.connect();
-      cd.add(device);
+      //await getDeviceFeatures(device,cd);
+      await CustomBluetoothDevice.create(device).then((customD){
+        cd.add(customD);
+      });
+      
     }
     setState(() {
       selectedDevice.setConnexionStatus = newStatus;
     });
   }
 
-  List<Widget> _buildCustomTiles(List<DeviceInfo> result, ConnectedDevices cd) {
+
+  List<Widget> _buildCustomTiles(List<DeviceResult> result, ConnectedDevices cd) {
     return result
         .map(
           (d) => CustomTile(
@@ -129,14 +147,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
       );
   }
 
-  Widget _circularProgressIndicator() {
-    return Center(
-      child: CircularProgressIndicator(
-        backgroundColor: Colors.cyan,
-        strokeWidth: 5,
-      ),
-    );
-  }
+
   Widget _buildAnimations(){
     return RotationTransition(
       turns: Tween(

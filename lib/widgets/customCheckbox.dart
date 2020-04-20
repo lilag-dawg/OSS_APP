@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:oss_app/models/deviceInfo.dart';
+import 'package:oss_app/models/deviceResult.dart';
 import '../constants.dart' as Constants;
 
 class CustomTile extends StatelessWidget {
-  final DeviceInfo currentDevice;
+  final DeviceResult currentDevice;
   final Function(BluetoothDevice, bool) onPressed;
 
   const CustomTile({this.currentDevice, this.onPressed});
