@@ -8,7 +8,7 @@ import '../screens/findDevicesScreen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/statistics_screen.dart';
 import '../screens/home_screen.dart';
-import '../models/test.dart';
+
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -20,17 +20,6 @@ class RouteGenerator {
             builder: (_) => HomeScreen(
                   connectedDevices: args,
                 ));
-
-      case "/second":
-        if (args is Arguments) {
-          return MaterialPageRoute(
-            builder: (_) => SecondPage(
-              data: args.data,
-              number: args.number,
-            ),
-          );
-        }
-        return _errorRoute();
       case "/settings":
         return MaterialPageRoute(
             builder: (_) => SettingsScreen(

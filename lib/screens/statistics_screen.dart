@@ -5,52 +5,45 @@ import 'package:provider/provider.dart';
 import '../constants.dart' as Constants;
 import '../widgets/StatisticBox.dart';
 import '../widgets/lowerNavigationBar.dart';
-import '../widgets/rpm.dart';
-import '../widgets/speed.dart';
+import '../widgets/cscMeasurement.dart';
+import '../widgets/cyclingPowerMeasurement.dart';
 import '../models/connectedDevices.dart';
 import './bluetoothOffScreen.dart';
 
 class StatisticsScreen extends StatelessWidget {
   final List<BluetoothDevice> connectedDevices;
-  const StatisticsScreen({Key key, @required this.connectedDevices})
+  StatisticsScreen({Key key, @required this.connectedDevices})
       : super(key: key);
+  
+  final List<bool> isInfo0x2A62 = [false, false, true];
+  final List<bool> isInfo0x2A5B = [true, true];
 
   Widget _buildDataPresentBody(ConnectedDevices cd) {
+    //BluetoothDevice cscDevice = cd.assignDevice("0x1816");
+    cd.findFeatureInDeviceList("Power");
     return Column(
       children: <Widget>[
         SizedBox(height: 20),
         StatisticBox(370, 185, 'Moving time:', "00:00:00"),
         SizedBox(height: 20),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              StatisticBox(175, 120, 'Heart rate', '88 Bpm'),
-              Speed(
-                boxWidth: 175,
-                boxHeight: 120,
-                boxTitle: "Speed",
-                device: null,
-              ),
-            ]),
+        Stack(
+          children: <Widget>[
+            CSCMeasurement(
+              isInfo0x2A5B: isInfo0x2A5B,
+              isInfo0x2A62: isInfo0x2A62,
+              boxHeight: 120,
+              boxWidth: 175,
+            ),
+            CyclingPowerMeasurement(isInfo0x2A62, isInfo0x2A5B),
+          ],
+        ),
         SizedBox(height: 20),
         Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Rpm(
-                boxWidth: 175,
-                boxHeight: 120,
-                boxTitle: "RPM",
-                device: null,
-              ),
-              StatisticBox(175, 120, 'Power', '90 Watts'),
-            ]),
-        SizedBox(height: 20),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              StatisticBox(175, 120, 'Calories', '582 cal'),
-              StatisticBox(175, 120, 'Distance', '30 Km'),
-            ]),
+              StatisticBoxCustom(175, 120, 'Calories', cd.getRpm()),
+              StatisticBoxCustom(175, 120, 'Heart rate', cd.getSpeed()),
+            ])
       ],
     );
   }
@@ -68,7 +61,7 @@ class StatisticsScreen extends StatelessWidget {
               color: Colors.red,
               child: Text("Manage Devices"),
               onPressed: () =>
-                   Navigator.of(context).popAndPushNamed("/settings/manage"),
+                  Navigator.of(context).popAndPushNamed("/settings/manage"),
             )
           ],
         ),
@@ -80,7 +73,7 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cd = Provider.of<ConnectedDevices>(context);
 
-        return Scaffold(
+    return Scaffold(
       //bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -89,10 +82,10 @@ class StatisticsScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: (Constants.isRunningOnEmulator)
-          ? _buildDataPresentBody(cd)
-          : (cd.deviceCount() > 0)
             ? _buildDataPresentBody(cd)
-            : _buildDataNotPresentBody(context),
+            : (cd.deviceCount() > 0)
+                ? _buildDataPresentBody(cd)
+                : _buildDataNotPresentBody(context),
       ),
     );
   }

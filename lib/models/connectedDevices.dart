@@ -1,14 +1,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import './customBluetoothDevice.dart';
+
+import './streamPackage.dart';
+import './device.dart';
 
 class ConnectedDevices extends ChangeNotifier{
-  final List<CustomBluetoothDevice> _devices;
+  final List<Device> _devices;
 
   ConnectedDevices(this._devices);
 
-  void add(CustomBluetoothDevice d){
+  void add(Device d){
     _devices.add(d);
     notifyListeners();
   }
@@ -23,5 +25,24 @@ class ConnectedDevices extends ChangeNotifier{
     return _devices.length;
   }
 
+  Device findFeatureInDeviceList(String tag){
+    Device matchingDevice;
+    _devices.forEach((d) => d.services.values.forEach((s){
+      if(s.features[tag] == true){
+        matchingDevice = d;
+      }
+    }));
+    return matchingDevice;
+  }
+
+  StreamPackage getRpm(){
+    Device selectedDevice = findFeatureInDeviceList("CrankRev");
+    return selectedDevice.getStreamPackage("0x2A5B", "RPM");
+  }
+
+  StreamPackage getSpeed(){
+    Device selectedDevice = findFeatureInDeviceList("WheelRev");
+    return selectedDevice.getStreamPackage("0x2A5B","Speed");
+  }
 
 }

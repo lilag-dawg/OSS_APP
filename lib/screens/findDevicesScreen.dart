@@ -8,7 +8,7 @@ import '../models/deviceResult.dart';
 import '../models/connectedDevices.dart';
 import '../utile/deviceDataHandling.dart';
 
-import '../models/customBluetoothDevice.dart';
+import '../models/device.dart';
 
 
 class FindDevicesScreen extends StatefulWidget {
@@ -78,8 +78,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProvid
       cd.remove(device);
     } else {
       await selectedDevice.device.connect();
-      //await getDeviceFeatures(device,cd);
-      await CustomBluetoothDevice.create(device).then((customD){
+      await Device.create(device).then((customD){
         cd.add(customD);
       });
       
