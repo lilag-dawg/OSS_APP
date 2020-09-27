@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
     void _specificationPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
+      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler, Constants.defaultUserId, Constants.defaultPreferencesModeName)),
       );
     }
 

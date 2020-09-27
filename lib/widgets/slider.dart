@@ -35,7 +35,7 @@ class SlideBarState extends State<SlideBar> {
         min: 0,
         max: widget.selectionMenu.length.toDouble() - 1,
         value: widget.value,
-        onChanged: widget._updateSlideBar,
+        onChanged: (double value) async {await widget._updateSlideBar(value);},
         divisions: widget.selectionMenu.length.toInt() - 1,
         label: widget.selectionMenu[widget.value.toInt()],
       ),

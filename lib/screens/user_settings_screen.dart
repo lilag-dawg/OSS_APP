@@ -5,13 +5,15 @@ import '../widgets/sexDialog.dart';
 import '../widgets/heightWeightDialog.dart';
 import '../constants.dart' as Constants;
 import 'package:intl/intl.dart';
-import '../databases/db_user_settings_model.dart';
+import '../databases/preferencesModel.dart';
+import '../databases/userPreferencesModesModel.dart';
+import '../databases/defaultPreferencesModel.dart';
+import '../databases/userProfileModel.dart';
 import '../databases/db.dart';
 
-var _db = new
-    DB(dbFormat: UserSettingsModel.dbFormat, dbName: UserSettingsModel.dbName);
-
 class UserSettingsScreen extends StatefulWidget {
+  final int userId;
+  UserSettingsScreen(this.userId);
   @override
   State<StatefulWidget> createState() {
     return UserSettingsScreenState();
@@ -19,19 +21,21 @@ class UserSettingsScreen extends StatefulWidget {
 }
 
 class UserSettingsScreenState extends State<UserSettingsScreen> {
-  var _birthdateParameter =
+  Future profileFuture;
+  Padding profileList;
+
+  UserProfileModel profile;
+
+  /*var _birthdateParameter =
       UserSettingsModel(parameter: 'Birthday', parameterValue: null);
 
-  var _sexParameter =
-      UserSettingsModel(parameter: 'Sex', parameterValue: null);
+  var _sexParameter = UserSettingsModel(parameter: 'Sex', parameterValue: null);
 
   var _heightParameter =
       UserSettingsModel(parameter: 'Height', parameterValue: null);
 
   var _weightParameter =
-      UserSettingsModel(parameter: 'Weight', parameterValue: null);
-
-
+      UserSettingsModel(parameter: 'Weight', parameterValue: null);*/
 
   void _birthdateButtonClicked() async {
     DateTime initialDate;
@@ -110,109 +114,120 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     }
   }
 
-    Future<void> _saveParameter(UserSettingsModel parameter) async {
-    if (await _db.queryByParameter(UserSettingsModel.dbName, parameter.parameter) ==
-        null) {
-      await _db.insert(UserSettingsModel.dbName, parameter);
-    } else {
-      await _db.updateByParameter(UserSettingsModel.dbName, parameter);
-    }
-  }
+  Future<void> _saveParameter(UserSettingsModel parameter) async {}
 
-  Future<void> _saveProfileDb() async {
+  Future<void> saveProfile() async {
     await _saveParameter(_birthdateParameter);
     await _saveParameter(_sexParameter);
     await _saveParameter(_heightParameter);
     await _saveParameter(_weightParameter);
   }
 
-  Future<UserSettingsModel> _loadParameter(UserSettingsModel parameter) async {
-    var loadedParameter =
-        await _db.queryByParameter(UserSettingsModel.dbName, parameter.parameter);
+  Future<void> loadDefaultProfile() async {
+    profile = new UserProfileModel();
 
-    if (loadedParameter != null) {
-      return UserSettingsModel.fromMap(loadedParameter);
+//TODO :
+    await DatabaseProvider.insert(UserProfileModel.tableName, profile);
+
+    var rows =
+        await DatabaseProvider.query(UserProfileModel.tableName); // get userId
+    if (rows != null) {
+      profile = UserProfileModel.fromMap(rows.last);
     } else {
-      return parameter;
+      profile = null; //make it crash (temporary)
     }
   }
 
-  Future<void> _loadProfileDb() async {
-    await _db.init();
-    _birthdateParameter = await _loadParameter(_birthdateParameter);
-    _sexParameter = await _loadParameter(_sexParameter);
-    _heightParameter = await _loadParameter(_heightParameter);
-    _weightParameter = await _loadParameter(_weightParameter);
+  Future<void> loadProfile() async {
+    var row = await DatabaseProvider.queryByParameters(
+        UserProfileModel.tableName,
+        UserProfileModel.primaryKeyWhereString,
+        [widget.userId]);
+
+    if (row != null) {
+      profile = UserProfileModel.fromMap(row.first);
+    }
   }
 
-  void _resetProfileDb() async {
-    await _db.delete(UserSettingsModel.dbName);
-    setState(() {
-      _birthdateParameter = UserSettingsModel(
-          parameter: 'Birthday', parameterValue: null);
+  Future<void> setProfile() async {
+    profile = null;
 
-      _sexParameter =
-          UserSettingsModel(parameter: 'Sex', parameterValue: null);
+    await loadProfile();
+    if (profile == null) {
+      await loadDefaultProfile();
+    }
+  }
 
-      _heightParameter = UserSettingsModel(
-          parameter: 'Height', parameterValue: null);
+  void resetProfile() async {
+    await saveProfile();
+  }
 
-      _weightParameter = UserSettingsModel(
-          parameter: 'Weight', parameterValue: null);
-    });
-    await _saveProfileDb();
+  Future<void> buildLayout() async {
+    await setProfile();
+
+    profileList = Padding(
+      padding: EdgeInsets.all(25.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          BlueButton(
+              _generateString(_birthdateParameter),
+              _birthdateButtonClicked,
+              Icons.date_range,
+              70,
+              Constants.appWidth - 50),
+          SizedBox(height: Constants.appHeight * 0.03),
+          BlueButton(_generateString(_sexParameter), _sexButtonClicked,
+              Icons.date_range, 70, Constants.appWidth - 50),
+          SizedBox(height: Constants.appHeight * 0.03),
+          BlueButton(_generateString(_heightParameter), _heightButtonClicked,
+              Icons.assessment, 70, Constants.appWidth - 50),
+          SizedBox(height: Constants.appHeight * 0.03),
+          BlueButton(_generateString(_weightParameter), _weightButtonClicked,
+              Icons.assessment, 70, Constants.appWidth - 50),
+          SizedBox(height: Constants.appHeight * 0.1),
+          BlueButton('Reset Profile', resetProfile, Icons.delete, 70,
+              Constants.appWidth - 50),
+        ],
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    _loadProfileDb().then((_) => setState(() {
-          _weightParameter = _weightParameter;
-        }));
+    profileFuture = buildLayout();
+  }
+
+  Widget futureBody() {
+    return FutureBuilder<void>(
+      future: profileFuture,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            return profileList;
+          default:
+            return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(Constants.backGroundBlue),
-        appBar: AppBar(
-          title: Text("User Settings page"),
-          backgroundColor: Color(Constants.blueButtonColor),
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(25.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              BlueButton(
-                  _generateString(_birthdateParameter),
-                  _birthdateButtonClicked,
-                  Icons.date_range,
-                  70,
-                  Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(_generateString(_sexParameter), _sexButtonClicked,
-                  Icons.date_range, 70, Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(
-                  _generateString(_heightParameter),
-                  _heightButtonClicked,
-                  Icons.assessment,
-                  70,
-                  Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.03),
-              BlueButton(
-                  _generateString(_weightParameter),
-                  _weightButtonClicked,
-                  Icons.assessment,
-                  70,
-                  Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.1),
-              BlueButton('Reset Profile', _resetProfileDb, Icons.delete, 70,
-                  Constants.appWidth - 50),
-            ],
-          ),
-        ));
+      backgroundColor: Color(Constants.backGroundBlue),
+      appBar: AppBar(
+        title: Text("User Settings page"),
+        backgroundColor: Color(Constants.blueButtonColor),
+      ),
+      body: futureBody(),
+    );
   }
 }

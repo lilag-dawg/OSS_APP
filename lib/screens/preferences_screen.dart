@@ -2,171 +2,236 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
-import '../databases/db_preferences_model.dart';
+import '../databases/preferencesModel.dart';
+import '../databases/userPreferencesModesModel.dart';
+import '../databases/defaultPreferencesModel.dart';
 import '../databases/db.dart';
 import '../widgets/blueButton.dart';
-
-var _db = new 
-    DB(dbFormat: PreferencesModel.dbFormat, dbName: PreferencesModel.dbName);
 
 class SpecificationScreen extends StatefulWidget {
   final PageController _currentPage;
   final Function selectHandler;
-  SpecificationScreen(this._currentPage, this.selectHandler);
+  final int userId;
+  final String defaultModeName;
+  SpecificationScreen(
+      this._currentPage, this.selectHandler, this.userId, this.defaultModeName);
 
   @override
   _SpecificationScreenState createState() => _SpecificationScreenState();
 }
 
 class _SpecificationScreenState extends State<SpecificationScreen> {
-  List<Map<String, Object>> sliderStepsMap;
+  PreferencesModel preferences;
+  List<Map<String, Object>> visibleParameterNames;
+  Future preferencesFuture;
+  Container preferencesList;
 
   final _minRpm = 70;
   final _maxRpm = 110;
 
-  var _shiftingResponsiveness = PreferencesModel(
-      parameter: 'Shifting Responsiveness', parameterValue: null);
+  void _updateSlideBarCombo(
+      double newParameterValue, String parameterName) async {
+    var preferencesRows = await DatabaseProvider.queryByParameters(
+        PreferencesModel.tableName,
+        PreferencesModel.primaryKeyWhereString,
+        [preferences.preferencesId]);
 
-  var _desiredRpm =
-      PreferencesModel(parameter: 'Desired RPM', parameterValue: null);
-
-  var _intensityZone =
-      PreferencesModel(parameter: 'Intensity Zone', parameterValue: null);
-
-  void _updateSlideBarCombo(double newValue, String parameter) {
-    setState(() {
-      if (_shiftingResponsiveness.parameter == parameter) {
-        _shiftingResponsiveness.parameterValue = newValue.toInt();
-        _saveParameter(_shiftingResponsiveness);
-      }
-      if (_desiredRpm.parameter == parameter) {
-        _desiredRpm.parameterValue = newValue.toInt();
-        _saveParameter(_desiredRpm);
-      }
-      if (_intensityZone.parameter == parameter) {
-        _intensityZone.parameterValue = newValue.toInt();
-        _saveParameter(_intensityZone);
-      }
-    });
+    if (preferencesRows != null) {
+      setState(() {
+        preferences = PreferencesModel.fromMap(preferencesRows[0]);
+      });
+      await DatabaseProvider.updateByPrimaryKey(
+          PreferencesModel.tableName,
+          preferences,
+          PreferencesModel.primaryKeyWhereString,
+          preferences.preferencesId);
+    }
   }
 
-  void _createStrings() {
+  void _createSlideBarComboContent() {
     var rpms = [_minRpm.toString()];
     for (var i = _minRpm + 1; i <= _maxRpm; i++) {
       rpms.add(i.toString());
     }
 
-    sliderStepsMap = [
+    visibleParameterNames = [
       {
-        'typeOfData': 'Shifting Responsiveness',
-        'selectionMenu': ['Low', 'medium', 'High', 'Very high']
+        'name': 'Functional Threshold Power',
+        'parameterValue': preferences.ftp,
+        'possibleValues': rpms
       },
       {
-        'typeOfData': 'Desired RPM',
-        'selectionMenu': rpms,
+        'name': 'Target Average Power',
+        'parameterValue': preferences.targetEffort,
+        'possibleValues': rpms
       },
       {
-        'typeOfData': 'Intensity Zone',
-        'selectionMenu': ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5']
+        'name': 'Shifting Responsiveness',
+        'parameterValue': preferences.shiftingResponsiveness,
+        'possibleValues': rpms
       },
+      {
+        'name': 'Desired RPM',
+        'parameterValue': preferences.desiredRpm,
+        'possibleValues': rpms
+      },
+      {
+        'name': 'Desired BPM',
+        'parameterValue': preferences.desiredBpm,
+        'possibleValues': rpms
+      }
     ];
   }
 
-  Future<void> _saveParameter(PreferencesModel parameter) async {
-    if (await _db.queryByParameter(
-            PreferencesModel.dbName, parameter.parameter) ==
-        null) {
-      await _db.insert(PreferencesModel.dbName, parameter);
-    } else {
-      await _db.updateByParameter(PreferencesModel.dbName, parameter);
+  Future<void> loadPreferences() async {
+    var rows = await DatabaseProvider.queryByParameters(
+        UserPreferencesModesModel.tableName,
+        UserPreferencesModesModel.primaryKeyWhereString,
+        [-1, widget.userId]);
+
+    if (rows != null) {
+      int preferencesId;
+
+      for (int i = 0; i < rows.length; i++) {
+        if (UserPreferencesModesModel.fromMap(rows[i]).selected == true) {
+          preferencesId =
+              UserPreferencesModesModel.fromMap(rows[i]).preferencesId;
+        }
+      }
+      if (preferencesId != null) {
+        var preferencesRows = await DatabaseProvider.queryByParameters(
+            PreferencesModel.tableName,
+            PreferencesModel.primaryKeyWhereString,
+            [preferencesId]);
+
+        if (preferencesRows != null) {
+          preferences = PreferencesModel.fromMap(preferencesRows[0]);
+        }
+      }
     }
   }
 
-  Future<void> _saveProfileDb() async {
-    await _saveParameter(_shiftingResponsiveness);
-    await _saveParameter(_desiredRpm);
-    await _saveParameter(_intensityZone);
+  Future<void> loadDefaultPreferences() async {
+    var row = await DatabaseProvider.queryByParameters(
+        DefaultPreferencesModel.tableName,
+        DefaultPreferencesModel.primaryKeyWhereString,
+        [widget.defaultModeName]);
+
+    if (row != null) {
+      var defaultPreferencesRow = await DatabaseProvider.queryByParameters(
+          PreferencesModel.tableName,
+          PreferencesModel.primaryKeyWhereString,
+          [DefaultPreferencesModel.fromMap(row[0]).preferencesId]);
+
+      if (defaultPreferencesRow != null) {
+        preferences = PreferencesModel.fromMap(defaultPreferencesRow[0]);
+        preferences.preferencesId = null;
+      }
+    } else {
+      preferences = new PreferencesModel(
+          ftp: 0,
+          targetEffort: 0,
+          shiftingResponsiveness: 0,
+          desiredRpm: 0,
+          desiredBpm: 0);
+    }
+    await DatabaseProvider.insert(PreferencesModel.tableName, preferences);
+    var rows = await DatabaseProvider.query(
+        PreferencesModel.tableName); // get preferencesId
+    if (rows != null) {
+      preferences = PreferencesModel.fromMap(rows.last);
+    } else {
+      preferences = null; //make it crash (temporary)
+    }
+
+    var userPreferencesMode = new UserPreferencesModesModel( //assumes no other selected is true
+        userId: widget.userId,
+        preferencesId: preferences.preferencesId,
+        selected: true,
+        modeName: 'User Mode 1');
+    
+    await DatabaseProvider.insert(UserPreferencesModesModel.tableName, userPreferencesMode);
   }
 
-  Future<PreferencesModel> _loadParameter(PreferencesModel parameter) async {
-    var loadedParameter = await _db.queryByParameter(
-        PreferencesModel.dbName, parameter.parameter);
+  Future<void> resetProfileDb() async {}
 
-    if (loadedParameter != null) {
-      return PreferencesModel.fromMap(loadedParameter);
-    } else {
-      return parameter;
+  Future<void> setPreferences() async {
+    preferences = null;
+
+    await loadPreferences();
+    if (preferences == null) {
+      await loadDefaultPreferences();
     }
   }
 
-  Future<void> _loadProfileDb() async {
-    await _db.init();
-    _shiftingResponsiveness = await _loadParameter(_shiftingResponsiveness);
-    _desiredRpm = await _loadParameter(_desiredRpm);
-    _intensityZone = await _loadParameter(_intensityZone);
+  Future<void> buildLayout() async {
+    await setPreferences();
+    _createSlideBarComboContent();
 
-    _setToDefault();
-    await _saveProfileDb();
-  }
+    double spaceTopItem = 30;
+    double spaceItem1Item2 = 35;
 
-  void _setToDefault() {
-    _shiftingResponsiveness.parameterValue =
-        _shiftingResponsiveness.parameterValue != null
-            ? _shiftingResponsiveness.parameterValue
-            : (((sliderStepsMap[0]['selectionMenu'] as List<String>)
-                        .length
-                        .toDouble() -
-                    1) ~/
-                2);
-    _desiredRpm.parameterValue =
-        _desiredRpm.parameterValue != null
-            ? _desiredRpm.parameterValue
-            : (((sliderStepsMap[1]['selectionMenu'] as List<String>)
-                        .length
-                        .toDouble() -
-                    1) ~/
-                2);
-    _intensityZone.parameterValue =
-        _intensityZone.parameterValue != null
-            ? _intensityZone.parameterValue
-            : (((sliderStepsMap[2]['selectionMenu'] as List<String>)
-                        .length
-                        .toDouble() -
-                    1) ~/
-                2);
-  }
-
-  void _resetProfileDb() async {
-    await _db.delete(PreferencesModel.dbName);
-    setState(() {
-      _shiftingResponsiveness = PreferencesModel(
-          parameter: 'Shifting Responsiveness', parameterValue: null);
-
-      _desiredRpm =
-          PreferencesModel(parameter: 'Desired RPM', parameterValue: null);
-
-      _intensityZone =
-          PreferencesModel(parameter: 'Intensity Zone', parameterValue: null);
-    });
-    _setToDefault();
-    await _saveProfileDb();
+    preferencesList = Container(
+      margin: EdgeInsets.only(left: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: spaceTopItem),
+            SlideBarCombo(
+                visibleParameterNames[0]['name'],
+                visibleParameterNames[0]['possibleValues'],
+                visibleParameterNames[0]['parameterValue'],
+                _updateSlideBarCombo),
+            SizedBox(height: spaceItem1Item2),
+            SlideBarCombo(
+                visibleParameterNames[1]['name'],
+                visibleParameterNames[1]['possibleValues'],
+                visibleParameterNames[1]['parameterValue'],
+                _updateSlideBarCombo),
+            SizedBox(height: spaceItem1Item2),
+            SlideBarCombo(
+                visibleParameterNames[2]['name'],
+                visibleParameterNames[2]['possibleValues'],
+                visibleParameterNames[2]['parameterValue'],
+                _updateSlideBarCombo),
+            SizedBox(height: Constants.appHeight * 0.1),
+            BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
+                Constants.appWidth - 50),
+            SizedBox(height: Constants.appHeight * 0.03),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    _loadProfileDb().then((_) => setState(() {
-          _shiftingResponsiveness = _shiftingResponsiveness;
-        }));
+    preferencesFuture = buildLayout();
+  }
+
+  Widget futureBody() {
+    return FutureBuilder<void>(
+      future: preferencesFuture,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            return preferencesList;
+          default:
+            return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    double spaceTopItem = 30;
-    double spaceItem1Item2 = 35;
-
-    _createStrings();
-
     return Scaffold(
       bottomNavigationBar: LowerNavigationBar(
           widget._currentPage, context, widget.selectHandler),
@@ -174,29 +239,7 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
       appBar: AppBar(
           backgroundColor: Color(Constants.blueButtonColor),
           title: Text("Preferences page")),
-      body: Container(
-        margin: EdgeInsets.only(left: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: spaceTopItem),
-              SlideBarCombo(sliderStepsMap[0], _updateSlideBarCombo,
-                  _shiftingResponsiveness),
-              SizedBox(height: spaceItem1Item2),
-              SlideBarCombo(
-                  sliderStepsMap[1], _updateSlideBarCombo, _desiredRpm),
-              SizedBox(height: spaceItem1Item2),
-              SlideBarCombo(
-                  sliderStepsMap[2], _updateSlideBarCombo, _intensityZone),
-              SizedBox(height: Constants.appHeight * 0.1),
-              BlueButton('Reset Profile', _resetProfileDb, Icons.delete, 70,
-                  Constants.appWidth - 50),
-              SizedBox(height: Constants.appHeight * 0.03),
-            ],
-          ),
-        ),
-      ),
+      body: futureBody(),
     );
   }
 }

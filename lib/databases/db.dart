@@ -1,57 +1,114 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
-import '../databases/db_base_model.dart';
+import 'package:sqflite/sqlite_api.dart';
+import 'package:path/path.dart';
+import '../databases/base_model.dart';
 
-class DB {
-  Database _db;
+class DatabaseProvider {
+  DatabaseProvider._();
+  static final DatabaseProvider provider = DatabaseProvider._();
+  static Database _database;
 
-  static int get _version => 1;
+  static int get _version => 1; //onCreate
+  static final String databaseName = 'ossDatabase.db';
 
-  String dbFormat;
-  String dbName;
+  static Future<Database> get database async {
+    if (_database != null) return _database;
 
-  DB({this.dbFormat, this.dbName});
+    _database = await init();
+    return _database;
+  }
 
-  Future<void> init() async {
-    if (_db != null) {
+  static Future<Database> init() async {
+    return await openDatabase(join(await getDatabasesPath(), databaseName),
+        version: _version, onCreate: create, onConfigure: _onConfigure);
+  }
+
+  static Future<void> eraseDatabase() async {
+    if (_database == null) {
       return;
     }
 
-    try {
-      String _dbPath = await getDatabasesPath() + dbName;
-      _db = await openDatabase(_dbPath, version: _version, onCreate: create);
-    } catch (ex) {
-      print(ex);
-    }
+    await deleteDatabase(join(await getDatabasesPath(), databaseName));
+    _database = null;
+
+    return;
   }
 
-  void create(Database db, int version) async {
-    await db.execute(dbFormat);
+  static Future _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
-  Future<List<Map<String, dynamic>>> query(String table) async =>
-      _db.query(table);
+  static void create(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE userProfile (
+      userId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+      birthday TEXT,
+      sex TEXT,
+      height TEXT,
+      weight TEXT
+    );
+    ''');
 
-  Future<Map<String, dynamic>> queryByParameter(
-      String table, String parameter) async {
-    var query =
-        await _db.query(table, where: 'parameter = ?', whereArgs: [parameter]);
+    await db.execute('''
+    CREATE TABLE preferences (
+      preferencesId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+      ftp INTEGER NOT NULL, 
+      targetEffort INTEGER NOT NULL, 
+      shiftingResponsiveness INTEGER NOT NULL, 
+      desiredRpm INTEGER NOT NULL, 
+      desiredBpm INTEGER NOT NULL,
+    );
+    ''');
+
+    await db.execute('''
+    CREATE TABLE userPreferencesModes (
+      userId INTEGER NOT NULL,
+      FOREIGN KEY(userId) REFERENCES userProfile(userId) ON DELETE CASCADE
+      preferencesId INTEGER NOT NULL, 
+      FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
+      selected INTEGER NOT NULL,
+      modeName TEXT NOT NULL,
+    );
+    ''');
+
+    await db.execute('''
+    CREATE TABLE defaultPreferences (
+      defaultModeName TEXT PRIMARY KEY NOT NULL,
+      preferencesId INTEGER NOT NULL UNIQUE, 
+      FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
+      version INTEGER,
+    );
+    ''');
+  }
+
+  static Future<List<Map<String, dynamic>>> query(String tableName) async =>
+      await _database.query(tableName);
+
+  static Future<void> insert(String tableName, BaseModel tableRow) async =>
+      await _database.insert(tableName, tableRow.toMap());
+
+  static Future<int> deleteTableData(String tableName) async =>
+      await _database.delete(tableName);
+
+  static Future<List<Map<String, dynamic>>> queryByParameters(
+      String tableName, String whereString, List<dynamic> parameter) async {
+    var query = await _database
+        .query(tableName, where: whereString, whereArgs: parameter);
     if (query.length != 0) {
-      return query[0];
+      return query;
     } else {
       return null;
     }
   }
 
-  Future<int> insert(String table, BaseModel model) async =>
-      await _db.insert(table, model.toMap());
+  static Future<int> updateByPrimaryKey(String tableName, BaseModel tableRow,
+          String primaryKeySearchString, dynamic primaryKey) async =>
+      await _database.update(tableName, tableRow.toMap(),
+          where: primaryKeySearchString, whereArgs: [primaryKey]);
 
-  Future<int> updateByParameter(String table, BaseModel model) async =>
-      await _db.update(table, model.toMap(),
-          where: 'parameter = ?', whereArgs: [model.parameter]);
-
-  Future<int> deleteById(String table, int rowid) async =>
-      await _db.delete(table, where: 'rowid = ?', whereArgs: [rowid]);
-
-  Future<int> delete(String table) async => await _db.delete(table);
+  /*Future<int> deleteByPrimaryKey(String table, BaseModel usersTable,
+          String primaryKeySearchString, String primaryKey) async =>
+      await _db.delete(table,
+          where: primaryKeySearchString, whereArgs: [primaryKey]);*/
 }

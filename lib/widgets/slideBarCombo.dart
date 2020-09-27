@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../widgets/componentTitle.dart';
 import '../widgets/slider.dart';
-import '../databases/db_preferences_model.dart';
 
 class SlideBarCombo extends StatefulWidget {
-  final Map<String, Object> sliderStepsMap;
+  final String parameterName;
+  final List<int> possibleValues;
+  final int currentValue;
   final Function _updateSlideBarCombo;
-  final PreferencesModel preference;
+  
 
   SlideBarCombo(
-      this.sliderStepsMap, this._updateSlideBarCombo, this.preference);
+      this.parameterName, this.possibleValues, this.currentValue, this._updateSlideBarCombo);
 
   @override
   State<StatefulWidget> createState() {
@@ -20,22 +21,22 @@ class SlideBarCombo extends StatefulWidget {
 class SlideBarComboState extends State<SlideBarCombo> {
   double spaceTitleSlider = 15;
 
-  void _updateSlideBar(double newValue) {
-    widget._updateSlideBarCombo(newValue, widget.preference.parameter);
+  void _updateSlideBar(double newValue) async {
+    await widget._updateSlideBarCombo(newValue, widget.parameterName);
   }
 
   @override
   Widget build(BuildContext context) {
-    var valueCpy = widget.preference.parameterValue != null
-        ? widget.preference.parameterValue.toDouble()
+    var valueCpy = widget.currentValue != null
+        ? widget.currentValue.toDouble()
         : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        ComponentTitle(widget.preference.parameter),
+        ComponentTitle(widget.parameterName),
         SizedBox(height: spaceTitleSlider),
-        SlideBar((widget.sliderStepsMap['selectionMenu'] as List<String>),
+        SlideBar((widget.possibleValues as List<String>),
             valueCpy, _updateSlideBar),
       ],
     );

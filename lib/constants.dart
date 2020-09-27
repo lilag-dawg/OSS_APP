@@ -8,6 +8,9 @@ const int backGroundBlue = 0xFF0D47A1;
 
 const int defaultPageIndex = 1;
 
+const int defaultUserId = 0;
+const String defaultPreferencesModeName = 'Medium Intensity';
+
 
 
 
