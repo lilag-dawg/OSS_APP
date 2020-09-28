@@ -55,6 +55,12 @@ flutter:
    - assets/batterieLevel.png
    - assets/profil.png
    - assets/oss_logo.png
+   # temporaire
+   - assets/lstech_pedal_only.jpg
+   - assets/lstech_bike_only.jpg
+   - assets/lstech_text_only.jpg
+   - assets/lstech_ls_only.jpg
+   - assets/lstech_tech_only.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

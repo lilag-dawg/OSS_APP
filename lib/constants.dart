@@ -9,8 +9,8 @@ const int backGroundBlue = 0xFF0D47A1;
 
 const int defaultPageIndex = 1;
 
-const bool isRunningOnEmulator = false;
-
+// emulator
+final bool isWorkingOnEmulator = false;
 
 
 

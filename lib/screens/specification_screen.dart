@@ -4,14 +4,14 @@ import '../constants.dart' as Constants;
 
 import '../widgets/componentTitle.dart';
 import '../widgets/slider.dart';
-import '../widgets/navigationBar.dart';
-import '../widgets/lowerNavigationBar.dart';
+
+import 'package:oss_app/models/bluetoothDeviceManager.dart';
 
 class SpecificationScreen extends StatelessWidget {
 
-  final PageController _currentPage;
-  final Function selectHandler;
-  SpecificationScreen(this._currentPage, this.selectHandler);
+  final BluetoothDeviceManager ossManager;
+
+  const SpecificationScreen({Key key, @required this.ossManager}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,6 @@ class SpecificationScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(Constants.blueButtonColor),

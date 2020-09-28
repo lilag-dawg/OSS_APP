@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:oss_app/screens/home_screen.dart';
-import '../main.dart';
+import 'package:oss_app/screens/specification_screen.dart';
 
-import '../widgets/navigationBar.dart';
+
+
 import '../screens/findDevicesScreen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/statistics_screen.dart';
@@ -18,21 +18,22 @@ class RouteGenerator {
       case "/":
         return MaterialPageRoute(
             builder: (_) => HomeScreen(
-                  connectedDevices: args,
                 ));
       case "/settings":
         return MaterialPageRoute(
             builder: (_) => SettingsScreen(
-                  connectedDevices: args,
+                  ossManager: args,
                 ));
 
       case "/settings/manage":
-        return MaterialPageRoute(builder: (_) => FindDevicesScreen());
+        return MaterialPageRoute(builder: (_) => FindDevicesScreen(ossManager: args));
       case "/statistics":
         return MaterialPageRoute(
             builder: (_) => StatisticsScreen(
                   connectedDevices: args,
                 ));
+      case "/specification":
+        return MaterialPageRoute(builder: (_) => SpecificationScreen(ossManager: args));
       default:
         return _errorRoute();
     }

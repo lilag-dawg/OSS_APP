@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart' as Constants;
-import '../widgets/StatisticBox.dart';
-import '../widgets/lowerNavigationBar.dart';
-import '../widgets/cscMeasurement.dart';
-import '../widgets/cyclingPowerMeasurement.dart';
-import '../models/connectedDevices.dart';
-import './bluetoothOffScreen.dart';
+
+
 
 class StatisticsScreen extends StatelessWidget {
   final List<BluetoothDevice> connectedDevices;
@@ -18,31 +15,22 @@ class StatisticsScreen extends StatelessWidget {
   final List<bool> isInfo0x2A62 = [false, false, true];
   final List<bool> isInfo0x2A5B = [true, true];
 
-  Widget _buildDataPresentBody(ConnectedDevices cd) {
-    //BluetoothDevice cscDevice = cd.assignDevice("0x1816");
-    cd.findFeatureInDeviceList("Power");
+  Widget _buildDataPresentBody() {
+
     return Column(
       children: <Widget>[
         SizedBox(height: 20),
-        StatisticBox(370, 185, 'Moving time:', "00:00:00"),
+
         SizedBox(height: 20),
         Stack(
           children: <Widget>[
-            CSCMeasurement(
-              isInfo0x2A5B: isInfo0x2A5B,
-              isInfo0x2A62: isInfo0x2A62,
-              boxHeight: 120,
-              boxWidth: 175,
-            ),
-            CyclingPowerMeasurement(isInfo0x2A62, isInfo0x2A5B),
           ],
         ),
         SizedBox(height: 20),
         Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              StatisticBoxCustom(175, 120, 'Calories', cd.getRpm()),
-              StatisticBoxCustom(175, 120, 'Heart rate', cd.getSpeed()),
+             
             ])
       ],
     );
@@ -71,7 +59,7 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cd = Provider.of<ConnectedDevices>(context);
+    final cd = Provider.of<BluetoothDeviceManager>(context);
 
     return Scaffold(
       //bottomNavigationBar: LowerNavigationBar(_currentPage, context, selectHandler),
@@ -80,13 +68,7 @@ class StatisticsScreen extends StatelessWidget {
         backgroundColor: Color(Constants.blueButtonColor),
         title: Text("Statistics page"),
       ),
-      body: SingleChildScrollView(
-        child: (Constants.isRunningOnEmulator)
-            ? _buildDataPresentBody(cd)
-            : (cd.deviceCount() > 0)
-                ? _buildDataPresentBody(cd)
-                : _buildDataNotPresentBody(context),
-      ),
+      body: SingleChildScrollView(),
     );
   }
 }

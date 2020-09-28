@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:oss_app/models/OSSDevice.dart';
+import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-
-import '../models/connectedDevices.dart';
 
 import '../constants.dart' as Constants;
 
@@ -12,7 +12,7 @@ class BatteryLevelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cd = Provider.of<ConnectedDevices>(context);
+    final ossDevice = Provider.of<BluetoothDeviceManager>(context);
 
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),

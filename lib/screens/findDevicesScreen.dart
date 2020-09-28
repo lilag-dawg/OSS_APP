@@ -1,199 +1,208 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:provider/provider.dart';
+import 'package:oss_app/models/OSSDevice.dart';
+
+import '../widgets/customTile.dart';
+import '../models/deviceConnexionStatus.dart';
+import '../models/bluetoothDeviceManager.dart';
+import '../models/OSSDevice.dart';
 
 import '../constants.dart' as Constants;
-import '../widgets/customCheckbox.dart';
-import '../models/deviceResult.dart';
-import '../models/connectedDevices.dart';
-import '../utile/deviceDataHandling.dart';
-
-import '../models/device.dart';
-
 
 class FindDevicesScreen extends StatefulWidget {
+  final BluetoothDeviceManager ossManager;
+  FindDevicesScreen({Key key, @required this.ossManager}) : super(key: key);
+
   @override
   _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
 
-class _FindDevicesScreenState extends State<FindDevicesScreen> with TickerProviderStateMixin  {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
-  List<BluetoothDevice> alreadyConnectedDevices = [];
-  List<DeviceResult> devicesInfos = [];
+class _FindDevicesScreenState extends State<FindDevicesScreen>{
 
-  AnimationController _controller;
+  List<BluetoothDevice> alreadyConnectedDevices = [];
+  List<DeviceConnexionStatus> devicesConnexionStatus = [];
+  StreamSubscription<List<ScanResult>> scanSubscription;
   bool isDoneScanning;
 
-  Future<void> scanForDevices() async {
-    flutterBlue.scan(timeout: Duration(seconds: 4)).listen((scanResult) {
-      bool isDeviceAlreadyAdded =
-          devicesInfos.any((d) => d.getDevice == scanResult.device);
-      if (!isDeviceAlreadyAdded) {
-        devicesInfos.add(DeviceResult(
-          device: scanResult.device,
-          connexionStatus: false,
-        ));
-      }
-    }, onDone: () async {
-      flutterBlue.stopScan();
-      alreadyConnectedDevices = await getConnectedDevice();
-      if (alreadyConnectedDevices.length != 0) {
-        for (BluetoothDevice d in alreadyConnectedDevices) {
-          bool isDeviceAlreadyAdded =
-              devicesInfos.any((device) => device.getDevice == d);
-          if (!isDeviceAlreadyAdded) {
-            devicesInfos.add(DeviceResult(
-              device: d,
-              connexionStatus: true,
-            ));
-          }
+
+  Future<void> performScan() async {
+    scanSubscription = FlutterBlue.instance.scanResults.listen((scanResults) {
+      for (ScanResult r in scanResults) {
+        bool isDeviceAlreadyAdded =
+            devicesConnexionStatus.any((d) => d.getDevice == r.device);
+        if (!isDeviceAlreadyAdded) {
+          devicesConnexionStatus.add(DeviceConnexionStatus(
+            device: r.device,
+            connexionStatus: "disconnected",
+          ));
         }
       }
-      setState(() {
-        isDoneScanning = true;
-      });
+    });
+
+    await getConnectedDevice().then((alreadyConnectedDevices) async {
+      for (BluetoothDevice d in alreadyConnectedDevices) {
+        bool isDeviceAlreadyAdded =
+            devicesConnexionStatus.any((device) => device.getDevice == d);
+        if (!isDeviceAlreadyAdded) {
+          devicesConnexionStatus.add(DeviceConnexionStatus(
+            device: d,
+            connexionStatus: "connected",
+          ));
+          await addOSSDevice(d);
+        } else {
+          int errorFromScanResult = devicesConnexionStatus
+              .indexWhere((device) => device.getDevice == d);
+          devicesConnexionStatus[errorFromScanResult].setConnexionStatus = "connected";
+        }
+      }
     });
   }
 
   Future<List<BluetoothDevice>> getConnectedDevice() async {
-    List<BluetoothDevice> devices = await flutterBlue.connectedDevices;
+    List<BluetoothDevice> devices = await FlutterBlue.instance.connectedDevices;
     return devices;
   }
 
-
-  Future<List<int>> getCharacteristic(BluetoothCharacteristic c) async {
-    List<int> value;
-    if('0x${c.uuid.toString().toUpperCase().substring(4, 8)}' == "0x2A5C"){
-      value = await c.read();
-    }
-    return value;
-  }
-
-  Future<void> _handleOnpressChanged(
-      BluetoothDevice device, bool newStatus, ConnectedDevices cd) async {
-    final selectedDevice =
-        devicesInfos.firstWhere((item) => item.getDevice == device);
-    if (selectedDevice.connexionStatus) {
-      await selectedDevice.device.disconnect();
-      cd.remove(device);
-    } else {
-      await selectedDevice.device.connect();
-      await Device.create(device).then((customD){
-        cd.add(customD);
-      });
-      
-    }
-    setState(() {
-      selectedDevice.setConnexionStatus = newStatus;
+  Future<void> addOSSDevice(BluetoothDevice device) async {
+    await OSSDevice.create(device).then((createdOSSDevice) {
+      widget.ossManager.setDevice(createdOSSDevice);
     });
   }
 
+  Future<void> _handleOnpressChanged(
+      DeviceConnexionStatus c, String currentStatus) async {
+    if (currentStatus == c.connected) {
+      await c.device.disconnect().then((_) => currentStatus = c.disconnected);
+      widget.ossManager.remove();
+    } else {
+      await c.device.connect();
+      await addOSSDevice(c.device).then((value) => currentStatus = c.connected);
+    }
+    setState(() {
+      c.setConnexionStatus = currentStatus;
+    });
+  }
 
-  List<Widget> _buildCustomTiles(List<DeviceResult> result, ConnectedDevices cd) {
+  List<Widget> _buildCustomTiles(List<DeviceConnexionStatus> result) {
     return result
         .map(
           (d) => CustomTile(
             currentDevice: d,
-            onPressed: (BluetoothDevice d, bool status) async {
-              await _handleOnpressChanged(d, status, cd);
+            onTapTile: (String currentStatus) async {
+              setState(() {
+                d.setConnexionStatus = d.inTransistion;
+              });
+              await _handleOnpressChanged(d, currentStatus);
             },
           ),
         )
         .toList();
   }
 
-  Widget _buildBody(ConnectedDevices cd) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Column(children: _buildCustomTiles(devicesInfos, cd)),
-          Center(
-            child: RaisedButton(
-              child: Text("Show Data"),
-              textColor: Colors.white,
-              color: Colors.blue,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingButton(){
-    return StreamBuilder<bool>(
+  Widget _buildScanningButton() {
+    return StreamBuilder(
         stream: FlutterBlue.instance.isScanning,
         initialData: false,
         builder: (c, snapshot) {
           if (snapshot.data) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
+            return RaisedButton(
+              child: Text("Remettre à plus tard"),
+              color: Colors.red,
               onPressed: () => FlutterBlue.instance.stopScan(),
-              backgroundColor: Colors.red,
             );
           } else {
-            return FloatingActionButton(
-              child: Icon(Icons.search),
-              onPressed: () {
-                scanForDevices();
-                setState(() {
-                  isDoneScanning = false;
+            return RaisedButton(
+                child: Text("Rechercher de OSS"),
+                onPressed: () {
+                  setState(() {
+                    isDoneScanning = false;
+                  });
+                  startAScan();
                 });
-              },
-            );
           }
-        },
-      );
+        });
+  }
+
+  Widget _buildAnimations() {
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      child: Center(
+        child:Column(
+        children: <Widget>[
+          Text("Recherche de OSS.."),
+        ],
+      ),
+    )
+    );
   }
 
 
-  Widget _buildAnimations(){
-    return RotationTransition(
-      turns: Tween(
-        begin: 0.0,
-        end: 2.0
-      ).animate(_controller),
-      child: Center(
-        child: Container(
-          child: Image.asset("assets/oss_logo.png"),
-          height: 120.0,
-          width: 120.0,
+  
+  Widget _buildBody(){
+    return Scaffold(
+        backgroundColor: Color(Constants.backGroundBlue),
+        appBar: AppBar(
+          title: Text("Bluetooth Manager"),
+          backgroundColor: Color(Constants.blueButtonColor),
         ),
-      ),
+        body: SingleChildScrollView(
+      child: Column(children: <Widget>[
+        (isDoneScanning)
+            ? Column(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 15),
+                    child: Column(
+                      children: _buildCustomTiles(devicesConnexionStatus),
+                    ),
+                  ),
+                ],
+              )
+            : _buildAnimations(),
+        (Constants.isWorkingOnEmulator)
+            ? RaisedButton(
+                child: Text("Remettre à plus tard"),
+                color: Colors.red,
+                onPressed: () {})
+            : _buildScanningButton(),
+      ]),
+    )
     );
+  }
+
+  void startAScan() {
+    isDoneScanning = false;
+    if (!Constants.isWorkingOnEmulator) {
+      FlutterBlue.instance.startScan(timeout: Duration(seconds: 4)).then((_) {
+        setState(() {
+          isDoneScanning = true;
+        });
+      });
+      performScan();
+    }
   }
 
   @override
   void initState() {
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 4000),
-      vsync:this,
-    );
-    _controller.repeat();
-    isDoneScanning = false;
-    scanForDevices();
+    startAScan();
     // TODO: implement initState
     super.initState();
   }
+
   @override
-void dispose() {
-  _controller.dispose();
-  super.dispose();
-}
+  void dispose() {
+    if (!Constants.isWorkingOnEmulator) {
+      FlutterBlue.instance.stopScan();
+      scanSubscription.cancel();
+    }
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cd = Provider.of<ConnectedDevices>(context);
-    return Scaffold(
-      backgroundColor: Color(Constants.backGroundBlue),
-      appBar: AppBar(
-        title: Text("Manage your Devices"),
-        backgroundColor: Color(Constants.blueButtonColor),
-      ),
-      body: !isDoneScanning
-          ? _buildAnimations()
-          : _buildBody(cd),
-      floatingActionButton: _buildFloatingButton()
-    );
+    return _buildBody();
   }
 }

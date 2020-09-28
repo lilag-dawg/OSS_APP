@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 
-import './screens/bluetoothOffScreen.dart';
-import './screens/findDevicesScreen.dart';
 
-import './widgets/navigationBar.dart';
 import './models/routeGenerator.dart';
-import './models/connectedDevices.dart';
+import './models/bluetoothDeviceManager.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -17,8 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ConnectedDevices>(
-          create: (context) => ConnectedDevices([]),
+        ChangeNotifierProvider<BluetoothDeviceManager>(
+          create: (context) => BluetoothDeviceManager(),
         ),
       ],
       child: MaterialApp(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart' as Constants;
 
@@ -9,19 +9,20 @@ import '../screens/specification_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/batteryLevel_screen.dart';
 
+import '../models/bluetoothDeviceManager.dart';
+
 class HomeScreen extends StatelessWidget {
 
   //final PageController _currentPage;
   //final Function selectHandler;
-  final List<BluetoothDevice> connectedDevices;
 
- const HomeScreen({Key key, @required this.connectedDevices}) : super(key: key);
+ const HomeScreen({Key key}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
 
-
+    final ossManager = Provider.of<BluetoothDeviceManager>(context);
 
     void _calibrationPressed(){
       //selectHandler(0);
@@ -33,24 +34,22 @@ class HomeScreen extends StatelessWidget {
       MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler, devicesHandler)),
       );*/
       Navigator.of(context).pushNamed(
-        "/statistics",
-        arguments: connectedDevices,
+        "/statistics"
       );
 
     }
 
     void _specificationPressed(){
-     /* Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
-      );*/
+     Navigator.of(context).pushNamed(
+       "/specification",
+       arguments: ossManager,
+      );
     }
 
     void _settingPressed(){
-     // selectHandler(2);
      Navigator.of(context).pushNamed(
        "/settings",
-       arguments: connectedDevices,
+       arguments: ossManager,
      );
     }
 
@@ -69,6 +68,7 @@ class HomeScreen extends StatelessWidget {
     }
     
     return Scaffold(
+      
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text("Home Screen"),
