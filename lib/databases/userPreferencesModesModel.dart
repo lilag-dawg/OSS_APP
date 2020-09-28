@@ -1,17 +1,17 @@
 import 'base_model.dart';
 
 class UserPreferencesModesModel extends BaseModel {
-  int userId;
+  String userName;
   int preferencesId;
-  bool selected;
+  int selected; // max 1 selected per user
   String modeName;
 
-  static String primaryKeyWhereString = 'preferencesId = ? OR userId = ?';
+  static String primaryKeyWhereString = 'preferencesId = ? OR userName = ?';
   static String tableName = 'userPreferences';
 
   UserPreferencesModesModel(
       {
-    this.userId,
+    this.userName,
     this.preferencesId,
     this.selected,
     this.modeName,
@@ -19,7 +19,7 @@ class UserPreferencesModesModel extends BaseModel {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      'userId': userId,
+      'userName': userName,
       'preferencesId': preferencesId,
       'selected': selected,
       'modeName': modeName,
@@ -29,7 +29,7 @@ class UserPreferencesModesModel extends BaseModel {
 
   static UserPreferencesModesModel fromMap(Map<String, dynamic> map) {
     return UserPreferencesModesModel(
-        userId: map['userId'],
+        userName: map['userName'],
         preferencesId: map['preferencesId'],
         selected: map['selected'],
         modeName: map['modeName']);

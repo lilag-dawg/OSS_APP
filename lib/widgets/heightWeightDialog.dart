@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../constants.dart' as Constants;
 
 class HeightWeightDialog extends StatefulWidget {
   final String initialMeasure;
   final bool popHeight;
-  //HeightWeightDialog({this.heightString});
   HeightWeightDialog({this.initialMeasure, @required this.popHeight});
   @override
   State<StatefulWidget> createState() {

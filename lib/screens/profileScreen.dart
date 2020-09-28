@@ -5,42 +5,26 @@ import '../widgets/sexDialog.dart';
 import '../widgets/heightWeightDialog.dart';
 import '../constants.dart' as Constants;
 import 'package:intl/intl.dart';
-import '../databases/preferencesModel.dart';
-import '../databases/userPreferencesModesModel.dart';
-import '../databases/defaultPreferencesModel.dart';
 import '../databases/userProfileModel.dart';
 import '../databases/db.dart';
 
-class UserSettingsScreen extends StatefulWidget {
-  final int userId;
-  UserSettingsScreen(this.userId);
+class ProfileScreen extends StatefulWidget {
+  ProfileScreen();
   @override
   State<StatefulWidget> createState() {
-    return UserSettingsScreenState();
+    return ProfileScreenState();
   }
 }
 
-class UserSettingsScreenState extends State<UserSettingsScreen> {
-  Future profileFuture;
+class ProfileScreenState extends State<ProfileScreen> {
   Padding profileList;
 
   UserProfileModel profile;
 
-  /*var _birthdateParameter =
-      UserSettingsModel(parameter: 'Birthday', parameterValue: null);
-
-  var _sexParameter = UserSettingsModel(parameter: 'Sex', parameterValue: null);
-
-  var _heightParameter =
-      UserSettingsModel(parameter: 'Height', parameterValue: null);
-
-  var _weightParameter =
-      UserSettingsModel(parameter: 'Weight', parameterValue: null);*/
-
   void _birthdateButtonClicked() async {
     DateTime initialDate;
-    if (_birthdateParameter.parameterValue != null) {
-      initialDate = DateTime.parse(_birthdateParameter.parameterValue);
+    if (profile.birthday != null) {
+      initialDate = DateTime.parse(profile.birthday);
     } else {
       initialDate = DateTime.now();
     }
@@ -54,11 +38,10 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     );
     if (_birthdate != null) {
       setState(() {
-        _birthdateParameter.parameterValue =
-            DateFormat('yyyy-MM-dd').format(_birthdate);
+        profile.birthday = DateFormat('yyyy-MM-dd').format(_birthdate);
       });
     }
-    await _saveParameter(_birthdateParameter);
+    await saveProfile();
   }
 
   void _sexButtonClicked() async {
@@ -66,12 +49,12 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return SexDialog(_sexParameter.parameterValue);
+          return SexDialog(profile.sex);
         });
     setState(() {
-      _sexParameter.parameterValue = _sex;
+      profile.sex = _sex;
     });
-    await _saveParameter(_sexParameter);
+    await saveProfile();
   }
 
   void _heightButtonClicked() async {
@@ -80,14 +63,14 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: _heightParameter.parameterValue,
+            initialMeasure: profile.height.toString(),
             popHeight: true,
           );
         });
     setState(() {
-      _heightParameter.parameterValue = _height;
+      profile.height = _height;
     });
-    await _saveParameter(_heightParameter);
+    await saveProfile();
   }
 
   void _weightButtonClicked() async {
@@ -96,37 +79,32 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: _weightParameter.parameterValue,
+            initialMeasure: profile.weight.toString(),
             popHeight: false,
           );
         });
     setState(() {
-      _weightParameter.parameterValue = _weight;
+      profile.weight = _weight;
     });
-    await _saveParameter(_weightParameter);
+    await saveProfile();
   }
 
-  String _generateString(UserSettingsModel parameter) {
-    if (parameter.parameterValue == null) {
-      return parameter.parameter;
+  String _generateString(String parameterString, String parameter) {
+    if (parameter == null) {
+      return parameterString;
     } else {
-      return parameter.parameter + ' : ' + parameter.parameterValue;
+      return parameterString + ' : ' + parameter;
     }
   }
 
-  Future<void> _saveParameter(UserSettingsModel parameter) async {}
-
   Future<void> saveProfile() async {
-    await _saveParameter(_birthdateParameter);
-    await _saveParameter(_sexParameter);
-    await _saveParameter(_heightParameter);
-    await _saveParameter(_weightParameter);
+    await DatabaseProvider.updateByPrimaryKey(UserProfileModel.tableName,
+        profile, UserProfileModel.primaryKeyWhereString, profile.userName);
   }
 
-  Future<void> loadDefaultProfile() async {
+  /*Future<void> loadDefaultProfile() async {
     profile = new UserProfileModel();
 
-//TODO :
     await DatabaseProvider.insert(UserProfileModel.tableName, profile);
 
     var rows =
@@ -136,25 +114,30 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     } else {
       profile = null; //make it crash (temporary)
     }
-  }
+  }*/
 
-  Future<void> loadProfile() async {
+  Future<void> loadProfile(String userName) async {
     var row = await DatabaseProvider.queryByParameters(
         UserProfileModel.tableName,
         UserProfileModel.primaryKeyWhereString,
-        [widget.userId]);
+        [userName]);
 
-    if (row != null) {
+    if (row.length != 0) {
       profile = UserProfileModel.fromMap(row.first);
+    } else {
+      profile = null; //make it crash (temporary)
     }
   }
 
   Future<void> setProfile() async {
     profile = null;
 
-    await loadProfile();
-    if (profile == null) {
-      await loadDefaultProfile();
+    var userRow = await DatabaseProvider.queryByParameters(
+        UserProfileModel.tableName, UserProfileModel.getSelectedString, [Constants.isSelected]); 
+
+    if (userRow.length == 0) {
+    } else {
+      await loadProfile(UserProfileModel.fromMap(userRow.first).userName);
     }
   }
 
@@ -172,20 +155,28 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           BlueButton(
-              _generateString(_birthdateParameter),
+              _generateString("Birthday", profile.birthday),
               _birthdateButtonClicked,
               Icons.date_range,
               70,
               Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
-          BlueButton(_generateString(_sexParameter), _sexButtonClicked,
+          BlueButton(_generateString("Sex", profile.sex), _sexButtonClicked,
               Icons.date_range, 70, Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
-          BlueButton(_generateString(_heightParameter), _heightButtonClicked,
-              Icons.assessment, 70, Constants.appWidth - 50),
+          BlueButton(
+              _generateString("Height",profile.height == null ? null : profile.height.toString()),
+              _heightButtonClicked,
+              Icons.assessment,
+              70,
+              Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
-          BlueButton(_generateString(_weightParameter), _weightButtonClicked,
-              Icons.assessment, 70, Constants.appWidth - 50),
+          BlueButton(
+              _generateString("Weight", profile.weight == null ? null : profile.weight.toString()),
+              _weightButtonClicked,
+              Icons.assessment,
+              70,
+              Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.1),
           BlueButton('Reset Profile', resetProfile, Icons.delete, 70,
               Constants.appWidth - 50),
@@ -194,15 +185,9 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    profileFuture = buildLayout();
-  }
-
   Widget futureBody() {
     return FutureBuilder<void>(
-      future: profileFuture,
+      future: buildLayout(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:

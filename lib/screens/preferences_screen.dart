@@ -3,6 +3,7 @@ import '../constants.dart' as Constants;
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
+import '../databases/userProfileModel.dart';
 import '../databases/userPreferencesModesModel.dart';
 import '../databases/defaultPreferencesModel.dart';
 import '../databases/db.dart';
@@ -11,10 +12,9 @@ import '../widgets/blueButton.dart';
 class SpecificationScreen extends StatefulWidget {
   final PageController _currentPage;
   final Function selectHandler;
-  final int userId;
   final String defaultModeName;
   SpecificationScreen(
-      this._currentPage, this.selectHandler, this.userId, this.defaultModeName);
+      this._currentPage, this.selectHandler, this.defaultModeName);
 
   @override
   _SpecificationScreenState createState() => _SpecificationScreenState();
@@ -31,21 +31,7 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
 
   void _updateSlideBarCombo(
       double newParameterValue, String parameterName) async {
-    var preferencesRows = await DatabaseProvider.queryByParameters(
-        PreferencesModel.tableName,
-        PreferencesModel.primaryKeyWhereString,
-        [preferences.preferencesId]);
-
-    if (preferencesRows != null) {
-      setState(() {
-        preferences = PreferencesModel.fromMap(preferencesRows[0]);
-      });
-      await DatabaseProvider.updateByPrimaryKey(
-          PreferencesModel.tableName,
-          preferences,
-          PreferencesModel.primaryKeyWhereString,
-          preferences.preferencesId);
-    }
+    setState(() {});
   }
 
   void _createSlideBarComboContent() {
@@ -83,17 +69,17 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
     ];
   }
 
-  Future<void> loadPreferences() async {
+  Future<void> loadPreferences(String userName) async {
     var rows = await DatabaseProvider.queryByParameters(
         UserPreferencesModesModel.tableName,
         UserPreferencesModesModel.primaryKeyWhereString,
-        [-1, widget.userId]);
+        [null, userName]);
 
     if (rows != null) {
       int preferencesId;
 
       for (int i = 0; i < rows.length; i++) {
-        if (UserPreferencesModesModel.fromMap(rows[i]).selected == true) {
+        if (UserPreferencesModesModel.fromMap(rows[i]).selected == Constants.isSelected) {
           preferencesId =
               UserPreferencesModesModel.fromMap(rows[i]).preferencesId;
         }
@@ -111,7 +97,7 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
     }
   }
 
-  Future<void> loadDefaultPreferences() async {
+  Future<void> loadDefaultPreferences(String userName) async {
     var row = await DatabaseProvider.queryByParameters(
         DefaultPreferencesModel.tableName,
         DefaultPreferencesModel.primaryKeyWhereString,
@@ -144,13 +130,15 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
       preferences = null; //make it crash (temporary)
     }
 
-    var userPreferencesMode = new UserPreferencesModesModel( //assumes no other selected is true
-        userId: widget.userId,
+    var userPreferencesMode = new UserPreferencesModesModel(
+        //assumes no other selected is true
+        userName: userName,
         preferencesId: preferences.preferencesId,
-        selected: true,
+        selected: Constants.isSelected,
         modeName: 'User Mode 1');
-    
-    await DatabaseProvider.insert(UserPreferencesModesModel.tableName, userPreferencesMode);
+
+    await DatabaseProvider.insert(
+        UserPreferencesModesModel.tableName, userPreferencesMode);
   }
 
   Future<void> resetProfileDb() async {}
@@ -158,9 +146,16 @@ class _SpecificationScreenState extends State<SpecificationScreen> {
   Future<void> setPreferences() async {
     preferences = null;
 
-    await loadPreferences();
-    if (preferences == null) {
-      await loadDefaultPreferences();
+    var userRow = await DatabaseProvider.queryByParameters(
+        UserProfileModel.tableName, UserProfileModel.getSelectedString, [true]);
+
+    if (userRow.length == 0) {
+    } else {
+      await loadPreferences(UserProfileModel.fromMap(userRow.first).userName);
+      if (preferences == null) {
+        await loadDefaultPreferences(
+            UserProfileModel.fromMap(userRow.first).userName);
+      }
     }
   }
 

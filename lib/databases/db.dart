@@ -10,7 +10,7 @@ class DatabaseProvider {
   static Database _database;
 
   static int get _version => 1; //onCreate
-  static final String databaseName = 'ossDatabase.db';
+  static final String databaseName = 'ossDatabase_test3.db';
 
   static Future<Database> get database async {
     if (_database != null) return _database;
@@ -42,11 +42,12 @@ class DatabaseProvider {
   static void create(Database db, int version) async {
     await db.execute('''
     CREATE TABLE userProfile (
-      userId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+      userName TEXT PRIMARY KEY NOT NULL, 
       birthday TEXT,
       sex TEXT,
       height TEXT,
-      weight TEXT
+      weight TEXT,
+      selected INTEGER NOT NULL
     );
     ''');
 
@@ -57,18 +58,20 @@ class DatabaseProvider {
       targetEffort INTEGER NOT NULL, 
       shiftingResponsiveness INTEGER NOT NULL, 
       desiredRpm INTEGER NOT NULL, 
-      desiredBpm INTEGER NOT NULL,
+      desiredBpm INTEGER NOT NULL
     );
     ''');
 
+
+
     await db.execute('''
     CREATE TABLE userPreferencesModes (
-      userId INTEGER NOT NULL,
-      FOREIGN KEY(userId) REFERENCES userProfile(userId) ON DELETE CASCADE
+      userName TEXT NOT NULL,
       preferencesId INTEGER NOT NULL, 
-      FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
       selected INTEGER NOT NULL,
       modeName TEXT NOT NULL,
+      FOREIGN KEY(userName) REFERENCES userProfile(userName) ON DELETE CASCADE,
+       FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
     );
     ''');
 
@@ -76,8 +79,8 @@ class DatabaseProvider {
     CREATE TABLE defaultPreferences (
       defaultModeName TEXT PRIMARY KEY NOT NULL,
       preferencesId INTEGER NOT NULL UNIQUE, 
-      FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
       version INTEGER,
+      FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
     );
     ''');
   }
@@ -92,15 +95,8 @@ class DatabaseProvider {
       await _database.delete(tableName);
 
   static Future<List<Map<String, dynamic>>> queryByParameters(
-      String tableName, String whereString, List<dynamic> parameter) async {
-    var query = await _database
-        .query(tableName, where: whereString, whereArgs: parameter);
-    if (query.length != 0) {
-      return query;
-    } else {
-      return null;
-    }
-  }
+      String tableName, String whereString, List<dynamic> parameters) async =>
+    await _database.query(tableName, where: whereString, whereArgs: parameters);
 
   static Future<int> updateByPrimaryKey(String tableName, BaseModel tableRow,
           String primaryKeySearchString, dynamic primaryKey) async =>
