@@ -7,7 +7,7 @@ import '../screens/settings_screen.dart';
 import '../widgets/lowerNavigationBar.dart';
 import '../constants.dart' as Constants;
 import '../widgets/profileDialog.dart';
-import '../databases/userProfileModel.dart';
+import '../databases/dbHelper.dart';
 
 class MyNavigationBar extends StatefulWidget {
   @override
@@ -32,10 +32,9 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
   Future<void> buildLayout() async {
     await DatabaseProvider.database;
 
-    var userRow = await DatabaseProvider.queryByParameters(
-        UserProfileModel.tableName, UserProfileModel.getSelectedString, [Constants.isSelected]);
+    var user = await DatabaseHelper.getSelectedUserProfile();
 
-    if (userRow.length == 0) {
+    if (user == null) {
       await showDialog(
           barrierDismissible: false,
           context: context,

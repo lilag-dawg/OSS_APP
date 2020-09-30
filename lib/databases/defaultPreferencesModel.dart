@@ -10,7 +10,6 @@ class DefaultPreferencesModel extends BaseModel {
   static String tableName = 'defaultPreferences';
 
   DefaultPreferencesModel(
-      //TODO : Verify for PK inclusion?
       {this.preferencesId,
       this.defaultModeName,
       this.version});

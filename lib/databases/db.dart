@@ -10,7 +10,7 @@ class DatabaseProvider {
   static Database _database;
 
   static int get _version => 1; //onCreate
-  static final String databaseName = 'ossDatabase_test3.db';
+  static final String databaseName = 'ossDatabase_test12.db';
 
   static Future<Database> get database async {
     if (_database != null) return _database;
@@ -45,8 +45,10 @@ class DatabaseProvider {
       userName TEXT PRIMARY KEY NOT NULL, 
       birthday TEXT,
       sex TEXT,
-      height TEXT,
-      weight TEXT,
+      height REAL,
+      metricHeight INTEGER,
+      weight REAL,
+      metricWeight INTEGER,
       selected INTEGER NOT NULL
     );
     ''');

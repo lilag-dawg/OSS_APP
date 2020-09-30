@@ -4,13 +4,15 @@ import '../widgets/slider.dart';
 
 class SlideBarCombo extends StatefulWidget {
   final String parameterName;
-  final List<int> possibleValues;
+  final double minValue;
+  final double maxValue;
+  final double stepSize;
   final int currentValue;
-  final Function _updateSlideBarCombo;
+  final Function updateSlideBarCombo;
   
 
   SlideBarCombo(
-      this.parameterName, this.possibleValues, this.currentValue, this._updateSlideBarCombo);
+      this.parameterName, this.minValue, this.maxValue, this.stepSize, this.currentValue, this.updateSlideBarCombo);
 
   @override
   State<StatefulWidget> createState() {
@@ -21,8 +23,8 @@ class SlideBarCombo extends StatefulWidget {
 class SlideBarComboState extends State<SlideBarCombo> {
   double spaceTitleSlider = 15;
 
-  void _updateSlideBar(double newValue) async {
-    await widget._updateSlideBarCombo(newValue, widget.parameterName);
+  void updateSlideBar(int newValue) async {
+    await widget.updateSlideBarCombo(newValue, widget.parameterName);
   }
 
   @override
@@ -36,8 +38,8 @@ class SlideBarComboState extends State<SlideBarCombo> {
       children: <Widget>[
         ComponentTitle(widget.parameterName),
         SizedBox(height: spaceTitleSlider),
-        SlideBar((widget.possibleValues as List<String>),
-            valueCpy, _updateSlideBar),
+        SlideBar(widget.minValue, widget.maxValue, widget.stepSize,
+            valueCpy, updateSlideBar),
       ],
     );
   }

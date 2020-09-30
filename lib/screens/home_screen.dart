@@ -4,7 +4,7 @@ import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
 import '../screens/statistics_screen.dart';
-import '../screens/preferences_screen.dart';
+import 'preferencesScreen.dart';
 import '../screens/batteryLevel_screen.dart';
 import 'profileScreen.dart';
 
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
     void _specificationPressed(){
       Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler, Constants.defaultPreferencesModeName)),
+      MaterialPageRoute(builder: (context) => PreferencesScreen(_currentPage, selectHandler)),
       );
     }
 

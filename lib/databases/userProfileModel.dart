@@ -5,8 +5,10 @@ class UserProfileModel extends BaseModel {
   String userName;
   String birthday; //ISO-8601
   String sex;
-  int height;
-  int weight;
+  double height; //cm
+  int metricHeight;
+  double weight; //kg
+  int metricWeight;
   int selected;
 
   static String primaryKeyWhereString = 'userName = ?';
@@ -21,7 +23,9 @@ UserProfileModel(
       this.birthday,
       this.sex,
       this.height,
+      this.metricHeight,
       this.weight,
+      this.metricWeight,
       this.selected});
 
   Map<String, dynamic> toMap() {
@@ -30,7 +34,9 @@ UserProfileModel(
       'birthday': birthday,
       'sex': sex,
       'height': height,
+      'metricHeight' : metricHeight,
       'weight': weight,
+      'metricWeight': metricWeight,
       'selected': selected
     };
     return map;
@@ -42,7 +48,9 @@ UserProfileModel(
         birthday: map['birthday'],
         sex: map['sex'],
         height: map['height'],
+        metricHeight: map['metricHeight'],
         weight: map['weight'],
+        metricWeight: map['metricWeight'],
         selected: map['selected']);
   }
 }

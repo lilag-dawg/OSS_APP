@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 
 class SlideBar extends StatefulWidget {
-  final List<String> selectionMenu;
+  final double minValue;
+  final double maxValue;
+  final double stepSize;
   final double value;
-  final Function _updateSlideBar;
+  final Function updateSlideBar;
 
-  SlideBar(this.selectionMenu, this.value, this._updateSlideBar);
+  SlideBar(this.minValue, this.maxValue, this.stepSize, this.value,
+      this.updateSlideBar);
 
   @override
   State<StatefulWidget> createState() {
@@ -16,10 +19,8 @@ class SlideBar extends StatefulWidget {
 }
 
 class SlideBarState extends State<SlideBar> {
-
   @override
   Widget build(BuildContext context) {
-
     return Container(
         child: SliderTheme(
       data: SliderTheme.of(context).copyWith(
@@ -32,12 +33,15 @@ class SlideBarState extends State<SlideBar> {
         overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
       ),
       child: Slider(
-        min: 0,
-        max: widget.selectionMenu.length.toDouble() - 1,
+        min: widget.minValue,
+        max: widget.maxValue,
         value: widget.value,
-        onChanged: (double value) async {await widget._updateSlideBar(value);},
-        divisions: widget.selectionMenu.length.toInt() - 1,
-        label: widget.selectionMenu[widget.value.toInt()],
+        onChanged: (double value) async {
+          print(value);
+          await widget.updateSlideBar(value.toInt());
+        },
+        divisions: ((widget.maxValue - widget.minValue) ~/ widget.stepSize),
+        label: widget.value.toInt().toString(),
       ),
     ));
   }

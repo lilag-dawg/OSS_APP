@@ -8,7 +8,8 @@ class BlueButton extends StatelessWidget {
   final double buttonWidth;
   final double buttonHeight;
 
-  BlueButton(this.inputText, this.selectHandler, this.inputIcon, this.buttonHeight, this.buttonWidth);
+  BlueButton(this.inputText, this.selectHandler, this.inputIcon,
+      this.buttonHeight, this.buttonWidth);
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +17,21 @@ class BlueButton extends StatelessWidget {
       width: buttonWidth,
       height: buttonHeight,
       child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
-        color: Color(Constants.blueButtonColor) , // changer la couleur
-        child: Row(children: <Widget>[
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        color: Color(Constants.blueButtonColor), // changer la couleur
+        child: Row(
+          children: <Widget>[
             Icon(inputIcon),
-            SizedBox(width: buttonWidth*0.05),
-            Text(
+            SizedBox(width: buttonWidth * 0.05),
+            Expanded(
+                child: Text(
               inputText,
-              style: 
-              TextStyle(
+              overflow: TextOverflow.fade,
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 25,
               ),
-            ), 
+            )),
           ],
         ),
         onPressed: selectHandler,

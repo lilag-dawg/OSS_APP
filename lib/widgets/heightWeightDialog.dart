@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
+import '../databases/dbHelper.dart';
+import '../databases/userProfileModel.dart';
+import '../databases/db.dart';
 
 class HeightWeightDialog extends StatefulWidget {
-  final String initialMeasure;
+  final double initialMeasure;
   final bool popHeight;
-  HeightWeightDialog({this.initialMeasure, @required this.popHeight});
+  final int isMetric;
+  HeightWeightDialog(
+      {this.initialMeasure, @required this.popHeight, @required this.isMetric});
   @override
   State<StatefulWidget> createState() {
     return HeightWeightDialogState();
@@ -12,81 +17,74 @@ class HeightWeightDialog extends StatefulWidget {
 }
 
 class HeightWeightDialogState extends State<HeightWeightDialog> {
-  bool _isMetric = true;
-  double _measure;
-  bool _isMeasureInitialized = false;
+  int _isMetric;
+  double measure;
   String measureString;
-
-  int _impToMetIdx;
-  List<double> _imperialToMetric = [454 / 1000, 2.54]; // poundsToKg, inchToCm
-  List<double> _maxValues = [200, 250]; // Kg, Cm
-  List<double> _minValues = [20, 50]; // Kg, Cm
-  final feetToInch = 12;
-  final _defaultHeight = 175.0;
-  final _defaultWeight = 70.0;
 
   void _metricCheckboxClicked(bool state) {
     setState(() {
-      _isMetric = true;
+      _isMetric = Constants.isSelected;
       _measureConversion();
     });
   }
 
   void _imperialCheckboxClicked(bool state) {
     setState(() {
-      _isMetric = false;
+      _isMetric = Constants.isNotSelected;
       _measureConversion();
     });
   }
 
   void _measureConversion() {
     if (widget.popHeight) {
-      _heightConversion();
+      measureString = heightConversion(_isMetric, measure);
     } else {
-      _weightConversion();
+      measureString = weightConversion(_isMetric, measure);
     }
   }
 
-  void _heightConversion() {
-    if (_isMetric) {
-      measureString = _measure.round().toString() + ' cm';
+  static String heightConversion(int _isMetric, double measure) {
+    var measureString;
+    if (_isMetric == Constants.isSelected) {
+      measureString = measure.round().toString() + ' cm';
     } else {
-      int _feetHeightTemp =
-          (_measure / feetToInch / _imperialToMetric[_impToMetIdx]).floor();
-      int _inchHeightTemp = ((_measure.round() -
-                  (_feetHeightTemp *
-                          feetToInch *
-                          _imperialToMetric[_impToMetIdx])
-                      .round()) /
-              _imperialToMetric[_impToMetIdx])
+      int feet = (measure / Constants.footToCm).floor();
+      int inch = ((measure.round() - (feet * Constants.footToCm).round()) /
+              Constants.inchToCm)
           .round();
-      if (_inchHeightTemp == 12) {
+      if (inch == 12) {
         //5.97 feet will give 5'12", we want 6'0"
-        _inchHeightTemp = 0;
-        _feetHeightTemp++;
+        inch = 0;
+        feet++;
       }
-      measureString =
-          _feetHeightTemp.toString() + '\'' + _inchHeightTemp.toString() + '\"';
+      measureString = feet.toString() + '\'' + inch.toString() + '\"';
     }
+    return measureString;
   }
 
-  void _weightConversion() {
-    if (_isMetric) {
-      measureString = _measure.round().toString() + ' kg';
+  static String weightConversion(int _isMetric, double measure) {
+    var measureString;
+    if (_isMetric == Constants.isSelected) {
+      measureString = measure.round().toString() + ' kg';
     } else {
       measureString =
-          (_measure / _imperialToMetric[_impToMetIdx]).round().toString() +
-              ' lbs';
+          (measure / Constants.poundsToKg).round().toString() + ' lbs';
     }
+    return measureString;
   }
 
   void _addButtonClicked() {
-    if (_measure < _maxValues[_impToMetIdx]) {
+    if (widget.popHeight && measure < Constants.maxCm ||
+        !widget.popHeight && measure < Constants.maxKg) {
       setState(() {
-        if (_isMetric) {
-          _measure += 1;
+        if (_isMetric == Constants.isSelected) {
+          measure += 1;
         } else {
-          _measure += _imperialToMetric[_impToMetIdx];
+          if (widget.popHeight) {
+            measure += Constants.inchToCm;
+          } else {
+            measure += Constants.poundsToKg;
+          }
         }
         _measureConversion();
       });
@@ -94,78 +92,40 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
   }
 
   void _removeButtonClicked() {
-    if (_measure > _minValues[_impToMetIdx]) {
+    if (widget.popHeight && measure > Constants.minCm ||
+        !widget.popHeight && measure > Constants.minKg) {
       setState(() {
-        if (_isMetric) {
-          _measure -= 1;
+        if (_isMetric == Constants.isSelected) {
+          measure -= 1;
         } else {
-          _measure -= _imperialToMetric[_impToMetIdx];
+          if (widget.popHeight) {
+            measure -= Constants.inchToCm;
+          } else {
+            measure -= Constants.poundsToKg;
+          }
         }
         _measureConversion();
       });
     }
   }
 
-  void _setMeasure() {
-    if (widget.popHeight) {
-      _setHeight();
-    } else {
-      _setWeight();
-    }
-  }
-
-  void _setHeight() {
-    if (measureString != null) {
-      if (measureString.contains('\'')) {
-        _isMetric = false;
-        int feetIndex = measureString.indexOf('\'');
-        String _feetHeightTemp = measureString.substring(0, feetIndex);
-        int inchIndex = measureString.indexOf('\"');
-        String _inchHeightTemp =
-            measureString.substring(feetIndex + 1, inchIndex);
-        _measure = double.parse(_feetHeightTemp) *
-                feetToInch *
-                _imperialToMetric[_impToMetIdx] +
-            double.parse(_inchHeightTemp) * _imperialToMetric[_impToMetIdx];
-      } else if (measureString.contains('cm')) {
-        _isMetric = true;
-        int index = measureString.indexOf(' ');
-        _measure = double.parse(measureString.substring(0, index));
-      }
-    } else {
-      _isMetric = true;
-      _measure = _defaultHeight;
-    }
-  }
-
-  void _setWeight() {
-    if (measureString != null) {
-      if (measureString.contains('lbs')) {
-        _isMetric = false;
-        int index = measureString.indexOf(' ');
-        String _weightTemp = measureString.substring(0, index);
-        _measure = double.parse(_weightTemp) * _imperialToMetric[_impToMetIdx];
-      } else if (measureString.contains('kg')) {
-        _isMetric = true;
-        int index = measureString.indexOf(' ');
-        String _weightTemp = measureString.substring(0, index);
-        _measure = double.parse(_weightTemp);
-      }
-    } else {
-      _isMetric = true;
-      _measure = _defaultWeight;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-
-    if (!_isMeasureInitialized) {
-      measureString = widget.initialMeasure;
-      _impToMetIdx = widget.popHeight ? 1 : 0;
-      _setMeasure();
-      _isMeasureInitialized = true;
+    if (measure == null) {
+      if (widget.initialMeasure != null) {
+        measure = widget.initialMeasure;
+      } else {
+        widget.popHeight == true
+            ? measure = Constants.defaultHeight
+            : measure = Constants.defaultWeight;
+      }
+      if (widget.isMetric != null) {
+        _isMetric = widget.isMetric;
+      } else {
+        _isMetric = Constants.isSelected;
+      }
     }
+
     _measureConversion();
 
     return AlertDialog(
@@ -180,12 +140,15 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
               children: <Widget>[
                 Padding(
                     padding: const EdgeInsets.all(10.0), child: Text('Metric')),
-                Checkbox(value: _isMetric, onChanged: _metricCheckboxClicked),
+                Checkbox(
+                    value: _isMetric == Constants.isSelected,
+                    onChanged: _metricCheckboxClicked),
                 Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text('Imperial')),
                 Checkbox(
-                    value: !_isMetric, onChanged: _imperialCheckboxClicked),
+                    value: _isMetric == Constants.isNotSelected,
+                    onChanged: _imperialCheckboxClicked),
               ]),
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -229,9 +192,22 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
             padding: const EdgeInsets.all(8.0),
             child: RaisedButton(
               child: Text("Submit"),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(measureString);
+              onPressed: () async {
+                var profile = await DatabaseHelper.getSelectedUserProfile();
+                if (widget.popHeight) {
+                  profile.height = measure;
+                  profile.metricHeight = _isMetric;
+                } else {
+                  profile.weight = measure;
+                  profile.metricWeight = _isMetric;
+                }
+                await DatabaseProvider.updateByPrimaryKey(
+                    UserProfileModel.tableName,
+                    profile,
+                    UserProfileModel.primaryKeyWhereString,
+                    profile.userName);
+
+                Navigator.of(context, rootNavigator: true).pop(measureString);
               },
             ),
           ),

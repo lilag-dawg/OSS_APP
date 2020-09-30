@@ -7,6 +7,8 @@ import '../constants.dart' as Constants;
 import 'package:intl/intl.dart';
 import '../databases/userProfileModel.dart';
 import '../databases/db.dart';
+import '../databases/dbHelper.dart';
+import '../widgets/profileDialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen();
@@ -18,10 +20,13 @@ class ProfileScreen extends StatefulWidget {
 
 class ProfileScreenState extends State<ProfileScreen> {
   Padding profileList;
+  String height;
+  String weight;
 
   UserProfileModel profile;
 
   void _birthdateButtonClicked() async {
+    await getProfile();
     DateTime initialDate;
     if (profile.birthday != null) {
       initialDate = DateTime.parse(profile.birthday);
@@ -45,6 +50,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _sexButtonClicked() async {
+    await getProfile();
     var _sex = await showDialog(
         barrierDismissible: false,
         context: context,
@@ -58,35 +64,35 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _heightButtonClicked() async {
+    await getProfile();
     var _height = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: profile.height.toString(),
-            popHeight: true,
-          );
+              initialMeasure: profile.height == null ? null : profile.height,
+              popHeight: true,
+              isMetric: profile.metricHeight);
         });
     setState(() {
-      profile.height = _height;
+      height = _height;
     });
-    await saveProfile();
   }
 
   void _weightButtonClicked() async {
+    await getProfile();
     var _weight = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return HeightWeightDialog(
-            initialMeasure: profile.weight.toString(),
-            popHeight: false,
-          );
+              initialMeasure: profile.weight == null ? null : profile.weight,
+              popHeight: false,
+              isMetric: profile.metricWeight);
         });
     setState(() {
-      profile.weight = _weight;
+      weight = _weight;
     });
-    await saveProfile();
   }
 
   String _generateString(String parameterString, String parameter) {
@@ -102,51 +108,33 @@ class ProfileScreenState extends State<ProfileScreen> {
         profile, UserProfileModel.primaryKeyWhereString, profile.userName);
   }
 
-  /*Future<void> loadDefaultProfile() async {
-    profile = new UserProfileModel();
-
-    await DatabaseProvider.insert(UserProfileModel.tableName, profile);
-
-    var rows =
-        await DatabaseProvider.query(UserProfileModel.tableName); // get userId
-    if (rows != null) {
-      profile = UserProfileModel.fromMap(rows.last);
-    } else {
-      profile = null; //make it crash (temporary)
-    }
-  }*/
-
-  Future<void> loadProfile(String userName) async {
-    var row = await DatabaseProvider.queryByParameters(
-        UserProfileModel.tableName,
-        UserProfileModel.primaryKeyWhereString,
-        [userName]);
-
-    if (row.length != 0) {
-      profile = UserProfileModel.fromMap(row.first);
-    } else {
-      profile = null; //make it crash (temporary)
-    }
+  Future<void> changeProfile() async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return ProfileDialog();
+        });
+    setState(() {});
   }
 
-  Future<void> setProfile() async {
-    profile = null;
+  Future<void> getProfile() async {
+    profile = await DatabaseHelper.getSelectedUserProfile();
 
-    var userRow = await DatabaseProvider.queryByParameters(
-        UserProfileModel.tableName, UserProfileModel.getSelectedString, [Constants.isSelected]); 
-
-    if (userRow.length == 0) {
-    } else {
-      await loadProfile(UserProfileModel.fromMap(userRow.first).userName);
-    }
+    if (profile == null) {} //TODO : check errors
   }
 
   void resetProfile() async {
+    await getProfile();
+    setState(() {
+      profile = new UserProfileModel(
+          userName: profile.userName, selected: profile.selected);
+    });
     await saveProfile();
   }
 
   Future<void> buildLayout() async {
-    await setProfile();
+    await getProfile();
 
     profileList = Padding(
       padding: EdgeInsets.all(25.0),
@@ -154,6 +142,9 @@ class ProfileScreenState extends State<ProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          BlueButton(profile.userName, changeProfile, Icons.person, 70,
+              Constants.appWidth - 50),
+          SizedBox(height: Constants.appHeight * 0.09),
           BlueButton(
               _generateString("Birthday", profile.birthday),
               _birthdateButtonClicked,
@@ -162,22 +153,32 @@ class ProfileScreenState extends State<ProfileScreen> {
               Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
           BlueButton(_generateString("Sex", profile.sex), _sexButtonClicked,
-              Icons.date_range, 70, Constants.appWidth - 50),
+              Icons.pregnant_woman, 70, Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
           BlueButton(
-              _generateString("Height",profile.height == null ? null : profile.height.toString()),
+              _generateString(
+                  "Height",
+                  profile.height == null
+                      ? null
+                      : HeightWeightDialogState.heightConversion(
+                          profile.metricHeight, profile.height)),
               _heightButtonClicked,
               Icons.assessment,
               70,
               Constants.appWidth - 50),
           SizedBox(height: Constants.appHeight * 0.03),
           BlueButton(
-              _generateString("Weight", profile.weight == null ? null : profile.weight.toString()),
+              _generateString(
+                  "Weight",
+                  profile.weight == null
+                      ? null
+                      : HeightWeightDialogState.weightConversion(
+                          profile.metricWeight, profile.weight)),
               _weightButtonClicked,
               Icons.assessment,
               70,
               Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.1),
+          SizedBox(height: Constants.appHeight * 0.09),
           BlueButton('Reset Profile', resetProfile, Icons.delete, 70,
               Constants.appWidth - 50),
         ],
@@ -212,7 +213,7 @@ class ProfileScreenState extends State<ProfileScreen> {
         title: Text("User Settings page"),
         backgroundColor: Color(Constants.blueButtonColor),
       ),
-      body: futureBody(),
+      body: SingleChildScrollView(child: futureBody()),
     );
   }
 }

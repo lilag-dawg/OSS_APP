@@ -6,11 +6,11 @@ class UserPreferencesModesModel extends BaseModel {
   int selected; // max 1 selected per user
   String modeName;
 
-  static String primaryKeyWhereString = 'preferencesId = ? OR userName = ?';
-  static String tableName = 'userPreferences';
+  static String userWhereString = 'userName = ?';
+  static String preferencesWhereString = 'preferencesId = ?';
+  static String tableName = 'userPreferencesModes';
 
-  UserPreferencesModesModel(
-      {
+  UserPreferencesModesModel({
     this.userName,
     this.preferencesId,
     this.selected,
