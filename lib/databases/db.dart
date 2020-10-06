@@ -69,7 +69,7 @@ class DatabaseProvider {
     await db.execute('''
     CREATE TABLE userPreferencesModes (
       userName TEXT NOT NULL,
-      preferencesId INTEGER NOT NULL, 
+      preferencesId INTEGER NOT NULL UNIQUE, 
       selected INTEGER NOT NULL,
       modeName TEXT NOT NULL,
       FOREIGN KEY(userName) REFERENCES userProfile(userName) ON DELETE CASCADE,

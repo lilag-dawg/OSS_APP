@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:oss_app/databases/userPreferencesModesModel.dart';
 import '../constants.dart' as Constants;
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
-import '../databases/userPreferencesModesModel.dart';
 import '../databases/db.dart';
 import '../widgets/blueButton.dart';
 import '../databases/dbHelper.dart';
+import '../widgets/userPreferencesModesDialog.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final PageController _currentPage;
@@ -76,62 +77,26 @@ class PreferencesScreenState extends State<PreferencesScreen> {
         preferences.preferencesId);
   }
 
-  Future<void> loadPreferences(String userName) async {
-    //TODO : use helper
-    var rows = await DatabaseProvider.queryByParameters(
-        UserPreferencesModesModel.tableName,
-        UserPreferencesModesModel.userWhereString,
-        [userName]);
+  Future<void> loadPreferences() async {
+    var preferencesMode = await DatabaseHelper.getSelectedPreferencesMode();
 
-    if (rows.length != 0) {
-      int preferencesId;
+    if (preferencesMode.preferencesId != null) {
+      var preferencesRow = await DatabaseProvider.queryByParameters(
+          PreferencesModel.tableName,
+          PreferencesModel.primaryKeyWhereString,
+          [preferencesMode.preferencesId]);
 
-      for (int i = 0; i < rows.length; i++) {
-        if (UserPreferencesModesModel.fromMap(rows[i]).selected ==
-            Constants.isSelected) {
-          preferencesId =
-              UserPreferencesModesModel.fromMap(rows[i]).preferencesId;
-        }
-      }
-      if (preferencesId != null) {
-        var preferencesRow = await DatabaseProvider.queryByParameters(
-            PreferencesModel.tableName,
-            PreferencesModel.primaryKeyWhereString,
-            [preferencesId]);
-
-        if (preferencesRow.length != 0) {
-          preferences = PreferencesModel.fromMap(preferencesRow.first);
-        }
+      if (preferencesRow.length != 0) {
+        preferences = PreferencesModel.fromMap(preferencesRow.first);
       }
     }
   }
 
-  Future<void> loadDefaultPreferences(String userName) async {
-    preferences = new PreferencesModel(
-        ftp: Constants.defaultFtp,
-        targetEffort: Constants.defaultTargetEffort,
-        shiftingResponsiveness: Constants.defaultShiftingResponsiveness,
-        desiredRpm: Constants.defaultDesiredRpm,
-        desiredBpm: Constants.defaultDesiredBpm);
-
-    await DatabaseProvider.insert(PreferencesModel.tableName, preferences);
-    var rows = await DatabaseProvider.query(
-        PreferencesModel.tableName); // get preferencesId
-    if (rows.length != 0) {
-      preferences = PreferencesModel.fromMap(rows.last);
-    } else {
-      preferences = null; //make it crash (temporary)
-    }
-
-    var userPreferencesMode = new UserPreferencesModesModel(
-        //assumes no other selected is true
-        userName: userName,
-        preferencesId: preferences.preferencesId,
-        selected: Constants.isSelected,
-        modeName: Constants.defaultPreferencesModeName);
-
-    await DatabaseProvider.insert(
-        UserPreferencesModesModel.tableName, userPreferencesMode);
+  Future<void> loadDefaultPreferences() async {
+    preferences = await DatabaseHelper.createDefaultPreferencesRow();
+    await DatabaseHelper.createPreferencesMode(
+        Constants.defaultPreferencesModeName, preferences);
+    //TODO : check errors
   }
 
   Future<void> resetProfileDb() async {
@@ -147,20 +112,20 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> setPreferences() async {
-    var profile = await DatabaseHelper.getSelectedUserProfile();
-
-    if (profile == null) {
-    } //TODO : check errors
-    else {
-      await loadPreferences(profile.userName);
-      if (preferences == null) {
-        await loadDefaultPreferences(profile.userName);
-      }
+    await loadPreferences();
+    if (preferences == null) {
+      await loadDefaultPreferences();
     }
   }
 
   Future<void> changePreferencesMode() async {
-    
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return UserPreferencesModesDialog();
+        });
+    setState(() {});
   }
 
   Future<void> buildLayout() async {
@@ -177,8 +142,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: spaceTopItem),
-            BlueButton(preferencesMode.modeName, changePreferencesMode, Icons.person, 70,
-              Constants.appWidth - 50),
+            BlueButton(preferencesMode.modeName, changePreferencesMode,
+                Icons.playlist_play, 70, Constants.appWidth - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
                 ftpName,
@@ -186,7 +151,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultFtp * 4.0,
                 1,
                 preferences.ftp,
-                updateSlideBarCombo),
+                updateSlideBarCombo, Constants.ftpInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 targetEffortName,
@@ -194,7 +159,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultTargetEffort * 4.0,
                 1,
                 preferences.targetEffort,
-                updateSlideBarCombo),
+                updateSlideBarCombo, Constants.targetEffortInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 shiftingResponsivenessName,
@@ -202,7 +167,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultShiftingResponsiveness * 4.0,
                 1,
                 preferences.shiftingResponsiveness,
-                updateSlideBarCombo),
+                updateSlideBarCombo, Constants.shiftingResponsivenessInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredRpmName,
@@ -210,7 +175,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultDesiredRpm * 4.0,
                 1,
                 preferences.desiredRpm,
-                updateSlideBarCombo),
+                updateSlideBarCombo, Constants.desiredRpmInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredBpmName,
@@ -218,7 +183,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultDesiredBpm * 4.0,
                 1,
                 preferences.desiredBpm,
-                updateSlideBarCombo),
+                updateSlideBarCombo, Constants.desiredBpmInfo),
             SizedBox(height: Constants.appHeight * 0.1),
             BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
                 Constants.appWidth - 50),

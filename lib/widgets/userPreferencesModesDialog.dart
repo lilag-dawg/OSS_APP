@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
 import '../databases/dbHelper.dart';
 
-class ProfileDialog extends StatefulWidget {
-  ProfileDialog();
+class UserPreferencesModesDialog extends StatefulWidget {
+  UserPreferencesModesDialog();
   @override
   State<StatefulWidget> createState() {
-    return ProfileDialogState();
+    return UserPreferencesModesDialogState();
   }
 }
 
-class ProfileDialogState extends State<ProfileDialog> {
-  var userNameController = TextEditingController();
-  final userNameKey = GlobalKey<FormState>();
+class UserPreferencesModesDialogState extends State<UserPreferencesModesDialog> {
+  var nameController = TextEditingController();
+  final nameKey = GlobalKey<FormState>();
   Column profileDialog;
 
   Future<void> buildLayout() async {
-    var list = await DatabaseHelper.getUserNames();
-    var currentUser = await DatabaseHelper.getSelectedUserProfile();
+    var list = await DatabaseHelper.getPreferencesModesNames();
+    var currentSelection = await DatabaseHelper.getSelectedPreferencesMode();
 
     profileDialog = Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Form(
-              key: userNameKey,
+              key: nameKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    controller: userNameController,
+                    controller: nameController,
                     maxLength: 30,
                     decoration: InputDecoration(
                       icon: Icon(Icons.person),
-                      hintText: 'New User Name',
+                      hintText: 'New Mode Name',
                     ),
-                    validator: (userName) {
-                      if (userName.isEmpty) {
+                    validator: (name) {
+                      if (name.isEmpty) {
                         return 'Please enter some text';
                       }
-                      if (list.any((i) => i == userName)) {
-                        return 'User name already exists';
+                      if (list.any((i) => i == name)) {
+                        return 'Mode already exists';
                       }
                       return null;
                     },
@@ -47,8 +47,9 @@ class ProfileDialogState extends State<ProfileDialog> {
                   RaisedButton(
                     child: Text("Submit"),
                     onPressed: () async {
-                      if (userNameKey.currentState.validate()) {
-                        await DatabaseHelper.createUser(userNameController.text);
+                      if (nameKey.currentState.validate()) {
+                        var preferences = await DatabaseHelper.createDefaultPreferencesRow();
+                        await DatabaseHelper.createPreferencesMode(nameController.text, preferences);
                         Navigator.of(context, rootNavigator: true).pop(true);
                       }
                     },
@@ -59,9 +60,9 @@ class ProfileDialogState extends State<ProfileDialog> {
             isExpanded: true,
             iconSize: 20,
             icon: Icon(Icons.arrow_downward),
-            value: currentUser == null
-                ? 'No User Currently Defined'
-                : currentUser.userName,
+            value: currentSelection == null
+                ? 'No Mode Currently Defined'
+                : currentSelection.modeName,
             items: list.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -69,7 +70,7 @@ class ProfileDialogState extends State<ProfileDialog> {
               );
             }).toList(),
             onChanged: (String newValue) async {
-              await DatabaseHelper.selectUser(newValue);
+              await DatabaseHelper.selectPreferencesMode(newValue);
               Navigator.of(context, rootNavigator: true).pop(true);
             },
           ),
