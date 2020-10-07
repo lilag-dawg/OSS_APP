@@ -9,52 +9,56 @@ import '../screens/batteryLevel_screen.dart';
 import '../screens/user_settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-
   final PageController _currentPage;
   final Function selectHandler;
 
   HomeScreen(this._currentPage, this.selectHandler);
 
-
   @override
   Widget build(BuildContext context) {
-
-    void _calibrationPressed(){
+    void _calibrationPressed() {
       selectHandler(0);
     }
 
-    void _statsPressed(){
+    void _statsPressed() {
       Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler)),
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                StatisticsScreen(_currentPage, selectHandler)),
       );
     }
 
-    void _specificationPressed(){
+    void _specificationPressed() {
       Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SpecificationScreen(_currentPage, selectHandler)),
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                SpecificationScreen(_currentPage, selectHandler)),
       );
     }
 
-    void _settingPressed(){
+    void _settingPressed() {
       selectHandler(2);
     }
 
-    void _batterieLevelPressed(){
+    void _batterieLevelPressed() {
       Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
+        context,
+        MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
       );
     }
 
-    void _profilePressed(){
+    void _profilePressed() {
       Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => UserSettingsScreen()),
+        context,
+        MaterialPageRoute(builder: (context) => UserSettingsScreen()),
       );
     }
-    
+
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -62,21 +66,50 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: Container(
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(20.0),
-          mainAxisSpacing: 20.0,
-          crossAxisSpacing: 20.0,
-          children: <Widget>[
-            NavigationButton( 150, 150, "Calibration", "assets/activities.png", _calibrationPressed),
-            NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
-            NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
-            NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
-            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
-            NavigationButton( 150, 150, "Your profile", "assets/profil.png", _profilePressed),
-          ],
-        )
-      ),
+          child: GridView.count(
+        crossAxisCount: 2,
+        padding: const EdgeInsets.all(20.0),
+        mainAxisSpacing: Constants.getAppWidth() * 0.05,
+        crossAxisSpacing: Constants.getAppWidth() * 0.05,
+        children: <Widget>[
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Calibration",
+              "assets/test.png", //"assets/activities.png",
+              _calibrationPressed),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Statistics",
+              "assets/test.png", //"assets/stats.png",
+              _statsPressed),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Specifications",
+              "assets/test.png", //"assets/specifications.png",
+              _specificationPressed),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Setting",
+              "assets/test.png", //"assets/setting.png",
+              _settingPressed),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Battery level",
+              "assets/test.png", //"assets/batterieLevel.png",
+              _batterieLevelPressed),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Your profile",
+              "assets/test.png", //"assets/profil.png",
+              _profilePressed),
+        ],
+      )),
     );
   }
 }
