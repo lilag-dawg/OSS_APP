@@ -25,7 +25,9 @@ class HomeScreen extends StatelessWidget {
     final ossManager = Provider.of<BluetoothDeviceManager>(context);
 
     void _calibrationPressed(){
-      //selectHandler(0);
+      Navigator.of(context).pushNamed(
+        "/calibration"
+      );
     }
 
     void _statsPressed(){
@@ -57,10 +59,9 @@ class HomeScreen extends StatelessWidget {
     }
 
     void _profilePressed(){
-      // Navigator.push(
-      // context,
-      // MaterialPageRoute(builder: (context) => SettingsScreen()),
-      // );
+     Navigator.of(context).pushNamed(
+       "/settings/user_serttings",
+     );
     }
     
     return Scaffold(

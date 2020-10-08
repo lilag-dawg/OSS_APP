@@ -17,11 +17,10 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void _userSettingsPressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserSettingsScreen()),
-      );
-    }
+     Navigator.of(context).pushNamed(
+       "/settings/user_serttings",
+     );
+   }
     void _deviceManagementPressed() {
      Navigator.of(context).pushNamed(
         "/settings/manage", 
