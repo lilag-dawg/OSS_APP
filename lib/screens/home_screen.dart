@@ -11,52 +11,45 @@ import '../databases/dbHelper.dart';
 import '../models/bluetoothDeviceManager.dart';
 
 class HomeScreen extends StatelessWidget {
-
   //final PageController _currentPage;
   //final Function selectHandler;
 
- const HomeScreen({Key key}) : super(key: key);
+  const HomeScreen({Key key}) : super(key: key);
 
-     void _calibrationPressed(BuildContext context){
-      Navigator.of(context).pushNamed(
-        "/calibration"
-      );
-    }
+  void _calibrationPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/calibration");
+  }
 
-    void _statsPressed(BuildContext context){
-      Navigator.of(context).pushNamed(
-        "/statistics"
-      );
+  void _statsPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/statistics");
+  }
 
-    }
+  void _preferencePressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/preference",
+      //arguments: ossManager,
+    );
+  }
 
-    void _preferencePressed(BuildContext context){
-     Navigator.of(context).pushNamed(
-       "/prefererence",
-       //arguments: ossManager,
-      );
-    }
+  void _settingPressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/settings",
+      //arguments: ossManager,
+    );
+  }
 
-    void _settingPressed(BuildContext context){
-     Navigator.of(context).pushNamed(
-       "/settings",
-       //arguments: ossManager,
-     );
-    }
+  void _batterieLevelPressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/batterie",
+      //arguments: ossManager,
+    );
+  }
 
-    void _batterieLevelPressed(BuildContext context){
-     Navigator.of(context).pushNamed(
-       "/batterie",
-       //arguments: ossManager,
-     );
-    }
-
-
-    void _profilePressed(BuildContext context){
-     Navigator.of(context).pushNamed(
-       "/profile",
-     );
-    }
+  void _profilePressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/profile",
+    );
+  }
 
   Future<void> buildLayout(BuildContext context) async {
     await DatabaseProvider.database;
@@ -92,7 +85,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-Widget scaffold(BuildContext context){
+  Widget scaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -100,28 +93,31 @@ Widget scaffold(BuildContext context){
         backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: Container(
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(20.0),
-          mainAxisSpacing: 20.0,
-          crossAxisSpacing: 20.0,
-          children: <Widget>[
-            NavigationButton( 150, 150, "Calibration", "assets/activities.png", () => _calibrationPressed(context)),
-            NavigationButton( 150, 150, "Statistics", "assets/stats.png", () => _statsPressed(context)),
-            NavigationButton( 150, 150, "Preferences", "assets/specifications.png", () =>_preferencePressed(context)),
-            NavigationButton( 150, 150, "Setting", "assets/setting.png", () =>_settingPressed(context)),
-            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", () =>_batterieLevelPressed(context)),
-            NavigationButton( 150, 150, "Your profile", "assets/profil.png", () =>_profilePressed(context)),
-          ],
-        )
-      ),
+          child: GridView.count(
+        crossAxisCount: 2,
+        padding: const EdgeInsets.all(20.0),
+        mainAxisSpacing: 20.0,
+        crossAxisSpacing: 20.0,
+        children: <Widget>[
+          NavigationButton(150, 150, "Calibration", "assets/activities.png",
+              () => _calibrationPressed(context)),
+          NavigationButton(150, 150, "Statistics", "assets/stats.png",
+              () => _statsPressed(context)),
+          NavigationButton(150, 150, "Preferences", "assets/specifications.png",
+              () => _preferencePressed(context)),
+          NavigationButton(150, 150, "Setting", "assets/setting.png",
+              () => _settingPressed(context)),
+          NavigationButton(150, 150, "Battery level",
+              "assets/batterieLevel.png", () => _batterieLevelPressed(context)),
+          NavigationButton(150, 150, "Your profile", "assets/profil.png",
+              () => _profilePressed(context)),
+        ],
+      )),
     );
-}
-
+  }
 
   @override
   Widget build(BuildContext context) {
-
     final ossManager = Provider.of<BluetoothDeviceManager>(context);
 
     return futureBody(context);
