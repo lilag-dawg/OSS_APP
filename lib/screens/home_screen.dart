@@ -29,10 +29,6 @@ class HomeScreen extends StatelessWidget {
     }
 
     void _statsPressed(){
-      /*Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => StatisticsScreen(_currentPage, selectHandler, devicesHandler)),
-      );*/
       Navigator.of(context).pushNamed(
         "/statistics"
       );
@@ -54,10 +50,10 @@ class HomeScreen extends StatelessWidget {
     }
 
     void _batterieLevelPressed(){
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
-      );
+     Navigator.of(context).pushNamed(
+       "/batterie",
+       arguments: ossManager,
+     );
     }
 
     void _profilePressed(){

@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import './OSSDevice.dart';
 
 class BluetoothDeviceManager extends ChangeNotifier {
-  OSSDevice ossDevices;
+  OSSDevice ossDevice;
   BluetoothDeviceManager();
 
 
   void setDevice(OSSDevice device){
-    ossDevices = device;
+    ossDevice = device;
     notifyListeners();
   }
 
   void remove(){
-    ossDevices = null;
+    ossDevice = null;
   }
 
 

@@ -3,9 +3,9 @@ import 'package:flutter_blue/flutter_blue.dart';
 class DeviceConnexionStatus {
   final BluetoothDevice device;
   String connexionStatus;
-  String connected = "connected";
-  String inTransistion = "standby";
-  String disconnected = "disconnected";
+  static String connected = "connected";
+  static String inTransistion = "standby";
+  static String disconnected = "disconnected";
 
 
   DeviceConnexionStatus({this.device, this.connexionStatus});

@@ -35,7 +35,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
         if (!isDeviceAlreadyAdded) {
           devicesConnexionStatus.add(DeviceConnexionStatus(
             device: r.device,
-            connexionStatus: "disconnected",
+            connexionStatus: DeviceConnexionStatus.disconnected,
           ));
         }
       }
@@ -48,13 +48,13 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
         if (!isDeviceAlreadyAdded) {
           devicesConnexionStatus.add(DeviceConnexionStatus(
             device: d,
-            connexionStatus: "connected",
+            connexionStatus: DeviceConnexionStatus.connected,
           ));
           await addOSSDevice(d);
         } else {
           int errorFromScanResult = devicesConnexionStatus
               .indexWhere((device) => device.getDevice == d);
-          devicesConnexionStatus[errorFromScanResult].setConnexionStatus = "connected";
+          devicesConnexionStatus[errorFromScanResult].setConnexionStatus = DeviceConnexionStatus.connected;
         }
       }
     });
@@ -73,15 +73,26 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
 
   Future<void> _handleOnpressChanged(
       DeviceConnexionStatus c, String currentStatus) async {
-    if (currentStatus == c.connected) {
-      await c.device.disconnect().then((_) => currentStatus = c.disconnected);
+    final selectedDevice =
+        devicesConnexionStatus.firstWhere((item) => item == c);    
+    if (currentStatus == DeviceConnexionStatus.connected) {
+      await c.device.disconnect().then((_) => currentStatus = DeviceConnexionStatus.disconnected);
       widget.ossManager.remove();
     } else {
-      await c.device.connect();
-      await addOSSDevice(c.device).then((value) => currentStatus = c.connected);
+      await c.device.connect().then((value) async => await addOSSDevice(c.device).then((value) async {
+        currentStatus = DeviceConnexionStatus.connected;
+        for(DeviceConnexionStatus dc in devicesConnexionStatus){
+          if(dc.connexionStatus == DeviceConnexionStatus.connected && dc != c){
+            await dc.device.disconnect().then((_) => dc.connexionStatus = DeviceConnexionStatus.disconnected);
+          }
+        }
+      })).timeout(Duration(seconds: 5), onTimeout: (){
+        currentStatus = DeviceConnexionStatus.disconnected;
+        return null; //on pourrait rajouter un snackbar pour montrer à l'utilisateur que le connexion avec l'appareil n'a pas pu être établie
+      });
     }
     setState(() {
-      c.setConnexionStatus = currentStatus;
+      selectedDevice.setConnexionStatus = currentStatus;
     });
   }
 
@@ -92,7 +103,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
             currentDevice: d,
             onTapTile: (String currentStatus) async {
               setState(() {
-                d.setConnexionStatus = d.inTransistion;
+                d.setConnexionStatus = DeviceConnexionStatus.inTransistion;
               });
               await _handleOnpressChanged(d, currentStatus);
             },

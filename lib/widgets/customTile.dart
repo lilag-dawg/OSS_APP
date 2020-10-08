@@ -13,7 +13,11 @@ class CustomTile extends StatelessWidget {
     onTapTile(currentDevice.connexionStatus);
   }
 
-  void _handlePressTrailing() {} // todo
+  void _handlePressTrailing(BuildContext context) {
+    Navigator.of(context).pushNamed(
+       "/settings/manage/pairing",
+      );
+  } 
 
   Widget _buildTitle() {
     if (currentDevice.device.name.length > 0) {
@@ -26,7 +30,7 @@ class CustomTile extends StatelessWidget {
   }
 
   Widget _buildLeading() {
-    if (currentDevice.connexionStatus == currentDevice.connected) {
+    if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
       return Icon(
         Icons.bluetooth_connected,
         color: Colors.green,
@@ -40,21 +44,21 @@ class CustomTile extends StatelessWidget {
   }
 
   Widget _buildSubtitle() {
-    if (currentDevice.connexionStatus == currentDevice.connected) {
+    if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
       return Text("Enabled", style: TextStyle(color: Colors.green));
-    } else if (currentDevice.connexionStatus == currentDevice.inTransistion) {
-      return Text("In transistion...", style: TextStyle(color: Colors.grey));
+    } else if (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion) {
+      return Text("In transition...", style: TextStyle(color: Colors.grey));
     } else {
       return Text("Disabled", style: TextStyle(color: Colors.red));
     }
   }
 
-  Widget _buildTrailing() {
-    if (currentDevice.connexionStatus == currentDevice.connected) {
+  Widget _buildTrailing(BuildContext context) {
+    if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
       return IconButton(
           icon: Icon(Icons.settings),
           onPressed: () {
-            _handlePressTrailing();
+            _handlePressTrailing(context);
           });
     } else {
       return SizedBox.shrink();
@@ -62,9 +66,9 @@ class CustomTile extends StatelessWidget {
   }
 
   Color _buildColor() {
-    if (currentDevice.connexionStatus == currentDevice.connected) {
+    if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
       return Colors.green[100];
-    } else if (currentDevice.connexionStatus == currentDevice.inTransistion) {
+    } else if (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion) {
       return Colors.black38;
     } else {
       return Colors.red[100];
@@ -82,9 +86,9 @@ class CustomTile extends StatelessWidget {
           onTap: () {
             _handleTapTile();
           },
-          trailing: _buildTrailing(),
+          trailing: _buildTrailing(context),
           enabled:
-              (currentDevice.connexionStatus == currentDevice.inTransistion)
+              (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion)
                   ? false
                   : true),
       color:_buildColor()

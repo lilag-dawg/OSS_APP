@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:oss_app/screens/batteryLevel_screen.dart';
 import 'package:oss_app/screens/home_screen.dart';
+import 'package:oss_app/screens/manageDevicesScreen.dart';
 import 'package:oss_app/screens/specification_screen.dart';
 
 
@@ -24,9 +26,14 @@ class RouteGenerator {
             builder: (_) => SettingsScreen(
                   ossManager: args,
                 ));
+      case "/batterie":
+        return MaterialPageRoute(
+            builder: (_) => BatteryLevelScreen());
 
       case "/settings/manage":
         return MaterialPageRoute(builder: (_) => FindDevicesScreen(ossManager: args));
+      case "/settings/manage/pairing":
+        return MaterialPageRoute(builder: (_) => ManageDevicesScreen());
       case "/statistics":
         return MaterialPageRoute(
             builder: (_) => StatisticsScreen(
