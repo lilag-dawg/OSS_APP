@@ -5,9 +5,9 @@ import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
 import '../screens/statistics_screen.dart';
-import '../screens/specification_screen.dart';
-import '../screens/settings_screen.dart';
+import 'preferencesScreen.dart';
 import '../screens/batteryLevel_screen.dart';
+import 'profileScreen.dart';
 
 import '../models/bluetoothDeviceManager.dart';
 
@@ -39,8 +39,8 @@ class HomeScreen extends StatelessWidget {
 
     void _specificationPressed(){
      Navigator.of(context).pushNamed(
-       "/specification",
-       arguments: ossManager,
+       "/prefererence",
+       //arguments: ossManager,
       );
     }
 
@@ -58,9 +58,10 @@ class HomeScreen extends StatelessWidget {
      );
     }
 
+
     void _profilePressed(){
      Navigator.of(context).pushNamed(
-       "/settings/user_serttings",
+       "/profile",
      );
     }
     
@@ -80,10 +81,10 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             NavigationButton( 150, 150, "Calibration", "assets/activities.png", _calibrationPressed),
             NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
-            NavigationButton( 150, 150, "Specifications", "assets/specifications.png", _specificationPressed),
+            NavigationButton( 150, 150, "Preferences", "assets/specifications.png", _specificationPressed),
             NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
             NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
-            NavigationButton( 150, 150, "Your profil", "assets/profil.png", _profilePressed),
+            NavigationButton( 150, 150, "Your profile", "assets/profil.png", _profilePressed),
           ],
         )
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import '../widgets/blueButton.dart';
-import '../screens/user_settings_screen.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
@@ -54,8 +53,6 @@ class SettingsScreen extends StatelessWidget {
                 BlueButton("Device management", _deviceManagementPressed, Icons.device_unknown, 70,
                     Constants.appWidth - 50),
                 SizedBox(height: Constants.appHeight * 0.03),
-                BlueButton("User Settings", _userSettingsPressed, Icons.person,
-                    70, Constants.appWidth - 50),
               ],
             ),
           ),
