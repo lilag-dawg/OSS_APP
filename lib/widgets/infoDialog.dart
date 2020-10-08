@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../constants.dart' as Constants;
 
 class InfoDialog extends StatefulWidget {
   String info;

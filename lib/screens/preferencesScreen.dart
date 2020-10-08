@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oss_app/databases/userPreferencesModesModel.dart';
 import '../constants.dart' as Constants;
 import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
@@ -80,7 +79,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   Future<void> loadPreferences() async {
     var preferencesMode = await DatabaseHelper.getSelectedPreferencesMode();
 
-    if (preferencesMode.preferencesId != null) {
+    if (preferencesMode != null) {
       var preferencesRow = await DatabaseProvider.queryByParameters(
           PreferencesModel.tableName,
           PreferencesModel.primaryKeyWhereString,
@@ -128,6 +127,16 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     setState(() {});
   }
 
+  Future<void> changeGroupset() async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return UserPreferencesModesDialog();
+        });
+    setState(() {});
+  }
+
   Future<void> buildLayout() async {
     await setPreferences();
     var preferencesMode = await DatabaseHelper.getSelectedPreferencesMode();
@@ -144,6 +153,9 @@ class PreferencesScreenState extends State<PreferencesScreen> {
             SizedBox(height: spaceTopItem),
             BlueButton(preferencesMode.modeName, changePreferencesMode,
                 Icons.playlist_play, 70, Constants.appWidth - 50),
+            SizedBox(height: spaceItem1Item2),
+            BlueButton('Select Groupset', changeGroupset, Icons.settings, 70,
+                Constants.appWidth - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
                 ftpName,
@@ -151,7 +163,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultFtp * 4.0,
                 1,
                 preferences.ftp,
-                updateSlideBarCombo, Constants.ftpInfo),
+                updateSlideBarCombo,
+                Constants.ftpInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 targetEffortName,
@@ -159,7 +172,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultTargetEffort * 4.0,
                 1,
                 preferences.targetEffort,
-                updateSlideBarCombo, Constants.targetEffortInfo),
+                updateSlideBarCombo,
+                Constants.targetEffortInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 shiftingResponsivenessName,
@@ -167,7 +181,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultShiftingResponsiveness * 4.0,
                 1,
                 preferences.shiftingResponsiveness,
-                updateSlideBarCombo, Constants.shiftingResponsivenessInfo),
+                updateSlideBarCombo,
+                Constants.shiftingResponsivenessInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredRpmName,
@@ -175,7 +190,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultDesiredRpm * 4.0,
                 1,
                 preferences.desiredRpm,
-                updateSlideBarCombo, Constants.desiredRpmInfo),
+                updateSlideBarCombo,
+                Constants.desiredRpmInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredBpmName,
@@ -183,7 +199,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 Constants.defaultDesiredBpm * 4.0,
                 1,
                 preferences.desiredBpm,
-                updateSlideBarCombo, Constants.desiredBpmInfo),
+                updateSlideBarCombo,
+                Constants.desiredBpmInfo),
             SizedBox(height: Constants.appHeight * 0.1),
             BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
                 Constants.appWidth - 50),

@@ -1,7 +1,6 @@
 import 'base_model.dart';
 
 class UserProfileModel extends BaseModel {
-
   String userName;
   String birthday; //ISO-8601
   String sex;
@@ -15,10 +14,7 @@ class UserProfileModel extends BaseModel {
   static String getSelectedString = 'selected = ?';
   static String tableName = 'userProfile';
 
-  String parameter;
-  String parameterValue;
-
-UserProfileModel(
+  UserProfileModel(
       {this.userName,
       this.birthday,
       this.sex,
@@ -34,7 +30,7 @@ UserProfileModel(
       'birthday': birthday,
       'sex': sex,
       'height': height,
-      'metricHeight' : metricHeight,
+      'metricHeight': metricHeight,
       'weight': weight,
       'metricWeight': metricWeight,
       'selected': selected

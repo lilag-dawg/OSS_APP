@@ -10,7 +10,7 @@ class DatabaseProvider {
   static Database _database;
 
   static int get _version => 1; //onCreate
-  static final String databaseName = 'ossDatabase_test12.db';
+  static final String databaseName = 'ossDatabase_test13.db';
 
   static Future<Database> get database async {
     if (_database != null) return _database;
@@ -64,8 +64,6 @@ class DatabaseProvider {
     );
     ''');
 
-
-
     await db.execute('''
     CREATE TABLE userPreferencesModes (
       userName TEXT NOT NULL,
@@ -85,6 +83,34 @@ class DatabaseProvider {
       FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
     );
     ''');
+
+    await db.execute('''
+    CREATE TABLE cranksets  (
+      cranksetName TEXT PRIMARY KEY NOT NULL,
+      bigGear INTEGER NOT NULL, 
+      gear2 INTEGER,
+      gear3 INTEGER
+    );
+    ''');
+
+    await db.execute('''
+    CREATE TABLE sprockets  (
+      sprocketName TEXT PRIMARY KEY NOT NULL,
+      smallGear INTEGER NOT NULL, 
+      gear2 INTEGER,
+      gear3 INTEGER,
+      gear4 INTEGER,
+      gear5 INTEGER,
+      gear6 INTEGER,
+      gear7 INTEGER,
+      gear8 INTEGER,
+      gear9 INTEGER,
+      gear10 INTEGER,
+      gear11 INTEGER,
+      gear12 INTEGER,
+      gear13 INTEGER
+    );
+    ''');
   }
 
   static Future<List<Map<String, dynamic>>> query(String tableName) async =>
@@ -96,9 +122,10 @@ class DatabaseProvider {
   static Future<int> deleteTableData(String tableName) async =>
       await _database.delete(tableName);
 
-  static Future<List<Map<String, dynamic>>> queryByParameters(
-      String tableName, String whereString, List<dynamic> parameters) async =>
-    await _database.query(tableName, where: whereString, whereArgs: parameters);
+  static Future<List<Map<String, dynamic>>> queryByParameters(String tableName,
+          String whereString, List<dynamic> parameters) async =>
+      await _database.query(tableName,
+          where: whereString, whereArgs: parameters);
 
   static Future<int> updateByPrimaryKey(String tableName, BaseModel tableRow,
           String primaryKeySearchString, dynamic primaryKey) async =>
