@@ -31,10 +31,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _settingPressed(BuildContext context) {
+  void _settingPressed(
+      BuildContext context, BluetoothDeviceManager ossManager) {
     Navigator.of(context).pushNamed(
       "/settings",
-      //arguments: ossManager,
+      arguments: ossManager,
     );
   }
 
@@ -66,7 +67,7 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  Widget futureBody(BuildContext context) {
+  Widget futureBody(BuildContext context, BluetoothDeviceManager ossManager) {
     return FutureBuilder<void>(
       future: buildLayout(context),
       builder: (context, snapshot) {
@@ -77,7 +78,7 @@ class HomeScreen extends StatelessWidget {
           case ConnectionState.waiting:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
-            return scaffold(context);
+            return scaffold(context, ossManager);
           default:
             return Center(child: CircularProgressIndicator());
         }
@@ -85,7 +86,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget scaffold(BuildContext context) {
+  Widget scaffold(BuildContext context, BluetoothDeviceManager ossManager) {
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -106,7 +107,7 @@ class HomeScreen extends StatelessWidget {
           NavigationButton(150, 150, "Preferences", "assets/specifications.png",
               () => _preferencePressed(context)),
           NavigationButton(150, 150, "Setting", "assets/setting.png",
-              () => _settingPressed(context)),
+              () => _settingPressed(context, ossManager)),
           NavigationButton(150, 150, "Battery level",
               "assets/batterieLevel.png", () => _batterieLevelPressed(context)),
           NavigationButton(150, 150, "Your profile", "assets/profil.png",
@@ -120,6 +121,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ossManager = Provider.of<BluetoothDeviceManager>(context);
 
-    return futureBody(context);
+    return futureBody(context, ossManager);
   }
 }

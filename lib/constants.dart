@@ -10,7 +10,7 @@ const int backGroundBlue = 0xFF0D47A1;
 const int defaultPageIndex = 1;
 
 // emulator
-final bool isWorkingOnEmulator = true;
+final bool isWorkingOnEmulator = false;
 const int isSelected = 1;
 const int isNotSelected = 0;
 
@@ -34,8 +34,10 @@ const int defaultShiftingResponsiveness = 10;
 const int defaultDesiredRpm = 90;
 const int defaultDesiredBpm = 150;
 
-const String ftpInfo= 'Maximum average power for an hour-long session';
-const String targetEffortInfo= 'Target average power for an hour-long session';
-const String shiftingResponsivenessInfo= 'Defines the delta of rotations per minute (versus the desired cadence) necessary to trigger a shift';
-const String desiredRpmInfo= 'Desired average rotations per minute (cadence) for the bicycle crankset';
-const String desiredBpmInfo= 'Desired average heartbeats per minute';
+const String ftpInfo = 'Maximum average power for an hour-long session';
+const String targetEffortInfo = 'Target average power for an hour-long session';
+const String shiftingResponsivenessInfo =
+    'Defines the delta of rotations per minute (versus the desired cadence) necessary to trigger a shift';
+const String desiredRpmInfo =
+    'Desired average rotations per minute (cadence) for the bicycle crankset';
+const String desiredBpmInfo = 'Desired average heartbeats per minute';
