@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:oss_app/databases/db.dart';
 
 import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../screens/statistics_screen.dart';
-import 'preferencesScreen.dart';
-import '../screens/batteryLevel_screen.dart';
-import 'profileScreen.dart';
+import '../widgets/profileDialog.dart';
+import '../databases/dbHelper.dart';
 
 import '../models/bluetoothDeviceManager.dart';
 
@@ -18,55 +17,83 @@ class HomeScreen extends StatelessWidget {
 
  const HomeScreen({Key key}) : super(key: key);
 
-
-  @override
-  Widget build(BuildContext context) {
-
-    final ossManager = Provider.of<BluetoothDeviceManager>(context);
-
-    void _calibrationPressed(){
+     void _calibrationPressed(BuildContext context){
       Navigator.of(context).pushNamed(
         "/calibration"
       );
     }
 
-    void _statsPressed(){
+    void _statsPressed(BuildContext context){
       Navigator.of(context).pushNamed(
         "/statistics"
       );
 
     }
 
-    void _specificationPressed(){
+    void _preferencePressed(BuildContext context){
      Navigator.of(context).pushNamed(
        "/prefererence",
        //arguments: ossManager,
       );
     }
 
-    void _settingPressed(){
+    void _settingPressed(BuildContext context){
      Navigator.of(context).pushNamed(
        "/settings",
-       arguments: ossManager,
+       //arguments: ossManager,
      );
     }
 
-    void _batterieLevelPressed(){
+    void _batterieLevelPressed(BuildContext context){
      Navigator.of(context).pushNamed(
        "/batterie",
-       arguments: ossManager,
+       //arguments: ossManager,
      );
     }
 
 
-    void _profilePressed(){
+    void _profilePressed(BuildContext context){
      Navigator.of(context).pushNamed(
        "/profile",
      );
     }
-    
+
+  Future<void> buildLayout(BuildContext context) async {
+    await DatabaseProvider.database;
+
+    var user = await DatabaseHelper.getSelectedUserProfile();
+
+    if (user == null) {
+      await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return ProfileDialog();
+          });
+    }
+  }
+
+  Widget futureBody(BuildContext context) {
+    return FutureBuilder<void>(
+      future: buildLayout(context),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            return scaffold(context);
+          default:
+            return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+Widget scaffold(BuildContext context){
     return Scaffold(
-      
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text("Home Screen"),
@@ -79,15 +106,24 @@ class HomeScreen extends StatelessWidget {
           mainAxisSpacing: 20.0,
           crossAxisSpacing: 20.0,
           children: <Widget>[
-            NavigationButton( 150, 150, "Calibration", "assets/activities.png", _calibrationPressed),
-            NavigationButton( 150, 150, "Statistics", "assets/stats.png", _statsPressed),
-            NavigationButton( 150, 150, "Preferences", "assets/specifications.png", _specificationPressed),
-            NavigationButton( 150, 150, "Setting", "assets/setting.png", _settingPressed),
-            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", _batterieLevelPressed),
-            NavigationButton( 150, 150, "Your profile", "assets/profil.png", _profilePressed),
+            NavigationButton( 150, 150, "Calibration", "assets/activities.png", () => _calibrationPressed(context)),
+            NavigationButton( 150, 150, "Statistics", "assets/stats.png", () => _statsPressed(context)),
+            NavigationButton( 150, 150, "Preferences", "assets/specifications.png", () =>_preferencePressed(context)),
+            NavigationButton( 150, 150, "Setting", "assets/setting.png", () =>_settingPressed(context)),
+            NavigationButton( 150, 150, "Battery level", "assets/batterieLevel.png", () =>_batterieLevelPressed(context)),
+            NavigationButton( 150, 150, "Your profile", "assets/profil.png", () =>_profilePressed(context)),
           ],
         )
       ),
     );
+}
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    final ossManager = Provider.of<BluetoothDeviceManager>(context);
+
+    return futureBody(context);
   }
 }

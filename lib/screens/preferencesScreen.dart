@@ -9,9 +9,8 @@ import '../databases/dbHelper.dart';
 import '../widgets/userPreferencesModesDialog.dart';
 
 class PreferencesScreen extends StatefulWidget {
-  final PageController _currentPage;
-  final Function selectHandler;
-  PreferencesScreen(this._currentPage, this.selectHandler);
+
+  PreferencesScreen();
 
   @override
   PreferencesScreenState createState() => PreferencesScreenState();
@@ -241,8 +240,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: LowerNavigationBar(
-          widget._currentPage, context, widget.selectHandler),
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
           backgroundColor: Color(Constants.blueButtonColor),
