@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
-import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
 import '../databases/db.dart';
