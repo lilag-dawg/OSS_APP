@@ -59,6 +59,8 @@ class HomeScreen extends StatelessWidget {
     Constants.setAppWidth(MediaQuery.of(context).size.width);
     Constants.setAppHeight(MediaQuery.of(context).size.height);
 
+    imageCache.clear();
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -76,37 +78,37 @@ class HomeScreen extends StatelessWidget {
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Calibration",
-              "assets/test.png", //"assets/activities.png",
+              "assets/activities.png",
               _calibrationPressed),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Statistics",
-              "assets/test.png", //"assets/stats.png",
+              "assets/stats.png",
               _statsPressed),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Specifications",
-              "assets/test.png", //"assets/specifications.png",
+              "assets/specifications.png",
               _specificationPressed),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Setting",
-              "assets/test.png", //"assets/setting.png",
+              "assets/settings.png",
               _settingPressed),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Battery level",
-              "assets/test.png", //"assets/batterieLevel.png",
+              "assets/batteryLevel.png",
               _batterieLevelPressed),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Your profile",
-              "assets/test.png", //"assets/profil.png",
+              "assets/profile.png",
               _profilePressed),
         ],
       )),
