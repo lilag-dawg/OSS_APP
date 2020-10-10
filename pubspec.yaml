@@ -51,18 +51,20 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/activities.png
-   - assets/setting.png
+   - assets/settings.png
    - assets/specifications.png
    - assets/stats.png
-   - assets/batterieLevel.png
-   - assets/profil.png
-   - assets/oss_logo.png
+   - assets/batteryLevel.png
+   - assets/profile.png
+   - assets/test.png
    # temporaire
    - assets/lstech_pedal_only.jpg
    - assets/lstech_bike_only.jpg
    - assets/lstech_text_only.jpg
    - assets/lstech_ls_only.jpg
    - assets/lstech_tech_only.jpg
+
+
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

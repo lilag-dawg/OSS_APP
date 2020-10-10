@@ -87,6 +87,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget scaffold(BuildContext context, BluetoothDeviceManager ossManager) {
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
@@ -97,20 +100,44 @@ class HomeScreen extends StatelessWidget {
           child: GridView.count(
         crossAxisCount: 2,
         padding: const EdgeInsets.all(20.0),
-        mainAxisSpacing: 20.0,
-        crossAxisSpacing: 20.0,
+        mainAxisSpacing: Constants.getAppWidth() * 0.05,
+        crossAxisSpacing: Constants.getAppWidth() * 0.05,
         children: <Widget>[
-          NavigationButton(150, 150, "Calibration", "assets/activities.png",
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Calibration",
+              "assets/activities.png",
               () => _calibrationPressed(context)),
-          NavigationButton(150, 150, "Statistics", "assets/stats.png",
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Statistics",
+              "assets/stats.png",
               () => _statsPressed(context)),
-          NavigationButton(150, 150, "Preferences", "assets/specifications.png",
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Preferences",
+              "assets/specifications.png",
               () => _preferencePressed(context)),
-          NavigationButton(150, 150, "Setting", "assets/setting.png",
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Setting",
+              "assets/settings.png",
               () => _settingPressed(context, ossManager)),
-          NavigationButton(150, 150, "Battery level",
-              "assets/batterieLevel.png", () => _batterieLevelPressed(context)),
-          NavigationButton(150, 150, "Your profile", "assets/profil.png",
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Battery level",
+              "assets/batteryLevel.png",
+              () => _batterieLevelPressed(context)),
+          NavigationButton(
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              "Your profile",
+              "assets/profile.png",
               () => _profilePressed(context)),
         ],
       )),
