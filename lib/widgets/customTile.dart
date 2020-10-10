@@ -6,18 +6,14 @@ import '../models/deviceConnexionStatus.dart';
 class CustomTile extends StatelessWidget {
   final DeviceConnexionStatus currentDevice;
   final Function(String) onTapTile;
+  final Function(BuildContext) onTrailingPress;
 
-  const CustomTile({this.currentDevice, this.onTapTile});
+  const CustomTile({this.currentDevice, this.onTapTile, this.onTrailingPress});
 
   void _handleTapTile() {
     onTapTile(currentDevice.connexionStatus);
   }
 
-  void _handlePressTrailing(BuildContext context) {
-    Navigator.of(context).pushNamed(
-       "/settings/manage/pairing",
-      );
-  } 
 
   Widget _buildTitle() {
     if (currentDevice.device.name.length > 0) {
@@ -58,7 +54,7 @@ class CustomTile extends StatelessWidget {
       return IconButton(
           icon: Icon(Icons.settings),
           onPressed: () {
-            _handlePressTrailing(context);
+            onTrailingPress(context);
           });
     } else {
       return SizedBox.shrink();

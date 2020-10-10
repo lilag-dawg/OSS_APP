@@ -86,7 +86,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
             await dc.device.disconnect().then((_) => dc.connexionStatus = DeviceConnexionStatus.disconnected);
           }
         }
-      })).timeout(Duration(seconds: 5), onTimeout: (){
+      })).timeout(Duration(seconds: 10), onTimeout: (){
         currentStatus = DeviceConnexionStatus.disconnected;
         return null; //on pourrait rajouter un snackbar pour montrer à l'utilisateur que le connexion avec l'appareil n'a pas pu être établie
       });
@@ -94,6 +94,12 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
     setState(() {
       selectedDevice.setConnexionStatus = currentStatus;
     });
+  }
+
+  void __handleTrailingPressed(BuildContext context){
+    Navigator.of(context).pushNamed(
+       "/settings/manage/pairing",
+      );
   }
 
   List<Widget> _buildCustomTiles(List<DeviceConnexionStatus> result) {
@@ -106,6 +112,9 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
                 d.setConnexionStatus = DeviceConnexionStatus.inTransistion;
               });
               await _handleOnpressChanged(d, currentStatus);
+            },
+            onTrailingPress: (BuildContext context){
+              __handleTrailingPressed(context);
             },
           ),
         )
