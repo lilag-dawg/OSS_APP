@@ -1,65 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:oss_app/databases/db.dart';
 
 import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../screens/statistics_screen.dart';
-import '../screens/specification_screen.dart';
-import '../screens/batteryLevel_screen.dart';
-import '../screens/user_settings_screen.dart';
+import '../widgets/profileDialog.dart';
+import '../databases/dbHelper.dart';
+
+import '../models/bluetoothDeviceManager.dart';
 
 class HomeScreen extends StatelessWidget {
-  final PageController _currentPage;
-  final Function selectHandler;
+  //final PageController _currentPage;
+  //final Function selectHandler;
 
-  HomeScreen(this._currentPage, this.selectHandler);
+  const HomeScreen({Key key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    void _calibrationPressed() {
-      selectHandler(0);
+  void _calibrationPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/calibration");
+  }
+
+  void _statsPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/statistics");
+  }
+
+  void _preferencePressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/preference",
+      //arguments: ossManager,
+    );
+  }
+
+  void _settingPressed(
+      BuildContext context, BluetoothDeviceManager ossManager) {
+    Navigator.of(context).pushNamed(
+      "/settings",
+      arguments: ossManager,
+    );
+  }
+
+  void _batterieLevelPressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/batterie",
+      //arguments: ossManager,
+    );
+  }
+
+  void _profilePressed(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      "/profile",
+    );
+  }
+
+  Future<void> buildLayout(BuildContext context) async {
+    await DatabaseProvider.database;
+
+    var user = await DatabaseHelper.getSelectedUserProfile();
+
+    if (user == null) {
+      await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return ProfileDialog();
+          });
     }
+  }
 
-    void _statsPressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                StatisticsScreen(_currentPage, selectHandler)),
-      );
-    }
+  Widget futureBody(BuildContext context, BluetoothDeviceManager ossManager) {
+    return FutureBuilder<void>(
+      future: buildLayout(context),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            return scaffold(context, ossManager);
+          default:
+            return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
 
-    void _specificationPressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                SpecificationScreen(_currentPage, selectHandler)),
-      );
-    }
-
-    void _settingPressed() {
-      selectHandler(2);
-    }
-
-    void _batterieLevelPressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => BatteryLevelScreen()),
-      );
-    }
-
-    void _profilePressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserSettingsScreen()),
-      );
-    }
-
+  Widget scaffold(BuildContext context, BluetoothDeviceManager ossManager) {
     Constants.setAppWidth(MediaQuery.of(context).size.width);
     Constants.setAppHeight(MediaQuery.of(context).size.height);
-
-    imageCache.clear();
 
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
@@ -79,39 +108,46 @@ class HomeScreen extends StatelessWidget {
               (Constants.getAppWidth() * 0.35),
               "Calibration",
               "assets/activities.png",
-              _calibrationPressed),
+              () => _calibrationPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Statistics",
               "assets/stats.png",
-              _statsPressed),
+              () => _statsPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Specifications",
+              "Preferences",
               "assets/specifications.png",
-              _specificationPressed),
+              () => _preferencePressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Setting",
               "assets/settings.png",
-              _settingPressed),
+              () => _settingPressed(context, ossManager)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Battery level",
               "assets/batteryLevel.png",
-              _batterieLevelPressed),
+              () => _batterieLevelPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
               "Your profile",
               "assets/profile.png",
-              _profilePressed),
+              () => _profilePressed(context)),
         ],
       )),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ossManager = Provider.of<BluetoothDeviceManager>(context);
+
+    return futureBody(context, ossManager);
   }
 }

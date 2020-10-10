@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import '../widgets/blueButton.dart';
 import '../constants.dart' as Constants;
 
 class SettingsScreen extends StatelessWidget {
+  final BluetoothDeviceManager ossManager;
+
+  const SettingsScreen({Key key, @required this.ossManager}) : super(key: key);
+
   void _buttonClicked() {
     print("Button Clicked");
   }
 
   @override
   Widget build(BuildContext context) {
+    void _userSettingsPressed() {
+      Navigator.of(context).pushNamed(
+        "/settings/user_serttings",
+      );
+    }
+
+    void _deviceManagementPressed() {
+      Navigator.of(context)
+          .pushNamed("/settings/manage", arguments: ossManager);
+    }
+
     Constants.setAppWidth(MediaQuery.of(context).size.width);
     Constants.setAppHeight(MediaQuery.of(context).size.height);
 

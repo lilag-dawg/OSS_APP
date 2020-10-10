@@ -11,7 +11,7 @@ class ComponentTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 240,
       height: 40,
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.only(left: 10),

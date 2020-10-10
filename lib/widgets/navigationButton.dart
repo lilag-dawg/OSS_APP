@@ -31,7 +31,7 @@ class NavigationButton extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: Constants.getAppWidth() * 0.05,
                 ),
               ),
               SizedBox(height: buttonWidth * 0.05),
