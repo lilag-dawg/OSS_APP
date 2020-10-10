@@ -1,7 +1,12 @@
 library constants;
 
-const double appWidth = 410;
-const double appHeight = 700;
+//import 'dart:js';
+
+//const double appWidth = 410;
+//const double appHeight = 700;
+
+double _appWidth;
+double _appHeight;
 
 const int blueButtonColor = 0xFF1565C0;
 const int greyButtonColor = 0xFF252525;
@@ -41,3 +46,19 @@ const String shiftingResponsivenessInfo =
 const String desiredRpmInfo =
     'Desired average rotations per minute (cadence) for the bicycle crankset';
 const String desiredBpmInfo = 'Desired average heartbeats per minute';
+
+double getAppWidth() {
+  return _appWidth;
+}
+
+void setAppWidth(double newWidth) {
+  _appWidth = newWidth;
+}
+
+double getAppHeight() {
+  return _appHeight;
+}
+
+void setAppHeight(double newHeight) {
+  _appHeight = newHeight;
+}
