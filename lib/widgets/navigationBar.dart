@@ -33,6 +33,9 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
   Future<void> buildLayout() async {
     await DatabaseProvider.database;
+    await DatabaseHelper.updateCranksets();
+    await DatabaseHelper.updateSprockets();
+    //TODO : delete dead code
 
     var user = await DatabaseHelper.getSelectedUserProfile();
 

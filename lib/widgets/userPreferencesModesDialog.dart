@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../databases/dbHelper.dart';
+import '../constants.dart' as Constants;
 
 class UserPreferencesModesDialog extends StatefulWidget {
   UserPreferencesModesDialog();
@@ -9,7 +10,8 @@ class UserPreferencesModesDialog extends StatefulWidget {
   }
 }
 
-class UserPreferencesModesDialogState extends State<UserPreferencesModesDialog> {
+class UserPreferencesModesDialogState
+    extends State<UserPreferencesModesDialog> {
   var nameController = TextEditingController();
   final nameKey = GlobalKey<FormState>();
   Column profileDialog;
@@ -48,8 +50,10 @@ class UserPreferencesModesDialogState extends State<UserPreferencesModesDialog> 
                     child: Text("Submit"),
                     onPressed: () async {
                       if (nameKey.currentState.validate()) {
-                        var preferences = await DatabaseHelper.createDefaultPreferencesRow();
-                        await DatabaseHelper.createPreferencesMode(nameController.text, preferences);
+                        var preferences =
+                            await DatabaseHelper.createDefaultPreferencesRow();
+                        await DatabaseHelper.createPreferencesMode(
+                            nameController.text, preferences);
                         Navigator.of(context, rootNavigator: true).pop(true);
                       }
                     },
@@ -83,14 +87,14 @@ class UserPreferencesModesDialogState extends State<UserPreferencesModesDialog> 
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
           case ConnectionState.active:
           case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
           case ConnectionState.done:
             return profileDialog;
           default:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
         }
       },
     );

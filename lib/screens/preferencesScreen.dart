@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
-import '../widgets/lowerNavigationBar.dart';
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
 import '../databases/db.dart';
 import '../widgets/blueButton.dart';
 import '../databases/dbHelper.dart';
 import '../widgets/userPreferencesModesDialog.dart';
+import '../widgets/groupsetDialog.dart';
 
 class PreferencesScreen extends StatefulWidget {
-
   PreferencesScreen();
 
   @override
@@ -63,8 +62,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
         {}
         break;
     }
-
-    setState(() {});
   }
 
   Future<void> saveProfile() async {
@@ -73,46 +70,22 @@ class PreferencesScreenState extends State<PreferencesScreen> {
         preferences,
         PreferencesModel.primaryKeyWhereString,
         preferences.preferencesId);
-  }
-
-  Future<void> loadPreferences() async {
-    var preferencesMode = await DatabaseHelper.getSelectedPreferencesMode();
-
-    if (preferencesMode != null) {
-      var preferencesRow = await DatabaseProvider.queryByParameters(
-          PreferencesModel.tableName,
-          PreferencesModel.primaryKeyWhereString,
-          [preferencesMode.preferencesId]);
-
-      if (preferencesRow.length != 0) {
-        preferences = PreferencesModel.fromMap(preferencesRow.first);
-      }
-    }
-  }
-
-  Future<void> loadDefaultPreferences() async {
-    preferences = await DatabaseHelper.createDefaultPreferencesRow();
-    await DatabaseHelper.createPreferencesMode(
-        Constants.defaultPreferencesModeName, preferences);
-    //TODO : check errors
-  }
-
-  Future<void> resetProfileDb() async {
-    preferences = new PreferencesModel(
-        preferencesId: preferences.preferencesId,
-        ftp: Constants.defaultFtp,
-        targetEffort: Constants.defaultTargetEffort,
-        shiftingResponsiveness: Constants.defaultShiftingResponsiveness,
-        desiredRpm: Constants.defaultDesiredRpm,
-        desiredBpm: Constants.defaultDesiredBpm);
-    await saveProfile();
     setState(() {});
   }
 
+  Future<void> resetProfileDb() async {
+    preferences =
+        DatabaseHelper.getDefaultPreferencesRow(preferences.preferencesId);
+    await saveProfile();
+  }
+
   Future<void> setPreferences() async {
-    await loadPreferences();
+    preferences = await DatabaseHelper.getCurrentPreferences();
     if (preferences == null) {
-      await loadDefaultPreferences();
+      preferences = await DatabaseHelper.createDefaultPreferencesRow();
+      await DatabaseHelper.createPreferencesMode(
+          Constants.defaultPreferencesModeName, preferences);
+      //TODO : check errors
     }
   }
 
@@ -131,7 +104,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return UserPreferencesModesDialog();
+          return GroupsetDialog();
         });
     setState(() {});
   }

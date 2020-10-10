@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../databases/dbHelper.dart';
+import '../constants.dart' as Constants;
 
 class ProfileDialog extends StatefulWidget {
   ProfileDialog();
@@ -48,7 +49,8 @@ class ProfileDialogState extends State<ProfileDialog> {
                     child: Text("Submit"),
                     onPressed: () async {
                       if (userNameKey.currentState.validate()) {
-                        await DatabaseHelper.createUser(userNameController.text);
+                        await DatabaseHelper.createUser(
+                            userNameController.text);
                         Navigator.of(context, rootNavigator: true).pop(true);
                       }
                     },
@@ -82,14 +84,14 @@ class ProfileDialogState extends State<ProfileDialog> {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
           case ConnectionState.active:
           case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
           case ConnectionState.done:
             return profileDialog;
           default:
-            return Center(child: CircularProgressIndicator());
+            return Constants.dialogLoadingWidget;
         }
       },
     );

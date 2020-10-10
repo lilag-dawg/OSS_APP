@@ -1,5 +1,7 @@
 library constants;
 
+import 'package:flutter/material.dart';
+
 const double appWidth = 410;
 const double appHeight = 700;
 
@@ -33,6 +35,8 @@ const int defaultTargetEffort = 150;
 const int defaultShiftingResponsiveness = 10;
 const int defaultDesiredRpm = 90;
 const int defaultDesiredBpm = 150;
+const String defaultCranksetName = null;
+const String defaultSprocketName = null;
 
 const String ftpInfo = 'Maximum average power for an hour-long session';
 const String targetEffortInfo = 'Target average power for an hour-long session';
@@ -41,3 +45,9 @@ const String shiftingResponsivenessInfo =
 const String desiredRpmInfo =
     'Desired average rotations per minute (cadence) for the bicycle crankset';
 const String desiredBpmInfo = 'Desired average heartbeats per minute';
+
+Column dialogLoadingWidget = Column(
+  mainAxisSize: MainAxisSize.min,
+  children: <Widget>[CircularProgressIndicator()],
+  mainAxisAlignment: MainAxisAlignment.center,
+);
