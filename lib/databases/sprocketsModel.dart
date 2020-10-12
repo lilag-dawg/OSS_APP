@@ -16,7 +16,7 @@ class SprocketsModel extends BaseModel {
   int gear12;
   int gear13;
 
-  static String primaryKeyWhereString = 'cranksetName = ?';
+  static String primaryKeyWhereString = 'sprocketName = ?';
   static String tableName = 'sprockets';
 
   SprocketsModel(

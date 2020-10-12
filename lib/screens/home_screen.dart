@@ -54,6 +54,8 @@ class HomeScreen extends StatelessWidget {
 
   Future<void> buildLayout(BuildContext context) async {
     await DatabaseProvider.database;
+    await DatabaseHelper.updateCranksets();
+    await DatabaseHelper.updateSprockets();
 
     var user = await DatabaseHelper.getSelectedUserProfile();
 

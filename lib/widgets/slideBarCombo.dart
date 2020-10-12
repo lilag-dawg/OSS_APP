@@ -15,7 +15,6 @@ class SlideBarCombo extends StatefulWidget {
 
   SlideBarCombo(this.parameterName, this.minValue, this.maxValue, this.stepSize,
       this.currentValue, this.updateSlideBarCombo, this.info);
-      
 
   @override
   State<StatefulWidget> createState() {
@@ -38,16 +37,23 @@ class SlideBarComboState extends State<SlideBarCombo> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-          ComponentTitle(widget.parameterName),
-          RaisedButton(padding: EdgeInsets.all(10), shape: CircleBorder(), onPressed: () async => await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return InfoDialog(widget.info);
-        }), color: Color(Constants.blueButtonColor), child: Icon(Icons.info),),
-        ]),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ComponentTitle(widget.parameterName),
+              RaisedButton(
+                padding: EdgeInsets.all(10),
+                shape: CircleBorder(),
+                onPressed: () async => await showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return InfoDialog(widget.info);
+                    }),
+                color: Color(Constants.blueButtonColor),
+                child: Icon(Icons.info),
+              ),
+            ]),
         SizedBox(height: spaceTitleSlider),
         SlideBar(widget.minValue, widget.maxValue, widget.stepSize, valueCpy,
             updateSlideBar),
