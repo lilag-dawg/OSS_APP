@@ -31,7 +31,7 @@ class CharacteristicTile extends StatelessWidget {
                 Text('Characteristic'),
                 Text(
                     '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
-                    style: Theme.of(context).textTheme.body1.copyWith(
+                    style: Theme.of(context).textTheme.bodyText2.copyWith(
                         color: Theme.of(context).textTheme.caption.color))
               ],
             ),
@@ -63,7 +63,7 @@ class ServiceTile extends StatelessWidget {
             Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}',
                 style: Theme.of(context)
                     .textTheme
-                    .body1
+                    .bodyText2
                     .copyWith(color: Theme.of(context).textTheme.caption.color))
           ],
         ),
@@ -83,7 +83,6 @@ class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key key, this.device}) : super(key: key);
 
   final BluetoothDevice device;
-
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     return services
