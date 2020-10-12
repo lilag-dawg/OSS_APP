@@ -124,10 +124,10 @@ class PreferencesScreenState extends State<PreferencesScreen> {
           children: <Widget>[
             SizedBox(height: spaceTopItem),
             BlueButton(preferencesMode.modeName, changePreferencesMode,
-                Icons.playlist_play, 70, Constants.appWidth - 50),
+                Icons.playlist_play, 70, Constants.getAppWidth() - 50),
             SizedBox(height: spaceItem1Item2),
             BlueButton('Select Groupset', changeGroupset, Icons.settings, 70,
-                Constants.appWidth - 50),
+                Constants.getAppWidth() - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
                 ftpName,
@@ -173,10 +173,10 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 preferences.desiredBpm,
                 updateSlideBarCombo,
                 Constants.desiredBpmInfo),
-            SizedBox(height: Constants.appHeight * 0.1),
+            SizedBox(height: Constants.getAppHeight() * 0.1),
             BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
-                Constants.appWidth - 50),
-            SizedBox(height: Constants.appHeight * 0.03),
+                Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.03),
           ],
         ),
       ),
@@ -212,6 +212,9 @@ class PreferencesScreenState extends State<PreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(

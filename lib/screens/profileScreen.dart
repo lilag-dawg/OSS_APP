@@ -143,18 +143,18 @@ class ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           BlueButton(profile.userName, changeProfile, Icons.person, 70,
-              Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.09),
+              Constants.getAppWidth() - 50),
+          SizedBox(height: Constants.getAppHeight() * 0.09),
           BlueButton(
               _generateString("Birthday", profile.birthday),
               _birthdateButtonClicked,
               Icons.date_range,
               70,
-              Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.03),
+              Constants.getAppWidth() - 50),
+          SizedBox(height: Constants.getAppHeight() * 0.03),
           BlueButton(_generateString("Sex", profile.sex), _sexButtonClicked,
-              Icons.pregnant_woman, 70, Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.03),
+              Icons.pregnant_woman, 70, Constants.getAppWidth() - 50),
+          SizedBox(height: Constants.getAppHeight() * 0.03),
           BlueButton(
               _generateString(
                   "Height",
@@ -165,8 +165,8 @@ class ProfileScreenState extends State<ProfileScreen> {
               _heightButtonClicked,
               Icons.assessment,
               70,
-              Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.03),
+              Constants.getAppWidth() - 50),
+          SizedBox(height: Constants.getAppHeight() * 0.03),
           BlueButton(
               _generateString(
                   "Weight",
@@ -177,10 +177,10 @@ class ProfileScreenState extends State<ProfileScreen> {
               _weightButtonClicked,
               Icons.assessment,
               70,
-              Constants.appWidth - 50),
-          SizedBox(height: Constants.appHeight * 0.09),
+              Constants.getAppWidth() - 50),
+          SizedBox(height: Constants.getAppHeight() * 0.09),
           BlueButton('Reset Profile', resetProfile, Icons.delete, 70,
-              Constants.appWidth - 50),
+              Constants.getAppWidth() - 50),
         ],
       ),
     );
@@ -207,6 +207,9 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
+
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(

@@ -4,6 +4,8 @@ import './bluetoothDeviceService.dart';
 class OSSDevice {
   final BluetoothDevice device;
   List<BluetoothDeviceService> services = [];
+
+
   OSSDevice._create(this.device);
 
   static Future<OSSDevice> create(BluetoothDevice d) async{

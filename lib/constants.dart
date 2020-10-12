@@ -1,9 +1,12 @@
 library constants;
 
-import 'package:flutter/material.dart';
+//import 'dart:js';
 
-const double appWidth = 410;
-const double appHeight = 700;
+//const double appWidth = 410;
+//const double appHeight = 700;
+
+double _appWidth;
+double _appHeight;
 
 const int blueButtonColor = 0xFF1565C0;
 const int greyButtonColor = 0xFF252525;
@@ -51,3 +54,19 @@ Column dialogLoadingWidget = Column(
   children: <Widget>[CircularProgressIndicator()],
   mainAxisAlignment: MainAxisAlignment.center,
 );
+
+double getAppWidth() {
+  return _appWidth;
+}
+
+void setAppWidth(double newWidth) {
+  _appWidth = newWidth;
+}
+
+double getAppHeight() {
+  return _appHeight;
+}
+
+void setAppHeight(double newHeight) {
+  _appHeight = newHeight;
+}
