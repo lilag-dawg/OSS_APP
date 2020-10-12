@@ -1,4 +1,4 @@
-library constants;
+library groupsets;
 
 const List<Map<String, dynamic>> cranksets = [
   {'cranksetName': 'FC-R8000 53-39', 'bigGear': 53, 'gear2': 39, 'gear3': null},
