@@ -11,6 +11,7 @@ class BluetoothDeviceManager extends ChangeNotifier {
   
   static String nombreCapteursCharact = "16A1";
   static String listCapteursCharact = "16A2";
+  static String paringRequestCharact = "16A3";
 
   static String convertRawToStringListCapteursCharact(List<int> value){
     String name = "";
@@ -21,6 +22,16 @@ class BluetoothDeviceManager extends ChangeNotifier {
       name = name + String.fromCharCode(value[i]);
     }
     return name;
+  }
+
+  static int convertRawToIntCapteursCharact(List<int> value){
+    print(value);
+    int numberOfSensor = 0;
+    for(int i = 0; i < value.length; i++){ //length should always be 1
+      numberOfSensor = value[i];
+
+    }
+    return numberOfSensor;
   }
 
 

@@ -14,6 +14,8 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   List<String> connectedDevices = [];
   List<String> availableDevices = [];
 
+  int numberOfsensor = 0;
+
   String paired = "Paired";
   String notPaired = "notPaired";
 
@@ -30,7 +32,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     String currentName = "";
     await for (var value in stream) {
       if (value.isNotEmpty) {
-        if (count == 8) break;
+        if (count == numberOfsensor) break;
         currentName =
             BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
         if (!availableDevices.contains(currentName))
@@ -42,10 +44,17 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
 
   Future<void> _getSensorStringListFromCharact(
       BluetoothDeviceManager ossManager) async {
+
     BluetoothDeviceCharacteristic listCapteursCharact = ossManager.ossDevice
         .getService(BluetoothDeviceManager.connectionHandlingService)
         .getCharacteristic(BluetoothDeviceManager.listCapteursCharact);
+
+    BluetoothDeviceCharacteristic nombreCapteursCharact = ossManager.ossDevice
+        .getService(BluetoothDeviceManager.connectionHandlingService)
+        .getCharacteristic(BluetoothDeviceManager.nombreCapteursCharact);
+
     if (listCapteursCharact != null) {
+      await nombreCapteursCharact.characteristic.read().then((value) => numberOfsensor = BluetoothDeviceManager.convertRawToIntCapteursCharact(value));
       await listCapteursCharact.characteristic.setNotifyValue(true);
       await _getList(listCapteursCharact.characteristic.value)
           .then((value) async {
