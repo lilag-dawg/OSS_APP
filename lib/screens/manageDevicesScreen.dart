@@ -14,20 +14,19 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   List<String> connectedDevices = [];
   List<String> availableDevices = [];
 
-  int numberOfsensor = 0;
 
   String paired = "Paired";
   String notPaired = "notPaired";
 
-  List<Widget> _buildConnectedDevicesTiles(List<String> result) {
-    return result.map((d) => _customCardTile(d, paired)).toList();
+  List<Widget> _buildConnectedDevicesTiles(List<String> result, BluetoothDeviceManager ossManager) {
+    return result.map((d) => _customCardTile(d, paired, ossManager)).toList();
   }
 
-  List<Widget> _buildAvailableDevicesTiles(List<String> result) {
-    return result.map((d) => _customCardTile(d, notPaired)).toList();
+  List<Widget> _buildAvailableDevicesTiles(List<String> result, BluetoothDeviceManager ossManager) {
+    return result.map((d) => _customCardTile(d, notPaired, ossManager)).toList();
   }
 
-  Future<void> _getList(Stream<List<int>> stream) async {
+  Future<void> _getList(Stream<List<int>> stream, int numberOfsensor) async {
     int count = 0;
     String currentName = "";
     await for (var value in stream) {
@@ -35,11 +34,33 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
         if (count == numberOfsensor) break;
         currentName =
             BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
-        if (!availableDevices.contains(currentName))
-          availableDevices.add(currentName);
-        count = count + 1;
+        if(value[0] & 0x01 == 1){
+          if (!connectedDevices.contains(currentName)){
+            connectedDevices.add(currentName);
+            count = count + 1;
+          }
+        }
+        else{
+          if (!availableDevices.contains(currentName)){
+            availableDevices.add(currentName);
+            count = count + 1;
+          }
+        }
       }
     }
+  }
+
+  Future<int> _getNumberOfSensorCharact(BluetoothDeviceManager ossManager) async{
+
+      BluetoothDeviceCharacteristic nombreCapteursCharact = ossManager.ossDevice
+        .getService(BluetoothDeviceManager.connectionHandlingService)
+        .getCharacteristic(BluetoothDeviceManager.nombreCapteursCharact);
+
+      int number = 0;
+
+      await nombreCapteursCharact.characteristic.read().then((value) => number = BluetoothDeviceManager.convertRawToIntCapteursCharact(value));
+
+      return number;
   }
 
   Future<void> _getSensorStringListFromCharact(
@@ -49,33 +70,36 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
         .getService(BluetoothDeviceManager.connectionHandlingService)
         .getCharacteristic(BluetoothDeviceManager.listCapteursCharact);
 
-    BluetoothDeviceCharacteristic nombreCapteursCharact = ossManager.ossDevice
-        .getService(BluetoothDeviceManager.connectionHandlingService)
-        .getCharacteristic(BluetoothDeviceManager.nombreCapteursCharact);
+    int numberOfsensor = 0;
 
     if (listCapteursCharact != null) {
-      await nombreCapteursCharact.characteristic.read().then((value) => numberOfsensor = BluetoothDeviceManager.convertRawToIntCapteursCharact(value));
+      await _getNumberOfSensorCharact(ossManager).then((value) => numberOfsensor = value);
       await listCapteursCharact.characteristic.setNotifyValue(true);
-      await _getList(listCapteursCharact.characteristic.value)
+      await _getList(listCapteursCharact.characteristic.value, numberOfsensor)
           .then((value) async {
         await listCapteursCharact.characteristic.setNotifyValue(false);
       });
     }
   }
 
-  void _handlePressTrailing(String deviceName, String status) {
-    setState(() {
-      if (status == paired) {
-        connectedDevices.remove(deviceName);
-        availableDevices.add(deviceName);
-      } else {
-        availableDevices.remove(deviceName);
-        connectedDevices.add(deviceName);
-      }
+  Future<void> _writeToMCU(String deviceName, String status, BluetoothDeviceManager ossManager) async{
+      BluetoothDeviceCharacteristic paringRequestCharact = ossManager.ossDevice
+        .getService(BluetoothDeviceManager.connectionHandlingService)
+        .getCharacteristic(BluetoothDeviceManager.paringRequestCharact);
+
+      await paringRequestCharact.characteristic.write(BluetoothDeviceManager.sendPairingRequestCharact(deviceName, status)).then((value) => print(value));
+  }
+
+  Future<void> _handlePressTrailing(String deviceName, String status, BluetoothDeviceManager ossManager) async{
+    await _writeToMCU(deviceName, status, ossManager).then((value){
+      setState(() {
+        connectedDevices.clear();
+        availableDevices.clear();
+      });
     });
   }
 
-  Widget _customCardTile(String deviceName, String status) {
+  Widget _customCardTile(String deviceName, String status, BluetoothDeviceManager ossManager) {
     return Card(
         color: Colors.black12,
         child: ListTile(
@@ -86,13 +110,13 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
           subtitle: (status == paired) ? Text('Active') : SizedBox.shrink(),
           trailing: RaisedButton(
               child: (status == paired) ? Text("Forget") : Text("Pair"),
-              onPressed: () {
-                _handlePressTrailing(deviceName, status);
+              onPressed: () async {
+                await _handlePressTrailing(deviceName, status, ossManager);
               }),
         ));
   }
 
-  Widget _buildMainBody() {
+  Widget _buildMainBody(BluetoothDeviceManager ossManager) {
     return Container(
       child: Column(
         children: [
@@ -114,7 +138,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
               ),
-              Column(children: _buildConnectedDevicesTiles(connectedDevices))
+              Column(children: _buildConnectedDevicesTiles(connectedDevices, ossManager))
             ]),
           ),
           Container(
@@ -135,7 +159,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                       fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
               ),
-              Column(children: _buildAvailableDevicesTiles(availableDevices))
+              Column(children: _buildAvailableDevicesTiles(availableDevices, ossManager))
             ]),
           ),
         ],
@@ -150,7 +174,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
       builder: (c, snapshot) {
         print(snapshot.connectionState);
         if(snapshot.connectionState == ConnectionState.done){
-            return _buildMainBody();
+            return _buildMainBody(ossManager);
         }
         else{
           return Center(child: CircularProgressIndicator());

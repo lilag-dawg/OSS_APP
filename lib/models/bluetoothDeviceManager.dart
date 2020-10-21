@@ -25,13 +25,32 @@ class BluetoothDeviceManager extends ChangeNotifier {
   }
 
   static int convertRawToIntCapteursCharact(List<int> value){
-    print(value);
     int numberOfSensor = 0;
     for(int i = 0; i < value.length; i++){ //length should always be 1
       numberOfSensor = value[i];
 
     }
     return numberOfSensor;
+  }
+
+  static List<int> sendPairingRequestCharact(String deviceName, String status){
+     List<int> stringToListInt = [];
+
+     if(status == "Paired"){
+       stringToListInt.add(0); //request to forget
+     }
+     else{
+       stringToListInt.add(1); // request to pair
+     }
+     for(int c in deviceName.codeUnits){
+       stringToListInt.add(c);
+     }
+
+     print(stringToListInt);
+
+     return stringToListInt;
+
+
   }
 
 
