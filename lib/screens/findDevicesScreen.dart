@@ -19,13 +19,16 @@ class FindDevicesScreen extends StatefulWidget {
   _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
 
-class _FindDevicesScreenState extends State<FindDevicesScreen>{
+class _FindDevicesScreenState extends State<FindDevicesScreen> with SingleTickerProviderStateMixin{
 
   List<BluetoothDevice> alreadyConnectedDevices = [];
   List<DeviceConnexionStatus> devicesConnexionStatus = [];
   StreamSubscription<List<ScanResult>> scanSubscription;
   bool isDoneScanning;
 
+  //animation stuff
+  Animation<double> animation;
+  AnimationController controller;
 
   Future<void> performScan() async {
     scanSubscription = FlutterBlue.instance.scanResults.listen((scanResults) {
@@ -148,13 +151,16 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   Widget _buildAnimations() {
     return Container(
       margin: EdgeInsets.only(top: 20),
-      child: Center(
-        child:Column(
+      child: Column(
         children: <Widget>[
-          Text("Recherche de OSS.."),
+          Center(
+            child: AnimatedLogo(
+              animation: animation,
+            ),
+          ),
+          Text("Recherche de OSS..."),
         ],
       ),
-    )
     );
   }
 
@@ -207,6 +213,11 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   @override
   void initState() {
     startAScan();
+    controller =
+        AnimationController(duration: Duration(seconds: 4), vsync: this);
+    animation = CurvedAnimation(parent: controller, curve: Curves.bounceIn);
+
+    controller.forward();
     // TODO: implement initState
     super.initState();
   }
@@ -217,6 +228,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
       FlutterBlue.instance.stopScan();
       scanSubscription.cancel();
     }
+    controller.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -224,5 +236,32 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   @override
   Widget build(BuildContext context) {
     return _buildBody();
+  }
+}
+
+class AnimatedLogo extends AnimatedWidget {
+  AnimatedLogo({Key key, Animation<double> animation})
+      : super(key: key, listenable: animation);
+  static final _animateRotate = Tween<double>(begin: -1, end: 2);
+  static final _offsetAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(1.5, 0.0),
+    );
+
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return Center(
+      child: Container(
+        height: 200,
+        color: Color(Constants.backGroundBlue),
+        child: SlideTransition(
+          position: _offsetAnimation.animate(animation),
+          child: Transform.rotate(
+            angle: _animateRotate.evaluate(animation),
+            child: Image.asset("assets/oss_logo_blanc.png"),
+            ),
+        ),
+      ),
+    );
   }
 }

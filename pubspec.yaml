@@ -58,13 +58,11 @@ flutter:
    - assets/stats.png
    - assets/batteryLevel.png
    - assets/profile.png
-   - assets/test.png
-   # temporaire
-   - assets/lstech_pedal_only.jpg
-   - assets/lstech_bike_only.jpg
-   - assets/lstech_text_only.jpg
-   - assets/lstech_ls_only.jpg
-   - assets/lstech_tech_only.jpg
+
+   - assets/oss_logo.png
+   - assets/oss_logo_blanc.png
+
+
 
 
   #  - images/a_dot_ham.jpeg
