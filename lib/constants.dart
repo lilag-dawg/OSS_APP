@@ -17,7 +17,7 @@ const int backGroundBlue = 0xFF0D47A1;
 const int defaultPageIndex = 1;
 
 // emulator
-final bool isWorkingOnEmulator = true;
+final bool isWorkingOnEmulator = false;
 const int isSelected = 1;
 const int isNotSelected = 0;
 
