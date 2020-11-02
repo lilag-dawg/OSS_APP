@@ -19,20 +19,23 @@ class FindDevicesScreen extends StatefulWidget {
   _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
 
-class _FindDevicesScreenState extends State<FindDevicesScreen>{
-
+class _FindDevicesScreenState extends State<FindDevicesScreen>
+    with SingleTickerProviderStateMixin {
   List<BluetoothDevice> alreadyConnectedDevices = [];
   List<DeviceConnexionStatus> devicesConnexionStatus = [];
   StreamSubscription<List<ScanResult>> scanSubscription;
   bool isDoneScanning;
 
+  //animation stuff
+  Animation<double> animation;
+  AnimationController controller;
 
   Future<void> performScan() async {
     scanSubscription = FlutterBlue.instance.scanResults.listen((scanResults) {
       for (ScanResult r in scanResults) {
         bool isDeviceAlreadyAdded =
             devicesConnexionStatus.any((d) => d.getDevice == r.device);
-        if (!isDeviceAlreadyAdded) {
+        if (!isDeviceAlreadyAdded && r.device.name.length != 0) { //added r.device.name.length != 0 to only add named device
           devicesConnexionStatus.add(DeviceConnexionStatus(
             device: r.device,
             connexionStatus: DeviceConnexionStatus.disconnected,
@@ -54,7 +57,8 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
         } else {
           int errorFromScanResult = devicesConnexionStatus
               .indexWhere((device) => device.getDevice == d);
-          devicesConnexionStatus[errorFromScanResult].setConnexionStatus = DeviceConnexionStatus.connected;
+          devicesConnexionStatus[errorFromScanResult].setConnexionStatus =
+              DeviceConnexionStatus.connected;
         }
       }
     });
@@ -74,19 +78,27 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   Future<void> _handleOnpressChanged(
       DeviceConnexionStatus c, String currentStatus) async {
     final selectedDevice =
-        devicesConnexionStatus.firstWhere((item) => item == c);    
+        devicesConnexionStatus.firstWhere((item) => item == c);
     if (currentStatus == DeviceConnexionStatus.connected) {
-      await c.device.disconnect().then((_) => currentStatus = DeviceConnexionStatus.disconnected);
+      await c.device
+          .disconnect()
+          .then((_) => currentStatus = DeviceConnexionStatus.disconnected);
       widget.ossManager.remove();
     } else {
-      await c.device.connect().then((value) async => await addOSSDevice(c.device).then((value) async {
-        currentStatus = DeviceConnexionStatus.connected;
-        for(DeviceConnexionStatus dc in devicesConnexionStatus){
-          if(dc.connexionStatus == DeviceConnexionStatus.connected && dc != c){
-            await dc.device.disconnect().then((_) => dc.connexionStatus = DeviceConnexionStatus.disconnected);
-          }
-        }
-      })).timeout(Duration(seconds: 10), onTimeout: (){
+      await c.device
+          .connect()
+          .then((value) async =>
+              await addOSSDevice(c.device).then((value) async {
+                currentStatus = DeviceConnexionStatus.connected;
+                for (DeviceConnexionStatus dc in devicesConnexionStatus) {
+                  if (dc.connexionStatus == DeviceConnexionStatus.connected &&
+                      dc != c) {
+                    await dc.device.disconnect().then((_) => dc
+                        .connexionStatus = DeviceConnexionStatus.disconnected);
+                  }
+                }
+              }))
+          .timeout(Duration(seconds: 10), onTimeout: () {
         currentStatus = DeviceConnexionStatus.disconnected;
         return null; //on pourrait rajouter un snackbar pour montrer à l'utilisateur que le connexion avec l'appareil n'a pas pu être établie
       });
@@ -96,10 +108,10 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
     });
   }
 
-  void __handleTrailingPressed(BuildContext context){
+  void __handleTrailingPressed(BuildContext context) {
     Navigator.of(context).pushNamed(
-       "/settings/manage/pairing",
-      );
+      "/settings/manage/pairing",
+    );
   }
 
   List<Widget> _buildCustomTiles(List<DeviceConnexionStatus> result) {
@@ -113,7 +125,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
               });
               await _handleOnpressChanged(d, currentStatus);
             },
-            onTrailingPress: (BuildContext context){
+            onTrailingPress: (BuildContext context) {
               __handleTrailingPressed(context);
             },
           ),
@@ -127,15 +139,19 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
         initialData: false,
         builder: (c, snapshot) {
           if (snapshot.data) {
-            return RaisedButton(
-              child: Text("Remettre à plus tard"),
-              color: Colors.red,
-              onPressed: () => FlutterBlue.instance.stopScan(),
+            return Container(
+              child: RaisedButton(
+                child: Text("Remettre à plus tard"),
+                color: Colors.red,
+                onPressed: () => FlutterBlue.instance.stopScan(),
+              ),
             );
           } else {
             return RaisedButton(
-                child: Text("Rechercher de OSS"),
+                child: Text("Rechercher un OSS"),
                 onPressed: () {
+                  controller.reset();
+                  controller.forward();
                   setState(() {
                     isDoneScanning = false;
                   });
@@ -148,47 +164,19 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   Widget _buildAnimations() {
     return Container(
       margin: EdgeInsets.only(top: 20),
-      child: Center(
-        child:Column(
+      child: Column(
         children: <Widget>[
-          Text("Recherche de OSS.."),
+          Center(
+            child: AnimatedLogo(
+              animation: animation,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 50),
+            child: Text("Recherche de OSS..."),
+          ),
         ],
       ),
-    )
-    );
-  }
-
-
-  
-  Widget _buildBody(){
-    return Scaffold(
-        backgroundColor: Color(Constants.backGroundBlue),
-        appBar: AppBar(
-          title: Text("Bluetooth Manager"),
-          backgroundColor: Color(Constants.blueButtonColor),
-        ),
-        body: SingleChildScrollView(
-      child: Column(children: <Widget>[
-        (isDoneScanning)
-            ? Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 15),
-                    child: Column(
-                      children: _buildCustomTiles(devicesConnexionStatus),
-                    ),
-                  ),
-                ],
-              )
-            : _buildAnimations(),
-        (Constants.isWorkingOnEmulator)
-            ? RaisedButton(
-                child: Text("Remettre à plus tard"),
-                color: Colors.red,
-                onPressed: () {})
-            : _buildScanningButton(),
-      ]),
-    )
     );
   }
 
@@ -207,6 +195,10 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
   @override
   void initState() {
     startAScan();
+    controller =
+        AnimationController(duration: Duration(seconds: 4), vsync: this);
+    animation = CurvedAnimation(parent: controller, curve: Curves.bounceIn);
+    controller.forward();
     // TODO: implement initState
     super.initState();
   }
@@ -217,12 +209,67 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>{
       FlutterBlue.instance.stopScan();
       scanSubscription.cancel();
     }
+    controller.dispose();
     // TODO: implement dispose
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody();
+    return Scaffold(
+        backgroundColor: Color(Constants.backGroundBlue),
+        appBar: AppBar(
+          title: Text("Bluetooth Manager"),
+          backgroundColor: Color(Constants.blueButtonColor),
+        ),
+        body: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            (isDoneScanning)
+                ? Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 15),
+                        child: Column(
+                          children: _buildCustomTiles(devicesConnexionStatus),
+                        ),
+                      ),
+                    ],
+                  )
+                : _buildAnimations(),
+            (Constants.isWorkingOnEmulator)
+                ? RaisedButton(
+                    child: Text("Remettre à plus tard"),
+                    color: Colors.red,
+                    onPressed: () {})
+                : _buildScanningButton(),
+          ]),
+    ));
+  }
+}
+
+class AnimatedLogo extends AnimatedWidget {
+  AnimatedLogo({Key key, Animation<double> animation})
+      : super(key: key, listenable: animation);
+  static final _animateRotate = Tween<double>(begin: -1, end: 2);
+  static final _offsetAnimation = Tween<Offset>(
+    begin: Offset.zero,
+    end: const Offset(1.5, 0.0),
+  );
+
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return Center(
+      child: Container(
+        height: 200,
+        color: Color(Constants.backGroundBlue),
+        child: SlideTransition(
+          position: _offsetAnimation.animate(animation),
+          child: Transform.rotate(
+            angle: _animateRotate.evaluate(animation),
+            child: Image.asset("assets/oss_logo_blanc.png"),
+          ),
+        ),
+      ),
+    );
   }
 }
