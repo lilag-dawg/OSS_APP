@@ -45,12 +45,7 @@ class BluetoothDeviceManager extends ChangeNotifier {
      for(int c in deviceName.codeUnits){
        stringToListInt.add(c);
      }
-
-     print(stringToListInt);
-
      return stringToListInt;
-
-
   }
 
 
