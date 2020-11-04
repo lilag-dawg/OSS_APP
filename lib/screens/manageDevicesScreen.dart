@@ -11,43 +11,50 @@ class ManageDevicesScreen extends StatefulWidget {
 }
 
 class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
-  List<String> pairedDevices = [];
-  List<String> availableDevices = [];
+
+  List<Device> receivedDevices = [];
 
   String paired = "Paired";
   String notPaired = "notPaired";
 
   List<Widget> _buildPairedDevicesTiles(
-      List<String> result, BluetoothDeviceManager ossManager) {
-    return result.map((d) => _customListTile(d, paired, ossManager)).toList();
+      List<Device> result, BluetoothDeviceManager ossManager) {
+    return result.map((d) => _customListTile(d.name, d.status, ossManager)).toList();
   }
 
   List<Widget> _buildAvailableDevicesTiles(
-      List<String> result, BluetoothDeviceManager ossManager) {
+      List<Device> result, BluetoothDeviceManager ossManager) {
     return result
-        .map((d) => _customListTile(d, notPaired, ossManager))
+        .map((d) => _customListTile(d.name, d.status, ossManager))
         .toList();
   }
 
-  Future<void> _getList(Stream<List<int>> stream, int numberOfsensor) async {
-    int count = 0;
+
+    Future<void> _getList(Stream<List<int>> stream, int numberOfsensor) async {
     String currentName = "";
+    String currentStatus = "";
+    int count  = 0;
     await for (var value in stream) {
       if (value.isNotEmpty) {
-        if (count == numberOfsensor) break;
-        currentName =
-            BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
+        currentName = BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
         if (value[0] & 0x01 == 1) {
-          if (!pairedDevices.contains(currentName)) {
-            pairedDevices.add(currentName);
-            count = count + 1;
-          }
+          currentStatus = paired;
         } else {
-          if (!availableDevices.contains(currentName)) {
-            availableDevices.add(currentName);
-            count = count + 1;
+          currentStatus = notPaired;
+        }
+        if(receivedDevices.where((element) => element.name == currentName && element.status == currentStatus).isNotEmpty){
+          count = count + 1;
+        }
+        else{
+          if(receivedDevices.where((element) => element.name == currentName).isEmpty){
+            receivedDevices.add(Device(currentName, currentStatus));
+          }
+          else{
+            int index = receivedDevices.indexOf(receivedDevices.firstWhere((element) => element.name == currentName));
+            receivedDevices[index] = Device(currentName, currentStatus);
           }
         }
+        if (count == numberOfsensor) break;
       }
     }
   }
@@ -93,16 +100,14 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
 
     await paringRequestCharact.characteristic
         .write(BluetoothDeviceManager.sendPairingRequestCharact(
-            deviceName, status))
-        .then((value) => print(value));
+            deviceName, status));
   }
 
   Future<void> _handlePressTrailing(String deviceName, String status,
       BluetoothDeviceManager ossManager) async {
     await _writeToMCU(deviceName, status, ossManager).then((value) {
       setState(() {
-        pairedDevices.clear();
-        availableDevices.clear();
+        receivedDevices.clear();
       });
     });
   }
@@ -169,11 +174,13 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   }
 
   Widget _buildMainBody(BluetoothDeviceManager ossManager) {
+    List<Device> notPairedDevices = receivedDevices.where((element) => element.status == notPaired).toList();
+    List<Device> pairedDevices = receivedDevices.where((element) => element.status == paired).toList();
     return Container(
       child: Column(
         children: [
           _customBox(ossManager, "Available Devices",
-              _buildAvailableDevicesTiles(availableDevices, ossManager)),
+              _buildAvailableDevicesTiles(notPairedDevices, ossManager)),
           _customBox(ossManager, "Paired Devices",
               _buildPairedDevicesTiles(pairedDevices, ossManager)),
         ],
@@ -207,5 +214,15 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
       ),
       body: SingleChildScrollView(child: _buildBody(ossManager)),
     );
+  }
+}
+
+class Device {
+  String name;
+  String status;
+
+  Device(String name, String status){
+    this.name = name;
+    this.status = status;
   }
 }
