@@ -119,8 +119,13 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
           ? Icon(Icons.bluetooth_connected)
           : Icon(Icons.bluetooth_disabled),
       title: Text(deviceName),
-      subtitle: (status == paired) ? Text('Active') : SizedBox.shrink(),
+      subtitle: (status == paired) ? Text("Active - Tap for informations") : SizedBox.shrink(),
       trailing: _customTrailing(deviceName, status, ossManager),
+      onTap: () async{
+        if(status == paired){
+           await _showPopUp(deviceName);
+        }
+      },
     );
   }
 
@@ -136,6 +141,53 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
           onPressed: () async {
             await _handlePressTrailing(deviceName, status, ossManager);
           }),
+    );
+  }
+
+  Future<void> _showPopUp(String deviceName) async{
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text(deviceName),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("List of supported features"),
+                CheckboxListTile(
+                  title: Text("Power"),
+                  value: true,
+                  onChanged: null),
+                CheckboxListTile(
+                  title: Text("cadence"),
+                  value: true,
+                  onChanged: null),
+                CheckboxListTile(
+                  title: Text("speed"),
+                  value: true,
+                  onChanged: null),
+                CheckboxListTile(
+                  title: Text("battery"),
+                  value: false,
+                  onChanged: null),
+                CheckboxListTile(
+                  title: Text("gear"),
+                  value: false,
+                  onChanged: null),                  
+              ],
+            ),
+          ),
+        actions: <Widget>[
+          RaisedButton(
+            child: Text('OK!'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ], 
+        );
+      }
     );
   }
 
