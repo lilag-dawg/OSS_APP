@@ -1,6 +1,6 @@
 library constants;
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 
 //import 'dart:js';
 
@@ -57,6 +57,7 @@ Column dialogLoadingWidget = Column(
   mainAxisAlignment: MainAxisAlignment.center,
 );
 
+// Screen size Get/Set
 double getAppWidth() {
   return _appWidth;
 }

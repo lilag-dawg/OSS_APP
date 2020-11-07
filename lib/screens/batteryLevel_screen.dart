@@ -4,7 +4,7 @@ import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-import '../constants.dart' as Constants;
+import '../constants.dart' as constants;
 
 import '../widgets/percentIndicator.dart';
 
@@ -13,13 +13,13 @@ class BatteryLevelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ossDevice = Provider.of<BluetoothDeviceManager>(context);
 
-    Constants.setAppWidth(MediaQuery.of(context).size.width);
-    Constants.setAppHeight(MediaQuery.of(context).size.height);
+    constants.setAppWidth(MediaQuery.of(context).size.width);
+    constants.setAppHeight(MediaQuery.of(context).size.height);
 
     return Scaffold(
-        backgroundColor: Color(Constants.backGroundBlue),
+        backgroundColor: Color(constants.backGroundBlue),
         appBar: AppBar(
-            backgroundColor: Color(Constants.blueButtonColor),
+            backgroundColor: Color(constants.blueButtonColor),
             title: Text("Battery Level")),
         body: SingleChildScrollView(
           child: Padding(
@@ -36,7 +36,7 @@ class BatteryLevelScreen extends StatelessWidget {
                     width: 200,
                     height: 50,
                     child: RaisedButton(
-                        color: Color(Constants.blueButtonColor),
+                        color: Color(constants.blueButtonColor),
                         child: Text(
                           "Device management",
                           style: TextStyle(

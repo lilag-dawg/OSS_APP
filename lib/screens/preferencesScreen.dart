@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart' as Constants;
+import '../constants.dart' as constants;
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
 import '../databases/db.dart';
@@ -9,8 +9,6 @@ import '../widgets/userPreferencesModesDialog.dart';
 import '../widgets/groupsetDialog.dart';
 
 class PreferencesScreen extends StatefulWidget {
-  PreferencesScreen();
-
   @override
   PreferencesScreenState createState() => PreferencesScreenState();
 }
@@ -84,7 +82,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     if (preferences == null) {
       preferences = await DatabaseHelper.createDefaultPreferencesRow();
       await DatabaseHelper.createPreferencesMode(
-          Constants.defaultPreferencesModeName, preferences);
+          constants.defaultPreferencesModeName, preferences);
       //TODO : check errors
     }
   }
@@ -124,59 +122,59 @@ class PreferencesScreenState extends State<PreferencesScreen> {
           children: <Widget>[
             SizedBox(height: spaceTopItem),
             BlueButton(preferencesMode.modeName, changePreferencesMode,
-                Icons.playlist_play, 70, Constants.getAppWidth() - 50),
+                Icons.playlist_play, 70, constants.getAppWidth() - 50),
             SizedBox(height: spaceItem1Item2),
             BlueButton('Select Groupset', changeGroupset, Icons.settings, 70,
-                Constants.getAppWidth() - 50),
+                constants.getAppWidth() - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
                 ftpName,
-                (Constants.defaultFtp ~/ 4).toDouble(),
-                Constants.defaultFtp * 4.0,
+                (constants.defaultFtp ~/ 4).toDouble(),
+                constants.defaultFtp * 4.0,
                 1,
                 preferences.ftp,
                 updateSlideBarCombo,
-                Constants.ftpInfo),
+                constants.ftpInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 targetEffortName,
-                (Constants.defaultTargetEffort ~/ 4).toDouble(),
-                Constants.defaultTargetEffort * 4.0,
+                (constants.defaultTargetEffort ~/ 4).toDouble(),
+                constants.defaultTargetEffort * 4.0,
                 1,
                 preferences.targetEffort,
                 updateSlideBarCombo,
-                Constants.targetEffortInfo),
+                constants.targetEffortInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 shiftingResponsivenessName,
-                (Constants.defaultShiftingResponsiveness ~/ 4).toDouble(),
-                Constants.defaultShiftingResponsiveness * 4.0,
+                (constants.defaultShiftingResponsiveness ~/ 4).toDouble(),
+                constants.defaultShiftingResponsiveness * 4.0,
                 1,
                 preferences.shiftingResponsiveness,
                 updateSlideBarCombo,
-                Constants.shiftingResponsivenessInfo),
+                constants.shiftingResponsivenessInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredRpmName,
-                (Constants.defaultDesiredRpm ~/ 4).toDouble(),
-                Constants.defaultDesiredRpm * 4.0,
+                (constants.defaultDesiredRpm ~/ 4).toDouble(),
+                constants.defaultDesiredRpm * 4.0,
                 1,
                 preferences.desiredRpm,
                 updateSlideBarCombo,
-                Constants.desiredRpmInfo),
+                constants.desiredRpmInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredBpmName,
-                (Constants.defaultDesiredBpm ~/ 4).toDouble(),
-                Constants.defaultDesiredBpm * 4.0,
+                (constants.defaultDesiredBpm ~/ 4).toDouble(),
+                constants.defaultDesiredBpm * 4.0,
                 1,
                 preferences.desiredBpm,
                 updateSlideBarCombo,
-                Constants.desiredBpmInfo),
-            SizedBox(height: Constants.getAppHeight() * 0.1),
+                constants.desiredBpmInfo),
+            SizedBox(height: constants.getAppHeight() * 0.1),
             BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
-                Constants.getAppWidth() - 50),
-            SizedBox(height: Constants.getAppHeight() * 0.03),
+                constants.getAppWidth() - 50),
+            SizedBox(height: constants.getAppHeight() * 0.03),
           ],
         ),
       ),
@@ -212,13 +210,13 @@ class PreferencesScreenState extends State<PreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Constants.setAppWidth(MediaQuery.of(context).size.width);
-    Constants.setAppHeight(MediaQuery.of(context).size.height);
+    constants.setAppWidth(MediaQuery.of(context).size.width);
+    constants.setAppHeight(MediaQuery.of(context).size.height);
 
     return Scaffold(
-      backgroundColor: Color(Constants.backGroundBlue),
+      backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
-          backgroundColor: Color(Constants.blueButtonColor),
+          backgroundColor: Color(constants.blueButtonColor),
           title: Text("Preferences page")),
       body: futureBody(),
     );

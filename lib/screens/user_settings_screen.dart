@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../widgets/blueButton.dart';
 import '../widgets/sexDialog.dart';
 import '../widgets/heightWeightDialog.dart';
-import '../constants.dart' as Constants;
+import '../constants.dart' as constants;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -208,14 +208,14 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
       _isProfileInitialized = true;
     }
 
-    Constants.setAppWidth(MediaQuery.of(context).size.width);
-    Constants.setAppHeight(MediaQuery.of(context).size.height);
+    constants.setAppWidth(MediaQuery.of(context).size.width);
+    constants.setAppHeight(MediaQuery.of(context).size.height);
 
     return Scaffold(
-        backgroundColor: Color(Constants.backGroundBlue),
+        backgroundColor: Color(constants.backGroundBlue),
         appBar: AppBar(
           title: Text("User Settings page"),
-          backgroundColor: Color(Constants.blueButtonColor),
+          backgroundColor: Color(constants.blueButtonColor),
         ),
         body: Padding(
           padding: EdgeInsets.all(25.0),
@@ -225,19 +225,19 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 BlueButton(_birthdateStringComplete, _birthdateButtonClicked,
-                    Icons.date_range, 70, Constants.getAppWidth() - 50),
-                SizedBox(height: Constants.getAppHeight() * 0.03),
+                    Icons.date_range, 70, constants.getAppWidth() - 50),
+                SizedBox(height: constants.getAppHeight() * 0.03),
                 BlueButton(_sexStringComplete, _sexButtonClicked,
-                    Icons.date_range, 70, Constants.getAppWidth() - 50),
-                SizedBox(height: Constants.getAppHeight() * 0.03),
+                    Icons.date_range, 70, constants.getAppWidth() - 50),
+                SizedBox(height: constants.getAppHeight() * 0.03),
                 BlueButton(_heightStringComplete, _heightButtonClicked,
-                    Icons.assessment, 70, Constants.getAppWidth() - 50),
-                SizedBox(height: Constants.getAppHeight() * 0.03),
+                    Icons.assessment, 70, constants.getAppWidth() - 50),
+                SizedBox(height: constants.getAppHeight() * 0.03),
                 BlueButton(_weightStringComplete, _weightButtonClicked,
-                    Icons.assessment, 70, Constants.getAppWidth() - 50),
-                SizedBox(height: (70 + Constants.getAppHeight() * 0.06)),
+                    Icons.assessment, 70, constants.getAppWidth() - 50),
+                SizedBox(height: (70 + constants.getAppHeight() * 0.06)),
                 BlueButton('Reset Profile', _resetProfile, Icons.delete, 70,
-                    Constants.getAppWidth() - 50),
+                    constants.getAppWidth() - 50),
               ],
             ),
           ),

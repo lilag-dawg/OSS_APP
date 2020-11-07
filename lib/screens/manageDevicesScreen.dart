@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart' as Constants;
+import '../constants.dart' as constants;
 import '../models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 
@@ -134,19 +134,16 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     );
   }
 
-
   Widget _buildBody(BluetoothDeviceManager ossManager) {
     return FutureBuilder<void>(
       future: _getSensorStringListFromCharact(ossManager),
       builder: (c, snapshot) {
         print(snapshot.connectionState);
-        if(snapshot.connectionState == ConnectionState.done){
-            return _buildMainBody();
-        }
-        else{
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildMainBody();
+        } else {
           return Center(child: CircularProgressIndicator());
         }
-
       },
     );
   }
@@ -156,10 +153,10 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     final ossManager = Provider.of<BluetoothDeviceManager>(context);
 
     return Scaffold(
-      backgroundColor: Color(Constants.backGroundBlue),
+      backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
         title: Text(ossManager.ossDevice.device.name),
-        backgroundColor: Color(Constants.blueButtonColor),
+        backgroundColor: Color(constants.blueButtonColor),
       ),
       body: SingleChildScrollView(child: _buildBody(ossManager)),
     );

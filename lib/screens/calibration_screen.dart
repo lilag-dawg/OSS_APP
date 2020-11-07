@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart' as Constants;
+import '../constants.dart' as constants;
 import '../widgets/stopWatch.dart';
 
 class CalibrationScreen extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(Constants.backGroundBlue),
+      backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
-        backgroundColor: Color(Constants.blueButtonColor),
-        title: Text("Calibration page")
-      ),
-      body: SingleChildScrollView(
-        child: MyStopWatch()
-      ),
+          backgroundColor: Color(constants.blueButtonColor),
+          title: Text("Calibration page")),
+      body: SingleChildScrollView(child: MyStopWatch()),
     );
   }
 }
