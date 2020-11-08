@@ -109,7 +109,7 @@ class NotificationHandler {
   void notificationToggler() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getBool('notSetting')) {
+    if (prefs.getBool('notSetting') ?? false) {
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
               'profileChangeChannel',
