@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 import '../databases/dbHelper.dart';
-import '../databases/userProfileModel.dart';
-import '../databases/db.dart';
 
 class HeightWeightDialog extends StatefulWidget {
   final double initialMeasure;
@@ -201,11 +199,7 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
                   profile.weight = measure;
                   profile.metricWeight = _isMetric;
                 }
-                await DatabaseProvider.updateByPrimaryKey(
-                    UserProfileModel.tableName,
-                    profile,
-                    UserProfileModel.primaryKeyWhereString,
-                    profile.userName);
+                await DatabaseHelper.updateUser(profile, profile.userName);
 
                 Navigator.of(context, rootNavigator: true).pop(measureString);
               },

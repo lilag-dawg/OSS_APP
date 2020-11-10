@@ -9,7 +9,7 @@ class SlideBarCombo extends StatefulWidget {
   final double minValue;
   final double maxValue;
   final double stepSize;
-  final int currentValue;
+  final double currentValue;
   final Function updateSlideBarCombo;
   final String info;
 
@@ -25,15 +25,12 @@ class SlideBarCombo extends StatefulWidget {
 class SlideBarComboState extends State<SlideBarCombo> {
   double spaceTitleSlider = 15;
 
-  void updateSlideBar(int newValue) async {
+  void updateSlideBar(double newValue) async {
     await widget.updateSlideBarCombo(newValue, widget.parameterName);
   }
 
   @override
   Widget build(BuildContext context) {
-    var valueCpy =
-        widget.currentValue != null ? widget.currentValue.toDouble() : 0.0;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -55,8 +52,8 @@ class SlideBarComboState extends State<SlideBarCombo> {
               ),
             ]),
         SizedBox(height: spaceTitleSlider),
-        SlideBar(widget.minValue, widget.maxValue, widget.stepSize, valueCpy,
-            updateSlideBar),
+        SlideBar(widget.minValue, widget.maxValue, widget.stepSize,
+            widget.currentValue, updateSlideBar),
       ],
     );
   }

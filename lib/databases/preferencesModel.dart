@@ -4,7 +4,7 @@ class PreferencesModel extends BaseModel {
   int preferencesId;
   int ftp; // W
   int targetEffort; // %
-  int shiftingResponsiveness; // deltaRPM
+  double shiftingResponsiveness; // deltaRPM
   int desiredRpm;
   int desiredBpm;
   String cranksetName;

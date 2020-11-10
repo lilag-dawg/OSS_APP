@@ -9,25 +9,44 @@ import '../databases/cranksetsModel.dart';
 import '../databases/sprocketsModel.dart';
 
 abstract class DatabaseHelper {
-  static Future<UserProfileModel> getSelectedUserProfile() async {
-    var userRow = await DatabaseProvider.queryByParameters(
-        UserProfileModel.tableName,
-        UserProfileModel.getSelectedString,
-        [Constants.isSelected]);
+  static Future<void> initDatabase() async {
+    await DatabaseProvider.database;
+  }
 
-    if (userRow.length == 0) {
-      return null;
-    } else {
-      return UserProfileModel.fromMap(userRow.first);
+  static Future<List<UserProfileModel>> getUsers() async {
+    List<UserProfileModel> list = [];
+    var users = await DatabaseProvider.query(UserProfileModel.tableName);
+
+    if (users.length != 0) {
+      users.forEach((i) {
+        list.add(UserProfileModel.fromMap(i));
+      });
     }
+
+    return list;
+  }
+
+  static Future<UserProfileModel> getSelectedUserProfile() async {
+    var users = await DatabaseHelper.getUsers();
+
+    if (users.length != 0) {
+      for (int i = 0; i < users.length; i++) {
+        if (users[i].selected == Constants.isSelected) {
+          return users[i];
+        }
+      }
+
+      await DatabaseHelper.selectUser(users.first.userName);
+      return users.first;
+    }
+    return null;
   }
 
   static Future<void> selectUser(String userName) async {
-    var userRows = await DatabaseProvider.query(UserProfileModel.tableName);
+    var users = await DatabaseHelper.getUsers();
 
-    if (userRows.length != 0) {
-      userRows.forEach((i) async {
-        var user = UserProfileModel.fromMap(i);
+    if (users.length != 0) {
+      users.forEach((user) async {
         user.selected = user.userName == userName
             ? Constants.isSelected
             : Constants.isNotSelected;
@@ -37,43 +56,49 @@ abstract class DatabaseHelper {
     }
   }
 
-  static Future<List<String>> getUserNames() async {
-    var userRows = await DatabaseProvider.query(UserProfileModel.tableName);
-    List<String> list = [];
-
-    if (userRows.length != 0) {
-      userRows.forEach((i) {
-        list.add(UserProfileModel.fromMap(i).userName);
-      });
-    }
-
-    return list;
-  }
-
   static Future<void> createUser(String userName) async {
     var userRow =
         UserProfileModel(userName: userName, selected: Constants.isSelected);
     await DatabaseProvider.insert(UserProfileModel.tableName, userRow);
 
     await DatabaseHelper.selectUser(userName);
-    //TODO : check errors
+
+    var preferences = await DatabaseHelper.createDefaultPreferencesRow();
+    await DatabaseHelper.createPreferencesMode(
+        Constants.defaultPreferencesModeName, preferences);
+  }
+
+  static Future<void> deleteUser(String userName) async {
+    await DatabaseProvider.deleteTableDataByParameters(
+        UserProfileModel.tableName,
+        UserProfileModel.primaryKeyWhereString,
+        [userName]);
+
+    var users = await DatabaseHelper.getUsers();
+    if (users.length == 0) {
+      await DatabaseHelper.createUser(Constants.defaultProfileName);
+    }
+  }
+
+  static Future<void> updateUser(
+      UserProfileModel user, String oldUserName) async {
+    await DatabaseProvider.updateByPrimaryKey(UserProfileModel.tableName, user,
+        UserProfileModel.primaryKeyWhereString, oldUserName);
   }
 
   static Future<UserPreferencesModesModel> getSelectedPreferencesMode() async {
-    var profile = await DatabaseHelper.getSelectedUserProfile();
-    var rows = await DatabaseProvider.queryByParameters(
-        UserPreferencesModesModel.tableName,
-        UserPreferencesModesModel.userWhereString,
-        [profile.userName]);
-
-    if (rows.length != 0) {
-      for (int i = 0; i < rows.length; i++) {
-        if (UserPreferencesModesModel.fromMap(rows[i]).selected ==
-            Constants.isSelected) {
-          return UserPreferencesModesModel.fromMap(rows[i]);
+    var modes = await DatabaseHelper.getUserPreferencesModes();
+    if (modes.length != 0) {
+      for (int i = 0; i < modes.length; i++) {
+        if (modes[i].selected == Constants.isSelected) {
+          return modes[i];
         }
       }
+
+      await DatabaseHelper.selectPreferencesMode(modes.first.modeName);
+      return modes.first;
     }
+
     return null;
   }
 
@@ -94,15 +119,9 @@ abstract class DatabaseHelper {
   }
 
   static Future<void> selectPreferencesMode(String modeName) async {
-    var profile = await DatabaseHelper.getSelectedUserProfile();
-    var rows = await DatabaseProvider.queryByParameters(
-        UserPreferencesModesModel.tableName,
-        UserPreferencesModesModel.userWhereString,
-        [profile.userName]);
-
-    if (rows.length != 0) {
-      rows.forEach((i) async {
-        var mode = UserPreferencesModesModel.fromMap(i);
+    var modes = await DatabaseHelper.getUserPreferencesModes();
+    if (modes.length != 0) {
+      modes.forEach((mode) async {
         mode.selected = mode.modeName == modeName
             ? Constants.isSelected
             : Constants.isNotSelected;
@@ -115,20 +134,21 @@ abstract class DatabaseHelper {
     }
   }
 
-  static Future<List<String>> getPreferencesModesNames() async {
+  static Future<List<UserPreferencesModesModel>>
+      getUserPreferencesModes() async {
     var profile = await DatabaseHelper.getSelectedUserProfile();
+    List<UserPreferencesModesModel> list = [];
+    if (profile != null) {
+      var rows = await DatabaseProvider.queryByParameters(
+          UserPreferencesModesModel.tableName,
+          UserPreferencesModesModel.userWhereString,
+          [profile.userName]);
 
-    var rows = await DatabaseProvider.queryByParameters(
-        UserPreferencesModesModel.tableName,
-        UserPreferencesModesModel.userWhereString,
-        [profile.userName]);
-
-    List<String> list = [];
-
-    if (rows.length != 0) {
-      rows.forEach((i) {
-        list.add(UserPreferencesModesModel.fromMap(i).modeName);
-      });
+      if (rows.length != 0) {
+        rows.forEach((i) {
+          list.add(UserPreferencesModesModel.fromMap(i));
+        });
+      }
     }
     return list;
   }
@@ -158,21 +178,52 @@ abstract class DatabaseHelper {
     return null;
   }
 
-  static Future<UserPreferencesModesModel> createPreferencesMode(
+  static Future<void> updatePreferences(PreferencesModel preferences) async {
+    await DatabaseProvider.updateByPrimaryKey(
+        PreferencesModel.tableName,
+        preferences,
+        PreferencesModel.primaryKeyWhereString,
+        preferences.preferencesId);
+  }
+
+  static Future<void> createPreferencesMode(
       String modeName, PreferencesModel preferences) async {
     var profile = await DatabaseHelper.getSelectedUserProfile();
-    var modeRow = UserPreferencesModesModel(
-        userName: profile.userName,
-        preferencesId: preferences.preferencesId,
-        selected: Constants.isSelected,
-        modeName: modeName);
-    await DatabaseProvider.insert(UserPreferencesModesModel.tableName, modeRow);
+    if (profile != null) {
+      var modeRow = UserPreferencesModesModel(
+          userName: profile.userName,
+          preferencesId: preferences.preferencesId,
+          selected: Constants.isSelected,
+          modeName: modeName);
+      await DatabaseProvider.insert(
+          UserPreferencesModesModel.tableName, modeRow);
 
-    await DatabaseHelper.selectPreferencesMode(modeName);
+      await DatabaseHelper.selectPreferencesMode(modeName);
+    }
+  }
 
-    return modeRow;
+  static Future<void> updatePreferencesMode(
+      UserPreferencesModesModel mode) async {
+    await DatabaseProvider.updateByPrimaryKey(
+        UserPreferencesModesModel.tableName,
+        mode,
+        UserPreferencesModesModel.preferencesWhereString,
+        mode.preferencesId);
+  }
 
-    //TODO : check errors
+  static Future<void> deletePreferencesMode(int preferencesId) async {
+    await DatabaseProvider.deleteTableDataByParameters(
+        UserPreferencesModesModel.tableName,
+        UserPreferencesModesModel.preferencesWhereString,
+        [preferencesId]);
+
+    var list = await DatabaseHelper.getUserPreferencesModes();
+
+    if (list.length == 0) {
+      var preferences = await DatabaseHelper.createDefaultPreferencesRow();
+      await DatabaseHelper.createPreferencesMode(
+          Constants.defaultPreferencesModeName, preferences);
+    }
   }
 
   static Future<void> updateCranksets() async {
@@ -198,8 +249,6 @@ abstract class DatabaseHelper {
             [j]);
       }
     });
-
-    //TODO : check errors
   }
 
   static Future<void> updateSprockets() async {
@@ -235,8 +284,6 @@ abstract class DatabaseHelper {
             [j]);
       }
     });
-
-    //TODO : check errors
   }
 
   static Future<List<String>> getCranksets() async {

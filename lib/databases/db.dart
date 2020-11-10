@@ -10,7 +10,7 @@ class DatabaseProvider {
   static Database _database;
 
   static int get _version => 1; //onCreate
-  static final String databaseName = 'ossDatabase_test17.db';
+  static final String databaseName = 'ossDatabase_test27.db';
 
   static Future<Database> get database async {
     if (_database != null) return _database;
@@ -58,7 +58,7 @@ class DatabaseProvider {
       preferencesId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
       ftp INTEGER NOT NULL, 
       targetEffort INTEGER NOT NULL, 
-      shiftingResponsiveness INTEGER NOT NULL, 
+      shiftingResponsiveness REAL NOT NULL, 
       desiredRpm INTEGER NOT NULL, 
       desiredBpm INTEGER NOT NULL,
       cranksetName TEXT,
@@ -70,11 +70,11 @@ class DatabaseProvider {
 
     await db.execute('''
     CREATE TABLE userPreferencesModes (
-      userName TEXT NOT NULL UNIQUE,
+      userName TEXT NOT NULL,
       preferencesId INTEGER NOT NULL UNIQUE, 
       selected INTEGER NOT NULL,
       modeName TEXT NOT NULL,
-      FOREIGN KEY(userName) REFERENCES userProfile(userName) ON DELETE CASCADE,
+      FOREIGN KEY(userName) REFERENCES userProfile(userName) ON DELETE CASCADE ON UPDATE CASCADE,
       FOREIGN KEY(preferencesId) REFERENCES preferences(preferencesId) ON DELETE CASCADE
     );
     ''');
@@ -114,7 +114,7 @@ class DatabaseProvider {
   static Future<void> insert(String tableName, BaseModel tableRow) async =>
       await _database.insert(tableName, tableRow.toMap());
 
-  static Future<int> deleteTableData(String tableName) async =>
+  static Future<int> deleteTable(String tableName) async =>
       await _database.delete(tableName);
 
   static Future<int> deleteTableDataByParameters(String tableName,

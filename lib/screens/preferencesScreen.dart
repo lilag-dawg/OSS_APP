@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 import '../widgets/slideBarCombo.dart';
 import '../databases/preferencesModel.dart';
-import '../databases/db.dart';
 import '../widgets/blueButton.dart';
 import '../databases/dbHelper.dart';
 import '../widgets/userPreferencesModesDialog.dart';
@@ -25,36 +24,32 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   static const desiredRpmName = 'Desired RPM';
   static const desiredBpmName = 'Desired BPM';
 
-  void updateSlideBarCombo(int newParameterValue, String parameterName) async {
+  void updateSlideBarCombo(
+      double newParameterValue, String parameterName) async {
     switch (parameterName) {
       case ftpName:
         {
-          preferences.ftp = newParameterValue;
-          await saveProfile();
+          preferences.ftp = newParameterValue.toInt();
         }
         break;
       case targetEffortName:
         {
-          preferences.targetEffort = newParameterValue;
-          await saveProfile();
+          preferences.targetEffort = newParameterValue.toInt();
         }
         break;
       case shiftingResponsivenessName:
         {
           preferences.shiftingResponsiveness = newParameterValue;
-          await saveProfile();
         }
         break;
       case desiredRpmName:
         {
-          preferences.desiredRpm = newParameterValue;
-          await saveProfile();
+          preferences.desiredRpm = newParameterValue.toInt();
         }
         break;
       case desiredBpmName:
         {
-          preferences.desiredBpm = newParameterValue;
-          await saveProfile();
+          preferences.desiredBpm = newParameterValue.toInt();
         }
         break;
 
@@ -62,14 +57,11 @@ class PreferencesScreenState extends State<PreferencesScreen> {
         {}
         break;
     }
+    setState(() {});
   }
 
   Future<void> saveProfile() async {
-    await DatabaseProvider.updateByPrimaryKey(
-        PreferencesModel.tableName,
-        preferences,
-        PreferencesModel.primaryKeyWhereString,
-        preferences.preferencesId);
+    await DatabaseHelper.updatePreferences(preferences);
     setState(() {});
   }
 
@@ -77,16 +69,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     preferences =
         DatabaseHelper.getDefaultPreferencesRow(preferences.preferencesId);
     await saveProfile();
-  }
-
-  Future<void> setPreferences() async {
-    preferences = await DatabaseHelper.getCurrentPreferences();
-    if (preferences == null) {
-      preferences = await DatabaseHelper.createDefaultPreferencesRow();
-      await DatabaseHelper.createPreferencesMode(
-          Constants.defaultPreferencesModeName, preferences);
-      //TODO : check errors
-    }
   }
 
   Future<void> changePreferencesMode() async {
@@ -110,7 +92,10 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> buildLayout() async {
-    await setPreferences();
+    if (preferences == null) {
+      preferences = await DatabaseHelper.getCurrentPreferences();
+    }
+
     var preferencesMode = await DatabaseHelper.getSelectedPreferencesMode();
 
     double spaceTopItem = 30;
@@ -128,49 +113,52 @@ class PreferencesScreenState extends State<PreferencesScreen> {
             SizedBox(height: spaceItem1Item2),
             BlueButton('Select Groupset', changeGroupset, Icons.settings, 70,
                 Constants.getAppWidth() - 50),
+            SizedBox(height: spaceItem1Item2),
+            BlueButton('Save Preferences', saveProfile, Icons.save, 70,
+                Constants.getAppWidth() - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
                 ftpName,
-                (Constants.defaultFtp ~/ 4).toDouble(),
-                Constants.defaultFtp * 4.0,
-                1,
-                preferences.ftp,
+                Constants.minFtp.toDouble(),
+                Constants.maxFtp.toDouble(),
+                10,
+                preferences.ftp.toDouble(),
                 updateSlideBarCombo,
                 Constants.ftpInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 targetEffortName,
-                (Constants.defaultTargetEffort ~/ 4).toDouble(),
-                Constants.defaultTargetEffort * 4.0,
-                1,
-                preferences.targetEffort,
+                Constants.minTargetEffort.toDouble(),
+                Constants.maxTargetEffort.toDouble(),
+                10,
+                preferences.targetEffort.toDouble(),
                 updateSlideBarCombo,
                 Constants.targetEffortInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 shiftingResponsivenessName,
-                (Constants.defaultShiftingResponsiveness ~/ 4).toDouble(),
-                Constants.defaultShiftingResponsiveness * 4.0,
-                1,
+                Constants.minShiftingResponsiveness.toDouble(),
+                Constants.maxShiftingResponsiveness.toDouble(),
+                0.1,
                 preferences.shiftingResponsiveness,
                 updateSlideBarCombo,
                 Constants.shiftingResponsivenessInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredRpmName,
-                (Constants.defaultDesiredRpm ~/ 4).toDouble(),
-                Constants.defaultDesiredRpm * 4.0,
+                Constants.minDesiredRpm.toDouble(),
+                Constants.maxDesiredRpm.toDouble(),
                 1,
-                preferences.desiredRpm,
+                preferences.desiredRpm.toDouble(),
                 updateSlideBarCombo,
                 Constants.desiredRpmInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 desiredBpmName,
-                (Constants.defaultDesiredBpm ~/ 4).toDouble(),
-                Constants.defaultDesiredBpm * 4.0,
+                Constants.minDesiredBpm.toDouble(),
+                Constants.maxDesiredBpm.toDouble(),
                 1,
-                preferences.desiredBpm,
+                preferences.desiredBpm.toDouble(),
                 updateSlideBarCombo,
                 Constants.desiredBpmInfo),
             SizedBox(height: Constants.getAppHeight() * 0.1),
@@ -202,7 +190,12 @@ class PreferencesScreenState extends State<PreferencesScreen> {
             break;
 
           case ConnectionState.done:
-            return preferencesList;
+            if (preferencesList != null) {
+              return preferencesList;
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+            break;
           default:
             return Center(child: CircularProgressIndicator());
         }

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:oss_app/databases/db.dart';
 
 import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../widgets/profileDialog.dart';
 import '../databases/dbHelper.dart';
 
 import '../models/bluetoothDeviceManager.dart';
@@ -53,19 +51,14 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> buildLayout(BuildContext context) async {
-    await DatabaseProvider.database;
+    await DatabaseHelper.initDatabase();
     await DatabaseHelper.updateCranksets();
     await DatabaseHelper.updateSprockets();
 
     var user = await DatabaseHelper.getSelectedUserProfile();
 
     if (user == null) {
-      await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return ProfileDialog();
-          });
+      await DatabaseHelper.createUser(Constants.defaultProfileName);
     }
   }
 
