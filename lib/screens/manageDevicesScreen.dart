@@ -30,7 +30,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   }
 
 
-    Future<void> _getList(Stream<List<int>> stream, int numberOfsensor) async {
+  Future<void> _getSensorNamesList(Stream<List<int>> stream, int numberOfsensor) async {
     String currentName = "";
     String currentStatus = "";
     int count  = 0;
@@ -59,6 +59,53 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     }
   }
 
+  Future<SupportedDataType> _getSensorDataTypes(Stream<List<int>> stream, String deviceName) async {
+    String currentName = "";
+    SupportedDataType supportedDataType = SupportedDataType(false,false,false,false,false);
+    await for (var value in stream){
+      currentName = BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
+      if(currentName == deviceName){
+        if(value[0] & 0x1 == 1){
+          supportedDataType.gear = true;
+        }
+        else{
+          supportedDataType.gear = false;
+        }
+
+        if(value[0] & 0x2 == 2){
+          supportedDataType.battery = true;
+        }
+        else{
+          supportedDataType.battery = false;
+        }
+
+        if(value[0] & 0x4 == 4){
+          supportedDataType.power = true;
+        }
+        else{
+          supportedDataType.power = false;
+        }
+
+        if(value[0] & 0x8 == 8){
+          supportedDataType.speed = true;
+        }
+        else{
+          supportedDataType.speed = false;
+        }
+
+        if(value[0] & 0x10 == 16){
+          supportedDataType.cadence = true;
+        }
+        else{
+          supportedDataType.cadence = false;
+        }
+        break;
+      }
+    }
+    return supportedDataType;
+
+  }
+
   Future<int> _getNumberOfSensorCharact(
       BluetoothDeviceManager ossManager) async {
     BluetoothDeviceCharacteristic nombreCapteursCharact = ossManager.ossDevice
@@ -85,11 +132,24 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
       await _getNumberOfSensorCharact(ossManager)
           .then((value) => numberOfsensor = value);
       await listCapteursCharact.characteristic.setNotifyValue(true);
-      await _getList(listCapteursCharact.characteristic.value, numberOfsensor)
+      await _getSensorNamesList(listCapteursCharact.characteristic.value, numberOfsensor)
           .then((value) async {
         await listCapteursCharact.characteristic.setNotifyValue(false);
       });
     }
+  }
+
+  Future<Device> _getSensorDataTypeFromCharact(BluetoothDeviceManager ossManager, String deviceName) async{
+    BluetoothDeviceCharacteristic sensorSupportedData = ossManager.ossDevice.getService(BluetoothDeviceManager.connectionHandlingService).getCharacteristic(BluetoothDeviceManager.sensorDataType);
+    await sensorSupportedData.characteristic.setNotifyValue(true);
+    await _getSensorDataTypes(sensorSupportedData.characteristic.value, deviceName).then((value) async{
+      await sensorSupportedData.characteristic.setNotifyValue(false);
+      //maybe need to add a setstate
+      receivedDevices.firstWhere((element) => element.name == deviceName).setSupportedDataType(value);
+    });
+
+    return receivedDevices.firstWhere((element) => element.name == deviceName);
+
   }
 
   Future<void> _writeToMCU(String deviceName, String status,
@@ -123,7 +183,9 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
       trailing: _customTrailing(deviceName, status, ossManager),
       onTap: () async{
         if(status == paired){
-           await _showPopUp(deviceName);
+           await _getSensorDataTypeFromCharact(ossManager,deviceName).then((value) async {
+             await _showPopUp(value);
+           });
         }
       },
     );
@@ -144,36 +206,36 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     );
   }
 
-  Future<void> _showPopUp(String deviceName) async{
+  Future<void> _showPopUp(Device device) async{
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context){
         return AlertDialog(
-          title: Text(deviceName),
+          title: Text(device.name),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text("List of supported features"),
                 CheckboxListTile(
                   title: Text("Power"),
-                  value: true,
+                  value: device.supportedDataType.power,
                   onChanged: null),
                 CheckboxListTile(
                   title: Text("cadence"),
-                  value: true,
+                  value: device.supportedDataType.cadence,
                   onChanged: null),
                 CheckboxListTile(
                   title: Text("speed"),
-                  value: true,
+                  value: device.supportedDataType.speed,
                   onChanged: null),
                 CheckboxListTile(
                   title: Text("battery"),
-                  value: false,
+                  value: device.supportedDataType.battery,
                   onChanged: null),
                 CheckboxListTile(
                   title: Text("gear"),
-                  value: false,
+                  value: device.supportedDataType.gear,
                   onChanged: null),                  
               ],
             ),
@@ -272,9 +334,34 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
 class Device {
   String name;
   String status;
+  SupportedDataType supportedDataType;
 
   Device(String name, String status){
     this.name = name;
     this.status = status;
+  }
+
+  get deviceDataType{
+    return supportedDataType;
+  }
+
+  void setSupportedDataType(SupportedDataType supportedDataType){
+    this.supportedDataType = supportedDataType;
+  }
+}
+
+class SupportedDataType{
+  bool cadence;
+  bool speed;
+  bool battery;
+  bool power;
+  bool gear;
+
+  SupportedDataType(bool cadence, bool speed, bool battery, bool power, bool gear){
+    this.cadence = cadence;
+    this.speed = speed;
+    this.battery = battery;
+    this.power = power;
+    this.gear = gear;
   }
 }
