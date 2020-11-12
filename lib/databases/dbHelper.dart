@@ -157,7 +157,6 @@ abstract class DatabaseHelper {
     return new PreferencesModel(
         preferencesId: preferencesId,
         ftp: Constants.defaultFtp,
-        targetEffort: Constants.defaultTargetEffort,
         shiftingResponsiveness: Constants.defaultShiftingResponsiveness,
         desiredRpm: Constants.defaultDesiredRpm,
         desiredBpm: Constants.defaultDesiredBpm,

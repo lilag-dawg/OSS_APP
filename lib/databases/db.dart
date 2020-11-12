@@ -57,7 +57,6 @@ class DatabaseProvider {
     CREATE TABLE preferences (
       preferencesId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
       ftp INTEGER NOT NULL, 
-      targetEffort INTEGER NOT NULL, 
       shiftingResponsiveness REAL NOT NULL, 
       desiredRpm INTEGER NOT NULL, 
       desiredBpm INTEGER NOT NULL,

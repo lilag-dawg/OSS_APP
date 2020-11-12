@@ -19,7 +19,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   Container preferencesList;
 
   static const ftpName = 'Functional Threshold Power';
-  static const targetEffortName = 'Target Average Power';
   static const shiftingResponsivenessName = 'Shifting Responsiveness';
   static const desiredRpmName = 'Desired RPM';
   static const desiredBpmName = 'Desired BPM';
@@ -32,10 +31,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
           preferences.ftp = newParameterValue.toInt();
         }
         break;
-      case targetEffortName:
-        {
-          preferences.targetEffort = newParameterValue.toInt();
-        }
         break;
       case shiftingResponsivenessName:
         {
@@ -125,15 +120,6 @@ class PreferencesScreenState extends State<PreferencesScreen> {
                 preferences.ftp.toDouble(),
                 updateSlideBarCombo,
                 Constants.ftpInfo),
-            SizedBox(height: spaceItem1Item2),
-            SlideBarCombo(
-                targetEffortName,
-                Constants.minTargetEffort.toDouble(),
-                Constants.maxTargetEffort.toDouble(),
-                10,
-                preferences.targetEffort.toDouble(),
-                updateSlideBarCombo,
-                Constants.targetEffortInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
                 shiftingResponsivenessName,
