@@ -57,6 +57,11 @@ class PreferencesScreenState extends State<PreferencesScreen> {
 
   Future<void> saveProfile() async {
     await DatabaseHelper.updatePreferences(preferences);
+    var crankset = await DatabaseHelper.getSelectedCrankset();
+    var sprocket = await DatabaseHelper.getSelectedSprocket();
+    // TODO : Alexis
+    //send data from preferences and gear numbers from sprocket and crankset
+
     setState(() {});
   }
 
@@ -77,12 +82,15 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> changeGroupset() async {
+    saveProfile();
     await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return GroupsetDialog();
         });
+
+    preferences = await DatabaseHelper.getCurrentPreferences();
     setState(() {});
   }
 

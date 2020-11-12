@@ -299,6 +299,21 @@ abstract class DatabaseHelper {
     return list;
   }
 
+  static Future<CranksetsModel> getSelectedCrankset() async {
+    var preferences = await DatabaseHelper.getCurrentPreferences();
+
+    if (preferences != null) {
+      var crankset = await DatabaseProvider.queryByParameters(
+          CranksetsModel.tableName,
+          CranksetsModel.primaryKeyWhereString,
+          [preferences.cranksetName]);
+      if (crankset.length != 0) {
+        return CranksetsModel.fromMap(crankset.first);
+      }
+    }
+    return null;
+  }
+
   static Future<List<String>> getSprockets() async {
     var rows = await DatabaseProvider.query(SprocketsModel.tableName);
 
@@ -311,5 +326,20 @@ abstract class DatabaseHelper {
     }
     list.sort((a, b) => a.toString().compareTo(b.toString()));
     return list;
+  }
+
+  static Future<SprocketsModel> getSelectedSprocket() async {
+    var preferences = await DatabaseHelper.getCurrentPreferences();
+
+    if (preferences != null) {
+      var sprocket = await DatabaseProvider.queryByParameters(
+          SprocketsModel.tableName,
+          SprocketsModel.primaryKeyWhereString,
+          [preferences.sprocketName]);
+      if (sprocket.length != 0) {
+        return SprocketsModel.fromMap(sprocket.first);
+      }
+    }
+    return null;
   }
 }
