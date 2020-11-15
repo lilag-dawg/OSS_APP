@@ -16,6 +16,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
 
   String paired = "Paired";
   String notPaired = "notPaired";
+  String connecting = "connecting";
 
   List<Widget> _buildPairedDevicesTiles(
       List<Device> result, BluetoothDeviceManager ossManager) {
@@ -37,12 +38,24 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     await for (var value in stream) {
       if (value.isNotEmpty) {
         currentName = BluetoothDeviceManager.convertRawToStringListCapteursCharact(value);
-        if (value[0] & 0x01 == 1) {
-          currentStatus = paired;
-        } else {
-          currentStatus = notPaired;
+        switch(value[0] & 0x3){
+          case 0: //disconnect
+            currentStatus = notPaired;
+            break;
+          case 1: //connect
+            currentStatus = paired;
+            break;
+          case 2: //todo disconnecting
+            break;
+          case 3: //connecting
+            currentStatus = connecting;
+            break;
+          default:
+            break;
+
         }
-        if(receivedDevices.where((element) => element.name == currentName && element.status == currentStatus).isNotEmpty){
+
+        if(receivedDevices.where((element) => element.name == currentName && element.status == currentStatus).isNotEmpty && receivedDevices.where((element) => element.status == connecting).isEmpty){
           count = count + 1;
         }
         else{
@@ -131,6 +144,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
     if (listCapteursCharact != null) {
       await _getNumberOfSensorCharact(ossManager)
           .then((value) => numberOfsensor = value);
+          print(numberOfsensor);
       await listCapteursCharact.characteristic.setNotifyValue(true);
       await _getSensorNamesList(listCapteursCharact.characteristic.value, numberOfsensor)
           .then((value) async {
