@@ -9,6 +9,7 @@ import '../databases/userProfileModel.dart';
 import '../databases/db.dart';
 import '../databases/dbHelper.dart';
 import '../widgets/profileDialog.dart';
+import '../generated/l10n.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen();
@@ -146,18 +147,23 @@ class ProfileScreenState extends State<ProfileScreen> {
               constants.getAppWidth() - 50),
           SizedBox(height: constants.getAppHeight() * 0.09),
           BlueButton(
-              _generateString("Birthday", profile.birthday),
+              _generateString(
+                  S.of(context).profileScreenBirthday, profile.birthday),
               _birthdateButtonClicked,
               Icons.date_range,
               70,
               constants.getAppWidth() - 50),
           SizedBox(height: constants.getAppHeight() * 0.03),
-          BlueButton(_generateString("Sex", profile.sex), _sexButtonClicked,
-              Icons.pregnant_woman, 70, constants.getAppWidth() - 50),
+          BlueButton(
+              _generateString(S.of(context).profileScreenSex, profile.sex),
+              _sexButtonClicked,
+              Icons.pregnant_woman,
+              70,
+              constants.getAppWidth() - 50),
           SizedBox(height: constants.getAppHeight() * 0.03),
           BlueButton(
               _generateString(
-                  "Height",
+                  S.of(context).profileScreenHeight,
                   profile.height == null
                       ? null
                       : HeightWeightDialogState.heightConversion(
@@ -169,7 +175,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: constants.getAppHeight() * 0.03),
           BlueButton(
               _generateString(
-                  "Weight",
+                  S.of(context).profileScreenWeight,
                   profile.weight == null
                       ? null
                       : HeightWeightDialogState.weightConversion(
@@ -179,8 +185,8 @@ class ProfileScreenState extends State<ProfileScreen> {
               70,
               constants.getAppWidth() - 50),
           SizedBox(height: constants.getAppHeight() * 0.09),
-          BlueButton('Reset Profile', resetProfile, Icons.delete, 70,
-              constants.getAppWidth() - 50),
+          BlueButton(S.of(context).profileScreenResetProfile, resetProfile,
+              Icons.delete, 70, constants.getAppWidth() - 50),
         ],
       ),
     );
@@ -213,7 +219,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
-        title: Text("User Settings page"),
+        title: Text(S.of(context).profileScreenAppBarTitle),
         backgroundColor: Color(constants.blueButtonColor),
       ),
       body: SingleChildScrollView(child: futureBody()),

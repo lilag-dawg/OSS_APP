@@ -1,19 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-
 import '../constants.dart' as Constants;
+import '../generated/l10n.dart';
 
 class MyStopWatch extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return StopWatchState();
   }
 }
 
-class StopWatchState extends State<MyStopWatch>{
-  String bigButtonText = 'Start';
+class StopWatchState extends State<MyStopWatch> {
+  String bigButtonText = S.current.stopwatchStart;
   IconData _iconPlayPause = Icons.play_arrow;
   bool isStartPressed = true;
   bool isStopPressed = true;
@@ -22,23 +21,25 @@ class StopWatchState extends State<MyStopWatch>{
   var _stopWatch = Stopwatch();
   final _dur = const Duration(milliseconds: 1);
 
-  void startTimer(){
+  void startTimer() {
     Timer(_dur, keepRunning);
   }
 
-  void keepRunning(){
-    if (_stopWatch.isRunning){
+  void keepRunning() {
+    if (_stopWatch.isRunning) {
       startTimer();
     }
     setState(() {
-      bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') + ' : '
-                      + (_stopWatch.elapsed.inMinutes%60).toString().padLeft(2, '0') + ' : '
-                      + (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2, '0');
+      bigButtonText = _stopWatch.elapsed.inHours.toString().padLeft(2, '0') +
+          ' : ' +
+          (_stopWatch.elapsed.inMinutes % 60).toString().padLeft(2, '0') +
+          ' : ' +
+          (_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, '0');
     });
   }
 
-  void startStopWatch(){
-    if (isStopPressed == true){
+  void startStopWatch() {
+    if (isStopPressed == true) {
       setState(() {
         isStartShown = false;
         isStopPressed = false;
@@ -47,22 +48,21 @@ class StopWatchState extends State<MyStopWatch>{
       });
       _stopWatch.start();
       startTimer();
-    }
-    else if (isStopPressed == false){
+    } else if (isStopPressed == false) {
       setState(() {
         isStartShown = false;
         isStopPressed = true;
         isResetPressed = false;
         _iconPlayPause = Icons.play_arrow;
       });
-    _stopWatch.stop();
+      _stopWatch.stop();
     }
   }
 
-  void resetStopWatch(){
+  void resetStopWatch() {
     setState(() {
       isStartShown = true;
-      bigButtonText = 'Start';
+      bigButtonText = S.current.stopwatchStart;
       isStartPressed = true;
       isResetPressed = true;
     });
@@ -72,104 +72,76 @@ class StopWatchState extends State<MyStopWatch>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 50
-            ),
-            SizedBox(
-              width: 350,
-              height: 350,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(350/2),
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 3
-                  )
-                ),
-                color: Color(Constants.backGroundBlue),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      bigButtonText,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40
-                      ),
-                    ),
-                    Visibility(
-                      visible: isStartShown? false:true,
-                      child: Text(
-                        'Hrs      Min     Sec',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                onPressed: isStartPressed? startStopWatch : null,
-              ),
-            ),
-            SizedBox(
-              height: 40
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Center(
+      child: Column(children: <Widget>[
+        SizedBox(height: 50),
+        SizedBox(
+          width: 350,
+          height: 350,
+          child: RaisedButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(350 / 2),
+                side: BorderSide(color: Colors.black, width: 3)),
+            color: Color(Constants.backGroundBlue),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(350/2),
-                    side: BorderSide(
-                      color: Colors.black,
-                      width: 1
-                    )
-                  ),
-                  child: SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: Icon(
-                      _iconPlayPause,
-                      size: 50,
-                    ),
-                  ),
-                  color: Colors.purple[900],
-                  onPressed: isStartPressed? startStopWatch : null,
+                Text(
+                  bigButtonText,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(350/2),
-                    side: BorderSide(
-                      color: Colors.black,
-                      width: 1
-                    )
+                Visibility(
+                  visible: isStartShown ? false : true,
+                  child: Text(
+                    'Hrs      Min     Sec',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   ),
-                  child: SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: Center(
-                      child: Text(
-                        'Reset',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22
-                        ),
-                      ),
-                    )
-                  ),
-                  color: Colors.purple[900],
-                  onPressed: isResetPressed? null : resetStopWatch,
-                )
+                ),
               ],
-            )
-          ] 
+            ),
+            onPressed: isStartPressed ? startStopWatch : null,
+          ),
         ),
-      )
-    );
+        SizedBox(height: 40),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(350 / 2),
+                  side: BorderSide(color: Colors.black, width: 1)),
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: Icon(
+                  _iconPlayPause,
+                  size: 50,
+                ),
+              ),
+              color: Colors.purple[900],
+              onPressed: isStartPressed ? startStopWatch : null,
+            ),
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(350 / 2),
+                  side: BorderSide(color: Colors.black, width: 1)),
+              child: SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Center(
+                    child: Text(
+                      S.of(context).stopwatchReset,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    ),
+                  )),
+              color: Colors.purple[900],
+              onPressed: isResetPressed ? null : resetStopWatch,
+            )
+          ],
+        )
+      ]),
+    ));
   }
 }

@@ -1,0 +1,101 @@
+{
+    "@@locale": "en_CA",
+    
+    "homeScreenAppBarTitle":                "Home Page",
+    "homeScreenCalibration":                "Calibration",
+    "homeScreenStatistics":                 "Statistics",
+    "homeScreenPreferences":                "Preferences",
+    "homeScreenSettings":                   "Settings",
+    "homeScreenBatteryLevel":               "Battery",
+    "homeScreenProfile":                    "Profile",
+
+    "calibrationScreenAppBarTitle":         "Calibration Page",
+
+    "stopwatchStart":                       "Start",
+    "stopwatchStop":                        "Stop",
+    "stopwatchReset":                       "Reset",
+
+    "statisticsScreenAppBarTitle":          "Statistics Page",
+    "statisticsNoDeviceConnected":          "No device connected",
+    "statisticsManageDevices":              "Manage devices",
+
+    "preferenceModeDialogNewMode":          "New mode...",
+    "preferenceModeDialogEnterMode":        "No modes entered",
+    "preferenceModeDialogAlreadyExists":    "Mode already exists",
+    "preferenceModeDialogNoModeSelected":   "No mode selected",
+
+    "preferencesScreenAppBarTitle":         "Preferences Page",
+    "preferencesScreenSelectGroupset":      "Select groupset",
+    "preferencesScreenThresholdPower":      "Functional Threshold Power",
+    "preferencesScreenThresholdPowerInfo":  "Maximum average power for an hour-long session",
+    "preferencesScreenAveragePower":        "Target Average Power",
+    "preferencesScreenAveragePowerInfo":    "Target average power for an hour-long session",
+    "preferencesScreenResponsiveness":      "Shifting Responsiveness",
+    "preferencesScreenResponsivenessInfo":  "Defines the delta of rotations per minute (versus the desired cadence) necessary to trigger a shift",
+    "preferencesScreenDesiredRPM":          "Desired RPM",
+    "preferencesScreenDesiredRPMInfo":      "Desired average rotations per minute (cadence) for the bicycle crankset",
+    "preferencesScreenDesiredBPM":          "Desired BPM",
+    "preferencesScreenDesiredBPMInfo":      "Desired average heartbeats per minute",
+    "preferencesScreenResetProfile":        "Reset preferences",
+
+    "infoDialogClose":                      "Close",
+
+    "settingsScreenAppBarTitle":            "Settings Page",
+    "settingsScreenShare":                  "Share",
+    "settingsScreenFacebook":               "Facebook",
+    "settingsScreenLogout":                 "Log Out",
+    "settingsScreenNotifications":          "Notifications",
+    "settingsScreenDeviceManagement":       "Device Management",
+
+    "findDeviceScreenAppBarTitle":          "Manage Devices Page",
+    "findDeviceScreenLookingFor":           "Search for OSS",
+    "findDeviceScreenCurrentlyLooking":     "Search in progress...",
+    "findDeviceScreenSearchLater":          "Search later",
+
+    "batteryScreenAppBarTitle":             "Battery Page",
+    "batteryScreenDeviceManagement":        "Manage Devices",
+    "batteryScreenConnected":               "CONNECTED",
+    "batteryScreenDisconnected":            "DISCONNECTED",
+    "batteryScreenDeviceUnavailable":       "Device unavailable",
+
+    "profileScreenAppBarTitle":             "Profile Page",
+    "profileScreenBirthday":                "Birthday",
+    "profileScreenSex":                     "Sex",
+    "profileScreenHeight":                  "Height",
+    "profileScreenWeight":                  "Weight",
+    "profileScreenResetProfile":            "Reset profile",
+
+    "dialogSubmit":                         "Submit",
+    "dialogSave":                           "Save",
+
+    "profileDialogNewUser":                 "New user...",
+    "profileDialogUserAlreadyExists":       "User already exists",
+    "profileDialogEnterUserName":           "Enter a user name",
+    "profileDialogNoUserDefined":           "No user selected",
+
+    "sexDialogMale":                        "Male",
+    "sexDialogFemale":                      "Female",
+    "sexDialogOther":                       "Other",
+
+    "heightWeightDialogMetric":             "Metric",
+    "heightWeightDialogImperial":           "Imperial",
+
+    "groupsetDialogCranksetModel":          "Crankset",
+    "groupsetDialogNoCranksetSelected":     "No crankset selected",
+    "groupsetDialogSproketModel":           "Sproket",
+    "groupsetDialogNoSproketSelected":      "No sproket selected",
+
+    "customTileEnabled":                    "Enabled",
+    "customTileDisabled":                   "Disabled",
+    "customTileInTransition":               "In transition...",
+
+    "sensorButtonEnabled":                  "Enabled",
+    "sensorButtonDisabled":                 "Discabled",
+    "sensorButtonID":                       "ID",
+    "sensorButtonName":                     "Name",
+    "sensorButtonSelect":                   "Select",
+
+    "notificationSettingDialogTitle":       "Notification settings",
+    "notificationTitle":                    "OSS Quick preference change",
+    "notificationInfo":                     "Press to acccess the preference selection page"
+}

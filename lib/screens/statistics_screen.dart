@@ -4,6 +4,7 @@ import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart' as constants;
+import '../generated/l10n.dart';
 
 class StatisticsScreen extends StatelessWidget {
   final List<BluetoothDevice> connectedDevices;
@@ -36,11 +37,11 @@ class StatisticsScreen extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("No device Connected",
+            Text(S.of(context).statisticsNoDeviceConnected,
                 style: TextStyle(fontSize: 30.0, color: Colors.white)),
             RaisedButton(
               color: Colors.red,
-              child: Text("Manage Devices"),
+              child: Text(S.of(context).statisticsManageDevices),
               onPressed: () =>
                   Navigator.of(context).popAndPushNamed("/settings/manage"),
             )
@@ -59,7 +60,7 @@ class StatisticsScreen extends StatelessWidget {
       backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
         backgroundColor: Color(constants.blueButtonColor),
-        title: Text("Statistics page"),
+        title: Text(S.of(context).statisticsScreenAppBarTitle),
       ),
       body: SingleChildScrollView(),
     );

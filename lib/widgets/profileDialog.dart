@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../databases/dbHelper.dart';
 import '../constants.dart' as Constants;
+import '../generated/l10n.dart';
 
 class ProfileDialog extends StatefulWidget {
   ProfileDialog();
@@ -33,20 +34,20 @@ class ProfileDialogState extends State<ProfileDialog> {
                     maxLength: 30,
                     decoration: InputDecoration(
                       icon: Icon(Icons.person),
-                      hintText: 'New User Name',
+                      hintText: S.of(context).profileDialogNewUser,
                     ),
                     validator: (userName) {
                       if (userName.isEmpty) {
-                        return 'Please enter some text';
+                        return S.of(context).profileDialogEnterUserName;
                       }
                       if (list.any((i) => i == userName)) {
-                        return 'User name already exists';
+                        return S.of(context).profileDialogUserAlreadyExists;
                       }
                       return null;
                     },
                   ),
                   RaisedButton(
-                    child: Text("Submit"),
+                    child: Text(S.of(context).dialogSubmit),
                     onPressed: () async {
                       if (userNameKey.currentState.validate()) {
                         await DatabaseHelper.createUser(
@@ -62,7 +63,7 @@ class ProfileDialogState extends State<ProfileDialog> {
             iconSize: 20,
             icon: Icon(Icons.arrow_downward),
             value: currentUser == null
-                ? 'No User Currently Defined'
+                ? S.of(context).profileDialogNoUserDefined
                 : currentUser.userName,
             items: list.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(

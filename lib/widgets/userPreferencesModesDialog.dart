@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../generated/l10n.dart';
 import '../databases/dbHelper.dart';
 import '../constants.dart' as Constants;
 
@@ -34,20 +35,20 @@ class UserPreferencesModesDialogState
                     maxLength: 30,
                     decoration: InputDecoration(
                       icon: Icon(Icons.person),
-                      hintText: 'New Mode Name',
+                      hintText: S.of(context).preferenceModeDialogNewMode,
                     ),
                     validator: (name) {
                       if (name.isEmpty) {
-                        return 'Please enter some text';
+                        return S.of(context).preferenceModeDialogEnterMode;
                       }
                       if (list.any((i) => i == name)) {
-                        return 'Mode already exists';
+                        return S.of(context).preferenceModeDialogAlreadyExists;
                       }
                       return null;
                     },
                   ),
                   RaisedButton(
-                    child: Text("Submit"),
+                    child: Text(S.of(context).dialogSubmit),
                     onPressed: () async {
                       if (nameKey.currentState.validate()) {
                         var preferences =
@@ -65,7 +66,7 @@ class UserPreferencesModesDialogState
             iconSize: 20,
             icon: Icon(Icons.arrow_downward),
             value: currentSelection == null
-                ? 'No Mode Currently Defined'
+                ? S.of(context).preferenceModeDialogNoModeSelected
                 : currentSelection.modeName,
             items: list.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(

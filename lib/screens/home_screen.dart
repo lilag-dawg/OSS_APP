@@ -10,6 +10,7 @@ import '../databases/dbHelper.dart';
 
 import '../models/bluetoothDeviceManager.dart';
 import '../main.dart';
+import '../generated/l10n.dart';
 
 class HomeScreen extends StatelessWidget {
   //final PageController _currentPage;
@@ -88,7 +89,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(constants.backGroundBlue),
       appBar: AppBar(
-        title: Text("Home Screen"),
+        title: Text(S.of(context).homeScreenAppBarTitle),
         backgroundColor: Color(constants.blueButtonColor),
       ),
       body: Container(
@@ -101,37 +102,37 @@ class HomeScreen extends StatelessWidget {
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Calibration",
+              S.of(context).homeScreenCalibration,
               "assets/activities.png",
               () => _calibrationPressed(context)),
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Statistics",
+              S.of(context).homeScreenStatistics,
               "assets/stats.png",
               () => _statsPressed(context)),
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Preferences",
+              S.of(context).homeScreenPreferences,
               "assets/specifications.png",
               () => _preferencePressed(context)),
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Setting",
+              S.of(context).homeScreenSettings,
               "assets/settings.png",
               () => _settingPressed(context, ossManager)),
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Battery level",
+              S.of(context).homeScreenBatteryLevel,
               "assets/batteryLevel.png",
               () => _batterieLevelPressed(context)),
           NavigationButton(
               (constants.getAppWidth() * 0.35),
               (constants.getAppWidth() * 0.35),
-              "Your profile",
+              S.of(context).homeScreenProfile,
               "assets/profile.png",
               () => _profilePressed(context)),
         ],

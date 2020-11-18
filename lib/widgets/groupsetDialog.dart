@@ -3,6 +3,7 @@ import 'package:oss_app/databases/db.dart';
 import '../databases/dbHelper.dart';
 import '../databases/preferencesModel.dart';
 import '../constants.dart' as Constants;
+import '../generated/l10n.dart';
 
 class GroupsetDialog extends StatefulWidget {
   GroupsetDialog();
@@ -27,7 +28,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            'Crankset Model :',
+            S.of(context).groupsetDialogCranksetModel + ' :',
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -37,7 +38,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
             iconSize: 20,
             icon: Icon(Icons.arrow_downward),
             value: currentPreferences == null
-                ? 'No Crankset Model Currently Defined'
+                ? S.of(context).groupsetDialogNoCranksetSelected
                 : currentPreferences.cranksetName,
             items: listCranksets.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -58,7 +59,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
           ),
           SizedBox(height: 20),
           Text(
-            'Sprocket Model :',
+            S.of(context).groupsetDialogSproketModel + ' :',
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -68,7 +69,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
             iconSize: 20,
             icon: Icon(Icons.arrow_downward),
             value: currentPreferences == null
-                ? 'No Sprocket Model Currently Defined'
+                ? S.of(context).groupsetDialogNoSproketSelected
                 : currentPreferences.sprocketName,
             items: listSprockets.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -88,7 +89,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
             },
           ),
           RaisedButton(
-            child: Text("Submit"),
+            child: Text(S.of(context).dialogSubmit),
             onPressed: () {
               Navigator.of(context, rootNavigator: true).pop(true);
             },

@@ -7,6 +7,9 @@ import '../constants.dart' as constants;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import '../generated/l10n.dart';
+
+//This screen is deprecated
 
 class UserSettingsScreen extends StatefulWidget {
   @override
@@ -45,7 +48,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
     if (_birthdate != null) {
       setState(() {
         _birthdateString = DateFormat('yyyy-MM-dd').format(_birthdate);
-        _birthdateStringComplete = 'Birthday : ' + _birthdateString;
+        _birthdateStringComplete = 'Birthday' + ' : ' + _birthdateString;
       });
     }
     _saveProfile();
@@ -161,7 +164,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
         });
     setState(() {
       if (_sexString != null) {
-        _sexStringComplete = 'Sex : ' + _sexString;
+        _sexStringComplete = 'Sex' + ' : ' + _sexString;
       }
     });
     _saveProfile();
@@ -179,7 +182,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
           );
         });
     setState(() {
-      _heightStringComplete = 'Height : ' + _heightString;
+      _heightStringComplete = 'Height' + ' : ' + _heightString;
     });
     _saveProfile();
   }
@@ -196,7 +199,7 @@ class UserSettingsScreenState extends State<UserSettingsScreen> {
           );
         });
     setState(() {
-      _weightStringComplete = 'Weight : ' + _weightString;
+      _weightStringComplete = 'Weight' + ' : ' + _weightString;
     });
     _saveProfile();
   }

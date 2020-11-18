@@ -10,6 +10,7 @@ import '../models/bluetoothDeviceManager.dart';
 import '../models/OSSDevice.dart';
 
 import '../constants.dart' as constants;
+import '../generated/l10n.dart';
 
 class FindDevicesScreen extends StatefulWidget {
   final BluetoothDeviceManager ossManager;
@@ -135,13 +136,13 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         builder: (c, snapshot) {
           if (snapshot.data) {
             return RaisedButton(
-              child: Text("Remettre à plus tard"),
+              child: Text(S.of(context).findDeviceScreenSearchLater),
               color: Colors.red,
               onPressed: () => FlutterBlue.instance.stopScan(),
             );
           } else {
             return RaisedButton(
-                child: Text("Rechercher de OSS"),
+                child: Text(S.of(context).findDeviceScreenLookingFor),
                 onPressed: () {
                   setState(() {
                     isDoneScanning = false;
@@ -158,7 +159,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         child: Center(
           child: Column(
             children: <Widget>[
-              Text("Recherche de OSS.."),
+              Text(S.of(context).findDeviceScreenCurrentlyLooking),
             ],
           ),
         ));
@@ -168,7 +169,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     return Scaffold(
         backgroundColor: Color(constants.backGroundBlue),
         appBar: AppBar(
-          title: Text("Bluetooth Manager"),
+          title: Text(S.of(context).findDeviceScreenAppBarTitle),
           backgroundColor: Color(constants.blueButtonColor),
         ),
         body: SingleChildScrollView(
@@ -187,7 +188,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                 : _buildAnimations(),
             (constants.isWorkingOnEmulator)
                 ? RaisedButton(
-                    child: Text("Remettre à plus tard"),
+                    child: Text(S.of(context).findDeviceScreenSearchLater),
                     color: Colors.red,
                     onPressed: () {})
                 : _buildScanningButton(),

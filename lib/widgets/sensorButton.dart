@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
+import '../generated/l10n.dart';
 
 class SensorButton extends StatefulWidget {
   final Function selectHandler;
@@ -8,8 +9,12 @@ class SensorButton extends StatefulWidget {
   final String deviceName;
   final String deviceID;
 
-  SensorButton(this.deviceName, this.deviceID, this.selectHandler,
-      this.buttonHeight, this.buttonWidth);                     //ex : SensorButton('Lilag Dawg', 'gara3103', _test, 120, Constants.appWidth - 50),
+  SensorButton(
+      this.deviceName,
+      this.deviceID,
+      this.selectHandler,
+      this.buttonHeight,
+      this.buttonWidth); //ex : SensorButton('Lilag Dawg', 'gara3103', _test, 120, Constants.appWidth - 50),
 
   @override
   _SensorButtonState createState() => _SensorButtonState();
@@ -17,7 +22,7 @@ class SensorButton extends StatefulWidget {
 
 class _SensorButtonState extends State<SensorButton> {
   bool _isDeviceSelected = false;
-  String _isEnabledString = 'Disabled';
+  String _isEnabledString = S.current.sensorButtonDisabled;
   String deviceIDString;
   String deviceNameString;
   bool _isDeviceEnabled = false;
@@ -32,23 +37,23 @@ class _SensorButtonState extends State<SensorButton> {
   }
 
   void _setStrings() {
-    deviceIDString = 'ID : ' + widget.deviceID; 
-    deviceNameString = 'Name : ' + widget.deviceName; 
+    deviceIDString = S.current.sensorButtonID + ' : ' + widget.deviceID;
+    deviceNameString = S.current.sensorButtonName + ' : ' + widget.deviceName;
   }
 
   void _mainButtonClicked() {
     setState(() {
-    _isDeviceEnabled = !_isDeviceEnabled;
-    if(_isDeviceEnabled){
-      _mainButtonColor = Constants.blueButtonColor;
-      _textColor = 0xFFFFFFFF;
-      _isEnabledString = 'Enabled';
-    } else {
-      _mainButtonColor = Constants.greyButtonColor;
-      _textColor = 0xFF606060;
-      _isEnabledString = 'Disabled';
-      _isDeviceSelected = false;
-    }
+      _isDeviceEnabled = !_isDeviceEnabled;
+      if (_isDeviceEnabled) {
+        _mainButtonColor = Constants.blueButtonColor;
+        _textColor = 0xFFFFFFFF;
+        _isEnabledString = S.current.sensorButtonEnabled;
+      } else {
+        _mainButtonColor = Constants.greyButtonColor;
+        _textColor = 0xFF606060;
+        _isEnabledString = S.current.sensorButtonDisabled;
+        _isDeviceSelected = false;
+      }
     });
 
     widget.selectHandler(_isDeviceEnabled, _isDeviceSelected, widget.deviceID);
@@ -57,7 +62,6 @@ class _SensorButtonState extends State<SensorButton> {
 
   @override
   Widget build(BuildContext context) {
-
     _setStrings();
     return Container(
       width: widget.buttonWidth,
@@ -89,8 +93,11 @@ class _SensorButtonState extends State<SensorButton> {
                   Container(
                     child: Text(
                       deviceIDString,
-                      style: TextStyle(fontSize: 18, color: Color(_textColor),
-                    ),),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color(_textColor),
+                      ),
+                    ),
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black38, width: 3),
                         borderRadius: BorderRadius.circular(7)),
@@ -113,8 +120,9 @@ class _SensorButtonState extends State<SensorButton> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            'Select :',
-                            style: TextStyle(fontSize: 18, color: Color(_textColor)),
+                            ' :',
+                            style: TextStyle(
+                                fontSize: 18, color: Color(_textColor)),
                           ),
                           Checkbox(
                               value: _isDeviceSelected,

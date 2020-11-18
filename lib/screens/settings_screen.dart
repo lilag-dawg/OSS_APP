@@ -3,12 +3,10 @@ import 'package:oss_app/models/bluetoothDeviceManager.dart';
 import '../widgets/blueButton.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../generated/l10n.dart';
 import '../constants.dart' as constants;
-
 import '../models/notificationHandler.dart';
-
 import '../main.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -69,7 +67,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: Color(constants.backGroundBlue),
         appBar: AppBar(
-          title: Text("Settings page"),
+          title: Text(S.of(context).settingsScreenAppBarTitle),
           backgroundColor: Color(constants.blueButtonColor),
         ),
         body: Padding(
@@ -79,23 +77,35 @@ class SettingsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                BlueButton("Language", _buttonClicked, Icons.language, 70,
+                /*BlueButton("Language", _buttonClicked, Icons.language, 70,
+                    constants.getAppWidth() - 50),*/
+                SizedBox(height: constants.getAppHeight() * 0.03),
+                BlueButton(S.of(context).settingsScreenShare, _buttonClicked,
+                    Icons.share, 70, constants.getAppWidth() - 50),
+                SizedBox(height: constants.getAppHeight() * 0.03),
+                BlueButton(
+                    S.of(context).settingsScreenFacebook,
+                    _fbButtonClicked,
+                    Icons.thumb_up,
+                    70,
                     constants.getAppWidth() - 50),
                 SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton("Share", _buttonClicked, Icons.share, 70,
+                BlueButton(S.of(context).settingsScreenLogout, _buttonClicked,
+                    Icons.exit_to_app, 70, constants.getAppWidth() - 50),
+                SizedBox(height: constants.getAppHeight() * 0.03),
+                BlueButton(
+                    S.of(context).settingsScreenNotifications,
+                    _notButtonClicked,
+                    Icons.add_alarm,
+                    70,
                     constants.getAppWidth() - 50),
                 SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton("OSS on Facebook", _fbButtonClicked, Icons.thumb_up,
-                    70, constants.getAppWidth() - 50),
-                SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton("Logout", _buttonClicked, Icons.exit_to_app, 70,
+                BlueButton(
+                    S.of(context).settingsScreenDeviceManagement,
+                    _deviceManagementPressed,
+                    Icons.device_unknown,
+                    70,
                     constants.getAppWidth() - 50),
-                SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton("Notifications", _notButtonClicked, Icons.add_alarm,
-                    70, constants.getAppWidth() - 50),
-                SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton("Device management", _deviceManagementPressed,
-                    Icons.device_unknown, 70, constants.getAppWidth() - 50),
                 SizedBox(height: constants.getAppHeight() * 0.03),
               ],
             ),

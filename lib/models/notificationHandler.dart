@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../constants.dart' as constants;
+import '../generated/l10n.dart';
 
 class NotificationHandler {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -39,7 +40,6 @@ class NotificationHandler {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
-    debugPrint('We should be loading the correct menu now');
     await MyApp.navKey.currentState.pushNamed("/preference");
   }
 
@@ -109,7 +109,7 @@ class NotificationHandler {
   void notificationToggler() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.getBool('notSetting') ?? false) {
+    if (prefs.getBool(constants.notKey) ?? false) {
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
               'profileChangeChannel',
@@ -123,8 +123,8 @@ class NotificationHandler {
           NotificationDetails(android: androidPlatformChannelSpecifics);
       await flutterLocalNotificationsPlugin.periodicallyShow(
           0,
-          'OSS Quick Profile Change',
-          'Click here to change your profile',
+          S.current.notificationTitle,
+          S.current.notificationInfo,
           RepeatInterval.everyMinute,
           platformChannelSpecifics,
           androidAllowWhileIdle: true);
@@ -146,12 +146,10 @@ class NotDialogState extends State<NotDialog> {
   Future _setSavedSetting(bool setting) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (prefs.containsKey('notSetting')) {
-      prefs.setBool('notSetting', setting);
-      debugPrint('Saved as $setting');
+    if (prefs.containsKey(constants.notKey)) {
+      prefs.setBool(constants.notKey, setting);
     } else {
-      prefs.setBool('notSetting', false);
-      debugPrint('No settings present, default setting saved as false');
+      prefs.setBool(constants.notKey, false);
     }
 
     notificationHandler.notificationToggler();
@@ -161,7 +159,7 @@ class NotDialogState extends State<NotDialog> {
 
   Future _getSavedSetting() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool value = prefs.getBool('notSetting') ?? false;
+    bool value = prefs.getBool(constants.notKey) ?? false;
 
     setState(() {
       notSetting = value;
@@ -177,7 +175,7 @@ class NotDialogState extends State<NotDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Paramètres de notifications'),
+      title: Text(S.of(context).notificationSettingDialogTitle),
       content: Container(
         alignment: Alignment.center,
         width: constants.getAppWidth() * 0.6,
@@ -188,7 +186,6 @@ class NotDialogState extends State<NotDialog> {
             setState(
               () {
                 notSetting = value;
-                debugPrint('Set to $notSetting');
               },
             );
           },
@@ -196,7 +193,7 @@ class NotDialogState extends State<NotDialog> {
       ),
       actions: [
         FlatButton(
-          child: new Text('Save'),
+          child: new Text(S.of(context).dialogSave),
           color: Color(constants.blueButtonColor),
           onPressed: () async {
             await _setSavedSetting(notSetting);
