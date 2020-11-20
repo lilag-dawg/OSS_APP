@@ -12,6 +12,7 @@ class BluetoothDeviceManager extends ChangeNotifier {
   static String nombreCapteursCharact = "16A1";
   static String listCapteursCharact = "16A2";
   static String paringRequestCharact = "16A3";
+  static String sensorDataType = "16A4";
 
   static String convertRawToStringListCapteursCharact(List<int> value){
     String name = "";
