@@ -331,13 +331,8 @@ class __CustomTileState extends State<_CustomTile> {
 
       if (listCapteursCharact != null) {
         await listCapteursCharact.characteristic.setNotifyValue(true);
-        await _waitForSensorConnection(listCapteursCharact.characteristic.value).timeout(Duration(seconds: 10), onTimeout: () async{
-          await _writeToMCU(paired, ossManager); //cancel device pairing
-          return notPaired;
-        }).then((value) async {
-          setState(() {
+        await _waitForSensorConnection(listCapteursCharact.characteristic.value).then((value) async { //ajouter timeout pour rendre plus robuste
             currentStatus = value;
-          });
           await listCapteursCharact.characteristic.setNotifyValue(false).then((value) => widget.onTapTile(currentStatus));
         });
     }
