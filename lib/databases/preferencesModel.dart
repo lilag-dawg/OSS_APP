@@ -3,8 +3,7 @@ import 'base_model.dart';
 class PreferencesModel extends BaseModel {
   int preferencesId;
   int ftp; // W
-  int targetEffort; // %
-  int shiftingResponsiveness; // deltaRPM
+  double shiftingResponsiveness; // deltaRPM
   int desiredRpm;
   int desiredBpm;
   String cranksetName;
@@ -16,7 +15,6 @@ class PreferencesModel extends BaseModel {
   PreferencesModel(
       {this.preferencesId,
       this.ftp,
-      this.targetEffort,
       this.shiftingResponsiveness,
       this.desiredRpm,
       this.desiredBpm,
@@ -27,7 +25,6 @@ class PreferencesModel extends BaseModel {
     Map<String, dynamic> map = {
       'preferencesId': preferencesId,
       'ftp': ftp,
-      'targetEffort': targetEffort,
       'shiftingResponsiveness': shiftingResponsiveness,
       'desiredRpm': desiredRpm,
       'desiredBpm': desiredBpm,
@@ -41,7 +38,6 @@ class PreferencesModel extends BaseModel {
     return PreferencesModel(
         preferencesId: map['preferencesId'],
         ftp: map['ftp'],
-        targetEffort: map['targetEffort'],
         shiftingResponsiveness: map['shiftingResponsiveness'],
         desiredRpm: map['desiredRpm'],
         desiredBpm: map['desiredBpm'],

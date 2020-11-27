@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InfoDialog extends StatefulWidget {
-  String info;
+  final String info;
   InfoDialog(this.info);
   @override
   State<StatefulWidget> createState() {
@@ -31,7 +31,7 @@ class InfoDialogState extends State<InfoDialog> {
               FlatButton(
                 child: Text('Okay!'),
                 onPressed: () =>
-                    Navigator.of(context, rootNavigator: true).pop(true),
+                    Navigator.of(context, rootNavigator: true).pop(),
               ),
             ],
           )

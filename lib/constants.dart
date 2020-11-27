@@ -1,11 +1,6 @@
 library constants;
+
 import 'package:flutter/material.dart';
-
-
-//import 'dart:js';
-
-//const double appWidth = 410;
-//const double appHeight = 700;
 
 double _appWidth;
 double _appHeight;
@@ -33,18 +28,29 @@ const int minKg = 20;
 const int maxCm = 250;
 const int minCm = 50;
 
+//profileScreen
+const String defaultProfileName = 'New User';
+
 //PreferencesScreen
 const String defaultPreferencesModeName = 'Medium Intensity';
 const int defaultFtp = 200;
-const int defaultTargetEffort = 150;
-const int defaultShiftingResponsiveness = 10;
+const double defaultShiftingResponsiveness = 1.0;
 const int defaultDesiredRpm = 90;
 const int defaultDesiredBpm = 150;
 const String defaultCranksetName = null;
 const String defaultSprocketName = null;
 
+const int minFtp = 50;
+const double minShiftingResponsiveness = 0.2;
+const int minDesiredRpm = 40;
+const int minDesiredBpm = 70;
+
+const int maxFtp = 500;
+const double maxShiftingResponsiveness = 5.0;
+const int maxDesiredRpm = 150;
+const int maxDesiredBpm = 220;
+
 const String ftpInfo = 'Maximum average power for an hour-long session';
-const String targetEffortInfo = 'Target average power for an hour-long session';
 const String shiftingResponsivenessInfo =
     'Defines the delta of rotations per minute (versus the desired cadence) necessary to trigger a shift';
 const String desiredRpmInfo =

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../databases/dbHelper.dart';
 import '../constants.dart' as Constants;
+import '../databases/userProfileModel.dart';
 
 class ProfileDialog extends StatefulWidget {
   ProfileDialog();
@@ -11,12 +12,12 @@ class ProfileDialog extends StatefulWidget {
 }
 
 class ProfileDialogState extends State<ProfileDialog> {
-  var userNameController = TextEditingController();
+  final userNameController = TextEditingController();
   final userNameKey = GlobalKey<FormState>();
   Column profileDialog;
 
   Future<void> buildLayout() async {
-    var list = await DatabaseHelper.getUserNames();
+    var list = await DatabaseHelper.getUsers();
     var currentUser = await DatabaseHelper.getSelectedUserProfile();
 
     profileDialog = Column(
@@ -39,7 +40,7 @@ class ProfileDialogState extends State<ProfileDialog> {
                       if (userName.isEmpty) {
                         return 'Please enter some text';
                       }
-                      if (list.any((i) => i == userName)) {
+                      if (list.any((user) => user.userName == userName)) {
                         return 'User name already exists';
                       }
                       return null;
@@ -51,7 +52,7 @@ class ProfileDialogState extends State<ProfileDialog> {
                       if (userNameKey.currentState.validate()) {
                         await DatabaseHelper.createUser(
                             userNameController.text);
-                        Navigator.of(context, rootNavigator: true).pop(true);
+                        Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
                   ),
@@ -64,17 +65,41 @@ class ProfileDialogState extends State<ProfileDialog> {
             value: currentUser == null
                 ? 'No User Currently Defined'
                 : currentUser.userName,
-            items: list.map<DropdownMenuItem<String>>((String value) {
+            items: list.map<DropdownMenuItem<String>>((UserProfileModel user) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: user.userName,
+                child: Text(user.userName),
               );
             }).toList(),
             onChanged: (String newValue) async {
               await DatabaseHelper.selectUser(newValue);
-              Navigator.of(context, rootNavigator: true).pop(true);
+              Navigator.of(context, rootNavigator: true).pop();
             },
           ),
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("Rename"),
+                  onPressed: () async {
+                    if (userNameKey.currentState.validate()) {
+                      var oldUserName = currentUser.userName;
+                      currentUser.userName = userNameController.text;
+                      await DatabaseHelper.updateUser(currentUser, oldUserName);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }
+                  },
+                ),
+                SizedBox(width: 10),
+                RaisedButton(
+                    child: Text("Delete"),
+                    onPressed: () async {
+                      await DatabaseHelper.deleteUser(currentUser.userName);
+
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+              ]),
         ]);
   }
 
