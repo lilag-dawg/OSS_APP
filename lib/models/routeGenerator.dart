@@ -11,6 +11,8 @@ import '../screens/settings_screen.dart';
 import '../screens/statistics_screen.dart';
 import '../screens/home_screen.dart';
 
+import '../widgets/userPreferencesModesDialog.dart';
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;

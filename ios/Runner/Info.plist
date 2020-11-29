@@ -41,5 +41,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CFBundleLocalizations</key>
+    <array>
+        <string>fr_CA</string>
+        <string>en_CA</string>
+    </array>
 </dict>
 </plist>

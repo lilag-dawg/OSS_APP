@@ -1,0 +1,101 @@
+{
+    "@@locale": "fr_CA",
+    
+    "homeScreenAppBarTitle":                "Écran d'accueuil",
+    "homeScreenCalibration":                "Calibration",
+    "homeScreenStatistics":                 "Statistiques",
+    "homeScreenPreferences":                "Préférences",
+    "homeScreenSettings":                   "Paramètres",
+    "homeScreenBatteryLevel":               "Batterie",
+    "homeScreenProfile":                    "Profil",
+
+    "calibrationScreenAppBarTitle":         "Page de calibration",
+
+    "stopwatchStart":                       "Démarrer",
+    "stopwatchStop":                        "Arrêter",
+    "stopwatchReset":                       "Remise à zéro",
+
+    "statisticsScreenAppBarTitle":          "Page de statistiques",
+    "statisticsNoDeviceConnected":          "Aucun appareil connecté",
+    "statisticsManageDevices":              "Gérer les appareils",
+
+    "preferenceModeDialogNewMode":          "Nouveau mode...",
+    "preferenceModeDialogEnterMode":        "Aucun mode entré",
+    "preferenceModeDialogAlreadyExists":    "Mode déjà existant",
+    "preferenceModeDialogNoModeSelected":   "Aucun mode sélectionné",
+
+    "preferencesScreenAppBarTitle":         "Page de préférences",
+    "preferencesScreenSelectGroupset":      "Choix du groupe",
+    "preferencesScreenThresholdPower":      "Puissance de seuil maximale",
+    "preferencesScreenThresholdPowerInfo":  "Puissance moyenne maximale par heure désirée",
+    "preferencesScreenAveragePower":        "Puissance moyenne ciblée",
+    "preferencesScreenAveragePowerInfo":    "Puissance moyenne par heure ciblée",
+    "preferencesScreenResponsiveness":      "Sensibilité",
+    "preferencesScreenResponsivenessInfo":  "Variation de la rotation (par rapport à la cadence) requise pour causer un changement",
+    "preferencesScreenDesiredRPM":          "RPM désiré",
+    "preferencesScreenDesiredRPMInfo":      "Vitesse en rotation par minutes (cadence) désirée du pédalier",
+    "preferencesScreenDesiredBPM":          "BPM désiré",
+    "preferencesScreenDesiredBPMInfo":      "Rhythme cardiaque en battements par minutes désiré",
+    "preferencesScreenResetProfile":        "Réinitialiser les préférences",
+
+    "infoDialogClose":                      "Fermer",
+
+    "settingsScreenAppBarTitle":            "Page de paramètres",
+    "settingsScreenShare":                  "Partager",
+    "settingsScreenFacebook":               "Page Facebook",
+    "settingsScreenLogout":                 "Déconnexion",
+    "settingsScreenNotifications":          "Notifications",
+    "settingsScreenDeviceManagement":       "Gestion des appareils",
+
+    "findDeviceScreenAppBarTitle":          "Page de gestion des appareils",
+    "findDeviceScreenLookingFor":           "Recherche de OSS",
+    "findDeviceScreenCurrentlyLooking":     "Recherche en cours...",
+    "findDeviceScreenSearchLater":          "Rechercher plus tard",
+
+    "batteryScreenAppBarTitle":             "Page de batterie",
+    "batteryScreenDeviceManagement":        "Gestion des appareils",
+    "batteryScreenConnected":               "ACTIF",
+    "batteryScreenDisconnected":            "INACTIF",
+    "batteryScreenDeviceUnavailable":       "Appareil non disponible",
+
+    "profileScreenAppBarTitle":             "Page du profil",
+    "profileScreenBirthday":                "Anniversaire",
+    "profileScreenSex":                     "Sexe",
+    "profileScreenHeight":                  "Taille",
+    "profileScreenWeight":                  "Poids",
+    "profileScreenResetProfile":            "Réinitialiser le profil",
+
+    "dialogSubmit":                         "Soumettre",
+    "dialogSave":                           "Enregistrer",
+
+    "profileDialogNewUser":                 "Nouvel utilisateur...",
+    "profileDialogUserAlreadyExists":       "Utilisateur déjà enregistré",
+    "profileDialogEnterUserName":           "Entrer un nom d'utilisateur",
+    "profileDialogNoUserDefined":           "Aucun utilisateur choisi",
+
+    "sexDialogMale":                        "Homme",
+    "sexDialogFemale":                      "Femme",
+    "sexDialogOther":                       "Autre",
+
+    "heightWeightDialogMetric":             "Métrique",
+    "heightWeightDialogImperial":           "Impérial",
+
+    "groupsetDialogCranksetModel":          "Pédalier",
+    "groupsetDialogNoCranksetSelected":     "Aucun pédalier sélectionné",
+    "groupsetDialogSproketModel":           "Pignon",
+    "groupsetDialogNoSproketSelected":      "Aucun pignon sélectionné",
+
+    "customTileEnabled":                    "Activé",
+    "customTileDisabled":                   "Désactivé",
+    "customTileInTransition":               "En transition...",
+
+    "sensorButtonEnabled":                  "Activé",
+    "sensorButtonDisabled":                 "Désactivé",
+    "sensorButtonID":                       "ID",
+    "sensorButtonName":                     "Nom",
+    "sensorButtonSelect":                   "Choisir",
+
+    "notificationSettingDialogTitle":       "Paramètre de notification",
+    "notificationTitle":                    "OSS Changement de préférences rapide",
+    "notificationInfo":                     "Appuyer pour accéder au choix des préférences"
+}

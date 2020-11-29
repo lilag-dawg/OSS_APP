@@ -10,6 +10,7 @@ import '../models/bluetoothDeviceManager.dart';
 import '../models/OSSDevice.dart';
 
 import '../constants.dart' as Constants;
+import '../generated/l10n.dart';
 
 class FindDevicesScreen extends StatefulWidget {
   final BluetoothDeviceManager ossManager;
@@ -141,14 +142,14 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
           if (snapshot.data) {
             return Container(
               child: RaisedButton(
-                child: Text("Remettre à plus tard"),
+                child: Text(S.of(context).findDeviceScreenSearchLater),
                 color: Colors.red,
                 onPressed: () => FlutterBlue.instance.stopScan(),
               ),
             );
           } else {
             return RaisedButton(
-                child: Text("Rechercher un OSS"),
+                child: Text(S.of(context).findDeviceScreenLookingFor),
                 onPressed: () {
                   controller.reset();
                   controller.forward();
@@ -173,7 +174,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
           ),
           Container(
             margin: EdgeInsets.only(top: 50),
-            child: Text("Recherche de OSS..."),
+            child: Text(S.of(context).findDeviceScreenCurrentlyLooking),
           ),
         ],
       ),

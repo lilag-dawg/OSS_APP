@@ -9,6 +9,7 @@ import '../databases/dbHelper.dart';
 import '../widgets/userPreferencesModesDialog.dart';
 import '../widgets/groupsetDialog.dart';
 import '../models/bluetoothDeviceManager.dart';
+import '../generated/l10n.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final BluetoothDeviceManager ossManager;
@@ -138,50 +139,50 @@ class PreferencesScreenState extends State<PreferencesScreen> {
             BlueButton(preferencesMode.modeName, changePreferencesMode,
                 Icons.playlist_play, 70, Constants.getAppWidth() - 50),
             SizedBox(height: spaceItem1Item2),
-            BlueButton('Select Groupset', changeGroupset, Icons.settings, 70,
+            BlueButton(S.of(context).preferencesScreenSelectGroupset, changeGroupset, Icons.settings, 70,
                 Constants.getAppWidth() - 50),
             SizedBox(height: spaceItem1Item2),
             BlueButton('Save Preferences', saveProfile, Icons.save, 70,
                 Constants.getAppWidth() - 50),
             SizedBox(height: spaceTopItem),
             SlideBarCombo(
-                ftpName,
+                S.of(context).preferencesScreenThresholdPower,
                 Constants.minFtp.toDouble(),
                 Constants.maxFtp.toDouble(),
                 10,
                 preferences.ftp.toDouble(),
                 updateSlideBarCombo,
-                Constants.ftpInfo),
+                S.of(context).preferencesScreenThresholdPowerInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
-                shiftingResponsivenessName,
+                S.of(context).preferencesScreenResponsiveness,
                 Constants.minShiftingResponsiveness.toDouble(),
                 Constants.maxShiftingResponsiveness.toDouble(),
                 0.1,
                 preferences.shiftingResponsiveness,
                 updateSlideBarCombo,
-                Constants.shiftingResponsivenessInfo),
+                S.of(context).preferencesScreenResponsivenessInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
-                desiredRpmName,
+                S.of(context).preferencesScreenDesiredRPM,
                 Constants.minDesiredRpm.toDouble(),
                 Constants.maxDesiredRpm.toDouble(),
                 1,
                 preferences.desiredRpm.toDouble(),
                 updateSlideBarCombo,
-                Constants.desiredRpmInfo),
+                S.of(context).preferencesScreenDesiredRPMInfo),
             SizedBox(height: spaceItem1Item2),
             SlideBarCombo(
-                desiredBpmName,
+                S.of(context).preferencesScreenDesiredBPM,
                 Constants.minDesiredBpm.toDouble(),
                 Constants.maxDesiredBpm.toDouble(),
                 1,
                 preferences.desiredBpm.toDouble(),
                 updateSlideBarCombo,
-                Constants.desiredBpmInfo),
+                S.of(context).preferencesScreenDesiredBPMInfo),
             SizedBox(height: Constants.getAppHeight() * 0.1),
-            BlueButton('Reset Profile', resetProfileDb, Icons.delete, 70,
-                Constants.getAppWidth() - 50),
+            BlueButton(S.of(context).preferencesScreenResetProfile,
+                resetProfileDb, Icons.delete, 70, Constants.getAppWidth() - 50),
             SizedBox(height: Constants.getAppHeight() * 0.03),
           ],
         ),
@@ -232,7 +233,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
           backgroundColor: Color(Constants.blueButtonColor),
-          title: Text("Preferences page")),
+          title: Text(S.of(context).preferencesScreenAppBarTitle)),
       body: futureBody(),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart' as Constants;
 import '../databases/dbHelper.dart';
+import '../generated/l10n.dart';
 
 class HeightWeightDialog extends StatefulWidget {
   final double initialMeasure;
@@ -137,13 +138,14 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Padding(
-                    padding: const EdgeInsets.all(10.0), child: Text('Metric')),
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(S.of(context).heightWeightDialogMetric)),
                 Checkbox(
                     value: _isMetric == Constants.isSelected,
                     onChanged: _metricCheckboxClicked),
                 Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text('Imperial')),
+                    child: Text(S.of(context).heightWeightDialogImperial)),
                 Checkbox(
                     value: _isMetric == Constants.isNotSelected,
                     onChanged: _imperialCheckboxClicked),
@@ -189,7 +191,7 @@ class HeightWeightDialogState extends State<HeightWeightDialog> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: RaisedButton(
-              child: Text("Submit"),
+              child: Text(S.of(context).dialogSubmit),
               onPressed: () async {
                 var profile = await DatabaseHelper.getSelectedUserProfile();
                 if (widget.popHeight) {

@@ -50,19 +50,13 @@ const double maxShiftingResponsiveness = 5.0;
 const int maxDesiredRpm = 150;
 const int maxDesiredBpm = 220;
 
-const String ftpInfo = 'Maximum average power for an hour-long session';
-const String shiftingResponsivenessInfo =
-    'Defines the delta of rotations per minute (versus the desired cadence) necessary to trigger a shift';
-const String desiredRpmInfo =
-    'Desired average rotations per minute (cadence) for the bicycle crankset';
-const String desiredBpmInfo = 'Desired average heartbeats per minute';
-
 Column dialogLoadingWidget = Column(
   mainAxisSize: MainAxisSize.min,
   children: <Widget>[CircularProgressIndicator()],
   mainAxisAlignment: MainAxisAlignment.center,
 );
 
+// Screen size Get/Set
 double getAppWidth() {
   return _appWidth;
 }
@@ -78,3 +72,6 @@ double getAppHeight() {
 void setAppHeight(double newHeight) {
   _appHeight = newHeight;
 }
+
+// Shared Preferences Keys
+const String notKey = 'notSetting';

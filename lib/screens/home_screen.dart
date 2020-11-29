@@ -7,6 +7,8 @@ import '../widgets/navigationButton.dart';
 import '../databases/dbHelper.dart';
 
 import '../models/bluetoothDeviceManager.dart';
+import '../main.dart';
+import '../generated/l10n.dart';
 
 class HomeScreen extends StatelessWidget {
   //final PageController _currentPage;
@@ -15,15 +17,15 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
 
   void _calibrationPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/calibration");
+    MyApp.navKey.currentState.pushNamed("/calibration");
   }
 
   void _statsPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/statistics");
+    MyApp.navKey.currentState.pushNamed("/statistics");
   }
 
   void _preferencePressed(BuildContext context,  BluetoothDeviceManager ossManager) {
-    Navigator.of(context).pushNamed(
+     MyApp.navKey.currentState.pushNamed(
       "/preference",
       arguments: ossManager,
     );
@@ -31,23 +33,18 @@ class HomeScreen extends StatelessWidget {
 
   void _settingPressed(
       BuildContext context, BluetoothDeviceManager ossManager) {
-    Navigator.of(context).pushNamed(
+    MyApp.navKey.currentState.pushNamed(
       "/settings",
       arguments: ossManager,
     );
   }
 
   void _batterieLevelPressed(BuildContext context) {
-    Navigator.of(context).pushNamed(
-      "/batterie",
-      //arguments: ossManager,
-    );
+    MyApp.navKey.currentState.pushNamed("/batterie");
   }
 
   void _profilePressed(BuildContext context) {
-    Navigator.of(context).pushNamed(
-      "/profile",
-    );
+    MyApp.navKey.currentState.pushNamed("/profile");
   }
 
   Future<void> buildLayout(BuildContext context) async {
@@ -88,7 +85,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
-        title: Text("Home Screen"),
+        title: Text(S.of(context).homeScreenAppBarTitle),
         backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: Container(
@@ -101,37 +98,37 @@ class HomeScreen extends StatelessWidget {
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Calibration",
+              S.of(context).homeScreenCalibration,
               "assets/activities.png",
               () => _calibrationPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Statistics",
+              S.of(context).homeScreenStatistics,
               "assets/stats.png",
               () => _statsPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Preferences",
+              S.of(context).homeScreenPreferences,
               "assets/specifications.png",
               () => _preferencePressed(context, ossManager)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Setting",
+              S.of(context).homeScreenSettings,
               "assets/settings.png",
               () => _settingPressed(context, ossManager)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Battery level",
+              S.of(context).homeScreenBatteryLevel,
               "assets/batteryLevel.png",
               () => _batterieLevelPressed(context)),
           NavigationButton(
               (Constants.getAppWidth() * 0.35),
               (Constants.getAppWidth() * 0.35),
-              "Your profile",
+              S.of(context).homeScreenProfile,
               "assets/profile.png",
               () => _profilePressed(context)),
         ],

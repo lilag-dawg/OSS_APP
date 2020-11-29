@@ -1,7 +1,10 @@
+//import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 import '../models/deviceConnexionStatus.dart';
+import '../generated/l10n.dart';
 
 class CustomTile extends StatelessWidget {
   final DeviceConnexionStatus currentDevice;
@@ -13,7 +16,6 @@ class CustomTile extends StatelessWidget {
   void _handleTapTile() {
     onTapTile(currentDevice.connexionStatus);
   }
-
 
   Widget _buildTitle() {
     if (currentDevice.device.name.length > 0) {
@@ -41,11 +43,15 @@ class CustomTile extends StatelessWidget {
 
   Widget _buildSubtitle() {
     if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
-      return Text("Enabled", style: TextStyle(color: Colors.green));
-    } else if (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion) {
-      return Text("In transition...", style: TextStyle(color: Colors.grey));
+      return Text(S.current.customTileEnabled,
+          style: TextStyle(color: Colors.green));
+    } else if (currentDevice.connexionStatus ==
+        DeviceConnexionStatus.inTransistion) {
+      return Text(S.current.customTileInTransition,
+          style: TextStyle(color: Colors.grey));
     } else {
-      return Text("Disabled", style: TextStyle(color: Colors.red));
+      return Text(S.current.customTileDisabled,
+          style: TextStyle(color: Colors.red));
     }
   }
 
@@ -64,7 +70,8 @@ class CustomTile extends StatelessWidget {
   Color _buildColor() {
     if (currentDevice.connexionStatus == DeviceConnexionStatus.connected) {
       return Colors.green[100];
-    } else if (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion) {
+    } else if (currentDevice.connexionStatus ==
+        DeviceConnexionStatus.inTransistion) {
       return Colors.black38;
     } else {
       return Colors.red[100];
@@ -75,19 +82,18 @@ class CustomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     print(currentDevice.connexionStatus + " " + currentDevice.device.name);
     return Card(
-      child: ListTile(
-          leading: _buildLeading(),
-          title: _buildTitle(),
-          subtitle: _buildSubtitle(),
-          onTap: () {
-            _handleTapTile();
-          },
-          trailing: _buildTrailing(context),
-          enabled:
-              (currentDevice.connexionStatus == DeviceConnexionStatus.inTransistion)
-                  ? false
-                  : true),
-      color:_buildColor()
-    );
+        child: ListTile(
+            leading: _buildLeading(),
+            title: _buildTitle(),
+            subtitle: _buildSubtitle(),
+            onTap: () {
+              _handleTapTile();
+            },
+            trailing: _buildTrailing(context),
+            enabled: (currentDevice.connexionStatus ==
+                    DeviceConnexionStatus.inTransistion)
+                ? false
+                : true),
+        color: _buildColor());
   }
 }

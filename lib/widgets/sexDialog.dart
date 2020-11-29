@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../generated/l10n.dart';
 
 class SexDialog extends StatefulWidget {
   final String _initialSexString;
@@ -13,9 +14,15 @@ class SexDialogState extends State<SexDialog> {
   String _sexString;
   bool _isSexInitialized = false;
 
-  void _sexMaleCheckboxClicked(bool state) => setState(() { _sexString = 'Male';});
-  void _sexFemaleCheckboxClicked(bool state) => setState(() { _sexString = 'Female';});
-  void _sexOtherCheckboxClicked(bool state) => setState(() { _sexString = 'Other';});
+  void _sexMaleCheckboxClicked(bool state) => setState(() {
+        _sexString = 'Male';
+      });
+  void _sexFemaleCheckboxClicked(bool state) => setState(() {
+        _sexString = 'Female';
+      });
+  void _sexOtherCheckboxClicked(bool state) => setState(() {
+        _sexString = 'Other';
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +40,11 @@ class SexDialogState extends State<SexDialog> {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Male'),
+                  Text(S.of(context).sexDialogMale),
                   Padding(
                       padding: const EdgeInsets.all(30.0),
-                      child: Text('Female')),
-                  Text('Other'),
+                      child: Text(S.of(context).sexDialogFemale)),
+                  Text(S.of(context).sexDialogOther),
                 ]),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +64,7 @@ class SexDialogState extends State<SexDialog> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: RaisedButton(
-              child: Text("Submit"),
+              child: Text(S.of(context).dialogSubmit),
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop(_sexString);
               },
