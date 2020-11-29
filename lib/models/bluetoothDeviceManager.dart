@@ -63,23 +63,41 @@ class BluetoothDeviceManager extends ChangeNotifier {
 
     List<int> dataToSend = [];
 
-    dataToSend.add( (crankset.bigGear != null ? ((crankset.bigGear & mask6bits) << 27) : 0 ) + (crankset.gear2 != null ? ((crankset.gear2 & mask6bits) << 21) : 0 ) + 
-                    (crankset.gear3 != null ? ((crankset.gear3 & mask6bits) << 15) : 0 ) + (sprocket.smallGear != null ? ((sprocket.smallGear & mask6bits) << 9) : 0 ) + 
-                    (sprocket.gear2 != null ? ((sprocket.gear2 & mask6bits) << 3) : 0 ) + (sprocket.gear3 != null ? (sprocket.gear3 & mask3bitsMSB) : 0 ) 
-                    );
+    //crankset
+    dataToSend.add((crankset.bigGear != null ? (crankset.bigGear & mask8bits) : 0 ));
+    dataToSend.add((crankset.gear2 != null ? (crankset.gear2 & mask8bits) : 0 ));
+    dataToSend.add((crankset.gear3 != null ? (crankset.gear3 & mask8bits) : 0 ));
 
+    //sprocket
+    dataToSend.add((sprocket.smallGear != null ? (sprocket.smallGear & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear2 != null ? (sprocket.gear2 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear3 != null ? (sprocket.gear3 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear4 != null ? (sprocket.gear4 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear5 != null ? (sprocket.gear5 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear6 != null ? (sprocket.gear6 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear7 != null ? (sprocket.gear7 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear8 != null ? (sprocket.gear8 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear9 != null ? (sprocket.gear9 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear10 != null ? (sprocket.gear10 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear11 != null ? (sprocket.gear11 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear12 != null ? (sprocket.gear12 & mask8bits) : 0 ));
+    dataToSend.add((sprocket.gear13 != null ? (sprocket.gear13 & mask8bits) : 0 ));
 
-    dataToSend.add( (sprocket.gear3 != null ? ((sprocket.gear3 & mask3bitsLSB) << 60) : 0 ) + (sprocket.gear4 != null ? ((sprocket.gear4 & mask6bits) << 54) : 0 ) + 
-                    (sprocket.gear5 != null ? ((sprocket.gear5 & mask6bits) << 48) : 0 )  + (sprocket.gear6 != null ? ((sprocket.gear6 & mask6bits) << 42) : 0 )  + 
-                    (sprocket.gear7 != null? ((sprocket.gear7 & mask6bits) << 36) : 0 )  + (sprocket.gear8 != null ? ((sprocket.gear8 & mask6bits) << 30) : 0 )  + 
-                    (sprocket.gear9 != null? ((sprocket.gear9 & mask6bits) << 24) : 0 )  + (sprocket.gear10 != null ? ((sprocket.gear10 & mask6bits) << 18) : 0 )  + 
-                    (sprocket.gear11 != null ? ((sprocket.gear11 & mask6bits) << 12) : 0 )  + (sprocket.gear12 != null ? ((sprocket.gear12 & mask6bits) << 6) : 0 )  + 
-                    (sprocket.gear13 != null ? (sprocket.gear13 & mask6bits) : 0 )
-                    );
-    
-    dataToSend.add( (preferences.ftp != null ? ((preferences.ftp & mask9bits) << 54) : 0 ) + (preferences.shiftingResponsiveness != null ? (((preferences.shiftingResponsiveness * 10).toInt() & mask32bits) << 22) : 0 ) +
-                    (preferences.desiredRpm != null ? ((preferences.desiredRpm & mask8bits) << 14) : 0 ) + (preferences.desiredBpm != null ? ((preferences.desiredBpm & mask8bits) << 6) : 0 )
-                    );
+    //ftp
+    dataToSend.add((preferences.ftp != null ? ((preferences.ftp & mask9bits) >> 8) : 0 ));  // 1 MSB
+    dataToSend.add((preferences.ftp != null ? (preferences.ftp & mask8bits) : 0 ));         // 7 LSB
+
+    //shitfting response
+    dataToSend.add((preferences.shiftingResponsiveness != null ? (((preferences.shiftingResponsiveness * 10).toInt() & mask32bits) >> 24) : 0 )); // 8 MSB
+    dataToSend.add((preferences.shiftingResponsiveness != null ? (((preferences.shiftingResponsiveness * 10).toInt() & mask32bits) >> 16) : 0 ));
+    dataToSend.add((preferences.shiftingResponsiveness != null ? (((preferences.shiftingResponsiveness * 10).toInt() & mask32bits) >> 8) : 0 ));
+    dataToSend.add((preferences.shiftingResponsiveness != null ? ((preferences.shiftingResponsiveness * 10).toInt() & mask32bits) : 0 ));         // 8 LSB
+
+    //desired Rpm
+    dataToSend.add((preferences.desiredRpm != null ? (preferences.desiredRpm & mask8bits) : 0 ));
+
+    //desired Bpm
+    dataToSend.add((preferences.desiredBpm != null ? (preferences.desiredBpm & mask8bits) : 0 ));
     
     return dataToSend;
 

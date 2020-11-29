@@ -67,7 +67,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
 
           List<int> test = [ 300,2,3];
 
-      await calibrationCharact.characteristic.write(test);
+      await calibrationCharact.characteristic.write(dataToSend);
   }
 
   Future<void> saveProfile() async {
@@ -225,6 +225,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   Widget build(BuildContext context) {
     Constants.setAppWidth(MediaQuery.of(context).size.width);
     Constants.setAppHeight(MediaQuery.of(context).size.height);
+
+    //todo faire une verification si aucun device n'est present
 
     return Scaffold(
       backgroundColor: Color(Constants.backGroundBlue),
