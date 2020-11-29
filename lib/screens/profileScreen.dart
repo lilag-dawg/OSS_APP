@@ -3,10 +3,9 @@ import 'package:flutter/cupertino.dart';
 import '../widgets/blueButton.dart';
 import '../widgets/sexDialog.dart';
 import '../widgets/heightWeightDialog.dart';
-import '../constants.dart' as constants;
+import '../constants.dart' as Constants;
 import 'package:intl/intl.dart';
 import '../databases/userProfileModel.dart';
-import '../databases/db.dart';
 import '../databases/dbHelper.dart';
 import '../widgets/profileDialog.dart';
 import '../generated/l10n.dart';
@@ -25,6 +24,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   String weight;
 
   UserProfileModel profile;
+  bool dialogIsOpened = false;
 
   void _birthdateButtonClicked() async {
     await getProfile();
@@ -105,24 +105,30 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> saveProfile() async {
-    await DatabaseProvider.updateByPrimaryKey(UserProfileModel.tableName,
-        profile, UserProfileModel.primaryKeyWhereString, profile.userName);
+    await DatabaseHelper.updateUser(profile, profile.userName);
   }
 
   Future<void> changeProfile() async {
-    await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return ProfileDialog();
-        });
-    setState(() {});
+    if (!dialogIsOpened) {
+      dialogIsOpened = true;
+      await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return ProfileDialog();
+          });
+      dialogIsOpened = false;
+      profile = await DatabaseHelper.getSelectedUserProfile();
+      setState(() {});
+    }
   }
 
   Future<void> getProfile() async {
     profile = await DatabaseHelper.getSelectedUserProfile();
 
-    if (profile == null) {} //TODO : check errors
+    if (profile == null) {
+      await changeProfile();
+    }
   }
 
   void resetProfile() async {
@@ -137,59 +143,60 @@ class ProfileScreenState extends State<ProfileScreen> {
   Future<void> buildLayout() async {
     await getProfile();
 
-    profileList = Padding(
-      padding: EdgeInsets.all(25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          BlueButton(profile.userName, changeProfile, Icons.person, 70,
-              constants.getAppWidth() - 50),
-          SizedBox(height: constants.getAppHeight() * 0.09),
-          BlueButton(
-              _generateString(
-                  S.of(context).profileScreenBirthday, profile.birthday),
-              _birthdateButtonClicked,
-              Icons.date_range,
-              70,
-              constants.getAppWidth() - 50),
-          SizedBox(height: constants.getAppHeight() * 0.03),
-          BlueButton(
-              _generateString(S.of(context).profileScreenSex, profile.sex),
-              _sexButtonClicked,
-              Icons.pregnant_woman,
-              70,
-              constants.getAppWidth() - 50),
-          SizedBox(height: constants.getAppHeight() * 0.03),
-          BlueButton(
-              _generateString(
-                  S.of(context).profileScreenHeight,
-                  profile.height == null
-                      ? null
-                      : HeightWeightDialogState.heightConversion(
-                          profile.metricHeight, profile.height)),
-              _heightButtonClicked,
-              Icons.assessment,
-              70,
-              constants.getAppWidth() - 50),
-          SizedBox(height: constants.getAppHeight() * 0.03),
-          BlueButton(
-              _generateString(
-                  S.of(context).profileScreenWeight,
-                  profile.weight == null
-                      ? null
-                      : HeightWeightDialogState.weightConversion(
-                          profile.metricWeight, profile.weight)),
-              _weightButtonClicked,
-              Icons.assessment,
-              70,
-              constants.getAppWidth() - 50),
-          SizedBox(height: constants.getAppHeight() * 0.09),
-          BlueButton(S.of(context).profileScreenResetProfile, resetProfile,
-              Icons.delete, 70, constants.getAppWidth() - 50),
-        ],
-      ),
-    );
+    if (profile != null) {
+      profileList = Padding(
+        padding: EdgeInsets.all(25.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            BlueButton(profile.userName, changeProfile, Icons.person, 70,
+                Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.09),
+            BlueButton(
+                _generateString(S.of(context).profileScreenBirthday, profile.birthday),
+                _birthdateButtonClicked,
+                Icons.date_range,
+                70,
+                Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.03),
+            BlueButton(_generateString(S.of(context).profileScreenSex, profile.sex), _sexButtonClicked,
+                Icons.pregnant_woman, 70, Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.03),
+            BlueButton(
+                _generateString(
+                    S.of(context).profileScreenHeight,
+                    profile.height == null
+                        ? null
+                        : HeightWeightDialogState.heightConversion(
+                            profile.metricHeight, profile.height)),
+                _heightButtonClicked,
+                Icons.assessment,
+                70,
+                Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.03),
+            BlueButton(
+                _generateString(
+                    S.of(context).profileScreenWeight,
+                    profile.weight == null
+                        ? null
+                        : HeightWeightDialogState.weightConversion(
+                            profile.metricWeight, profile.weight)),
+                _weightButtonClicked,
+                Icons.assessment,
+                70,
+                Constants.getAppWidth() - 50),
+            SizedBox(height: Constants.getAppHeight() * 0.09),
+            BlueButton(S.of(context).profileScreenResetProfile, resetProfile, Icons.delete, 70,
+                Constants.getAppWidth() - 50),
+          ],
+        ),
+      );
+    }
+                  
+              
+                  
+            
   }
 
   Widget futureBody() {
@@ -213,14 +220,14 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    constants.setAppWidth(MediaQuery.of(context).size.width);
-    constants.setAppHeight(MediaQuery.of(context).size.height);
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
 
     return Scaffold(
-      backgroundColor: Color(constants.backGroundBlue),
+      backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text(S.of(context).profileScreenAppBarTitle),
-        backgroundColor: Color(constants.blueButtonColor),
+        backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: SingleChildScrollView(child: futureBody()),
     );

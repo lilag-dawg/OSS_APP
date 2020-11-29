@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../generated/l10n.dart';
 import '../databases/dbHelper.dart';
 import '../constants.dart' as Constants;
+import '../databases/userPreferencesModesModel.dart';
 
 class UserPreferencesModesDialog extends StatefulWidget {
   UserPreferencesModesDialog();
@@ -15,13 +16,13 @@ class UserPreferencesModesDialogState
     extends State<UserPreferencesModesDialog> {
   var nameController = TextEditingController();
   final nameKey = GlobalKey<FormState>();
-  Column profileDialog;
+  Column modeDialog;
 
   Future<void> buildLayout() async {
-    var list = await DatabaseHelper.getPreferencesModesNames();
+    var list = await DatabaseHelper.getUserPreferencesModes();
     var currentSelection = await DatabaseHelper.getSelectedPreferencesMode();
 
-    profileDialog = Column(
+    modeDialog = Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -41,7 +42,7 @@ class UserPreferencesModesDialogState
                       if (name.isEmpty) {
                         return S.of(context).preferenceModeDialogEnterMode;
                       }
-                      if (list.any((i) => i == name)) {
+                      if (list.any((i) => i.modeName == name)) {
                         return S.of(context).preferenceModeDialogAlreadyExists;
                       }
                       return null;
@@ -55,7 +56,7 @@ class UserPreferencesModesDialogState
                             await DatabaseHelper.createDefaultPreferencesRow();
                         await DatabaseHelper.createPreferencesMode(
                             nameController.text, preferences);
-                        Navigator.of(context, rootNavigator: true).pop(true);
+                        Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
                   ),
@@ -68,17 +69,43 @@ class UserPreferencesModesDialogState
             value: currentSelection == null
                 ? S.of(context).preferenceModeDialogNoModeSelected
                 : currentSelection.modeName,
-            items: list.map<DropdownMenuItem<String>>((String value) {
+            items: list.map<DropdownMenuItem<String>>(
+                (UserPreferencesModesModel mode) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: mode.modeName,
+                child: Text(mode.modeName),
               );
             }).toList(),
             onChanged: (String newValue) async {
               await DatabaseHelper.selectPreferencesMode(newValue);
-              Navigator.of(context, rootNavigator: true).pop(true);
+              Navigator.of(context, rootNavigator: true).pop();
             },
           ),
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("Rename"),
+                  onPressed: () async {
+                    if (nameKey.currentState.validate()) {
+                      currentSelection.modeName = nameController.text;
+                      await DatabaseHelper.updatePreferencesMode(
+                          currentSelection);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }
+                  },
+                ),
+                SizedBox(width: 10),
+                RaisedButton(
+                    child: Text("Delete"),
+                    onPressed: () async {
+                      await DatabaseHelper.deletePreferencesMode(
+                          currentSelection.preferencesId);
+
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }),
+              ]),
         ]);
   }
 
@@ -93,7 +120,7 @@ class UserPreferencesModesDialogState
           case ConnectionState.waiting:
             return Constants.dialogLoadingWidget;
           case ConnectionState.done:
-            return profileDialog;
+            return modeDialog;
           default:
             return Constants.dialogLoadingWidget;
         }

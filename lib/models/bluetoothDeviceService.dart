@@ -2,6 +2,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import './bluetoothDeviceCharacteristic.dart';
 
 
+
 class BluetoothDeviceService {
   final String serviceName;
   final BluetoothService service;

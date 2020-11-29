@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 import '../constants.dart' as Constants;
 
@@ -37,11 +38,11 @@ class SlideBarState extends State<SlideBar> {
         max: widget.maxValue,
         value: widget.value,
         onChanged: (double value) async {
-          print(value);
-          await widget.updateSlideBar(value.toInt());
+          await widget.updateSlideBar(value);
         },
         divisions: ((widget.maxValue - widget.minValue) ~/ widget.stepSize),
-        label: widget.value.toInt().toString(),
+        label: widget.value.toStringAsFixed(
+            (log(1.0 / widget.stepSize.toDouble()) / log(10)).ceil()),
       ),
     ));
   }

@@ -1,6 +1,48 @@
 library groupsets;
 
 const List<Map<String, dynamic>> cranksets = [
+  //DURA-ACE FC-R9100
+  {
+    'cranksetName': 'FC-R9100 50-34T',
+    'bigGear': 50,
+    'gear2': 34,
+    'gear3': null
+  },
+  {
+    'cranksetName': 'FC-R9100 52-36T',
+    'bigGear': 52,
+    'gear2': 36,
+    'gear3': null
+  },
+  {
+    'cranksetName': 'FC-R9100 53-39T',
+    'bigGear': 53,
+    'gear2': 39,
+    'gear3': null
+  },
+  {
+    'cranksetName': 'FC-R9100 54-42T',
+    'bigGear': 54,
+    'gear2': 42,
+    'gear3': null
+  },
+  {
+    'cranksetName': 'FC-R9100 55-42T',
+    'bigGear': 55,
+    'gear2': 42,
+    'gear3': null
+  },
+  //DURA-ACE FC-9000
+  {'cranksetName': 'FC-9000 50-34T', 'bigGear': 50, 'gear2': 34, 'gear3': null},
+  {'cranksetName': 'FC-9000 52-36T', 'bigGear': 52, 'gear2': 36, 'gear3': null},
+  {'cranksetName': 'FC-9000 52-38T', 'bigGear': 52, 'gear2': 38, 'gear3': null},
+  {'cranksetName': 'FC-9000 53-39T', 'bigGear': 53, 'gear2': 39, 'gear3': null},
+  {'cranksetName': 'FC-9000 54-42T', 'bigGear': 54, 'gear2': 42, 'gear3': null},
+  {'cranksetName': 'FC-9000 55-42T', 'bigGear': 55, 'gear2': 42, 'gear3': null},
+  //ULTEGRA FC-R8000
+  {'cranksetName': 'FC-R8000 53-39', 'bigGear': 53, 'gear2': 39, 'gear3': null},
+  {'cranksetName': 'FC-R8000 52-36', 'bigGear': 52, 'gear2': 36, 'gear3': null},
+  {'cranksetName': 'FC-R8000 50-34', 'bigGear': 50, 'gear2': 34, 'gear3': null},
   {
     'cranksetName': 'FC-R8000 53-39',
     'bigGear': 53,
@@ -25,9 +67,177 @@ const List<Map<String, dynamic>> cranksets = [
     'gear2': 36,
     'gear3': null,
   },
+  //ULTEGRA FC-6800
+  {'cranksetName': 'FC-6800 50-34T', 'bigGear': 50, 'gear2': 34, 'gear3': null},
+  {'cranksetName': 'FC-6800 52-36T', 'bigGear': 52, 'gear2': 36, 'gear3': null},
+  {'cranksetName': 'FC-6800 53-39T', 'bigGear': 53, 'gear2': 39, 'gear3': null},
+  {'cranksetName': 'FC-6800 46-36T', 'bigGear': 46, 'gear2': 36, 'gear3': null},
 ];
 
 const List<Map<String, dynamic>> sprockets = [
+  //DURA-ACE CS-R9100
+  {
+    'sprocketName': 'CS-R9100 11T-30T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 17,
+    'gear7': 19,
+    'gear8': 21,
+    'gear9': 24,
+    'gear10': 27,
+    'gear11': 30,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-R9100 11T-25T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 16,
+    'gear7': 17,
+    'gear8': 19,
+    'gear9': 21,
+    'gear10': 23,
+    'gear11': 25,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-R9100 12T-25T',
+    'smallGear': 12,
+    'gear2': 13,
+    'gear3': 14,
+    'gear4': 15,
+    'gear5': 16,
+    'gear6': 17,
+    'gear7': 18,
+    'gear8': 19,
+    'gear9': 21,
+    'gear10': 23,
+    'gear11': 25,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-R9100 11T-28T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 17,
+    'gear7': 19,
+    'gear8': 21,
+    'gear9': 23,
+    'gear10': 25,
+    'gear11': 28,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-R9100 12T-28T',
+    'smallGear': 12,
+    'gear2': 13,
+    'gear3': 14,
+    'gear4': 15,
+    'gear5': 16,
+    'gear6': 17,
+    'gear7': 19,
+    'gear8': 21,
+    'gear9': 23,
+    'gear10': 25,
+    'gear11': 28,
+    'gear12': null,
+    'gear13': null
+  },
+  //DURA-ACE CS-9000
+  {
+    'sprocketName': 'CS-9000 11-23T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 16,
+    'gear7': 17,
+    'gear8': 18,
+    'gear9': 19,
+    'gear10': 21,
+    'gear11': 23,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-9000 11-25T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 16,
+    'gear7': 17,
+    'gear8': 19,
+    'gear9': 21,
+    'gear10': 23,
+    'gear11': 25,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-9000 12-25T',
+    'smallGear': 12,
+    'gear2': 13,
+    'gear3': 14,
+    'gear4': 15,
+    'gear5': 16,
+    'gear6': 17,
+    'gear7': 18,
+    'gear8': 19,
+    'gear9': 21,
+    'gear10': 23,
+    'gear11': 25,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-9000 11-28T',
+    'smallGear': 11,
+    'gear2': 12,
+    'gear3': 13,
+    'gear4': 14,
+    'gear5': 15,
+    'gear6': 17,
+    'gear7': 19,
+    'gear8': 21,
+    'gear9': 23,
+    'gear10': 25,
+    'gear11': 28,
+    'gear12': null,
+    'gear13': null
+  },
+  {
+    'sprocketName': 'CS-9000 12-28T',
+    'smallGear': 12,
+    'gear2': 13,
+    'gear3': 14,
+    'gear4': 15,
+    'gear5': 16,
+    'gear6': 17,
+    'gear7': 19,
+    'gear8': 21,
+    'gear9': 23,
+    'gear10': 25,
+    'gear11': 28,
+    'gear12': null,
+    'gear13': null
+  },
+  //ULTEGRA CS-6800
   {
     'sprocketName': 'CS-6800 11-23T',
     'smallGear': 11,

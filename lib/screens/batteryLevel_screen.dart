@@ -15,6 +15,7 @@ class BatteryLevelScreen extends StatelessWidget {
     new Device("Speed sensor", true, 50),
     new Device("Heart beat sensor", true, 10),
     new Device("Power sensor", false, 90),
+    Device("test", false, 66),
   ];
 
   @override

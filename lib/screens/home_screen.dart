@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:oss_app/databases/db.dart';
 
-import '../constants.dart' as constants;
+import '../constants.dart' as Constants;
 
 import '../widgets/navigationButton.dart';
-import '../widgets/profileDialog.dart';
 import '../databases/dbHelper.dart';
 
 import '../models/bluetoothDeviceManager.dart';
@@ -26,8 +24,11 @@ class HomeScreen extends StatelessWidget {
     MyApp.navKey.currentState.pushNamed("/statistics");
   }
 
-  void _preferencePressed(BuildContext context) {
-    MyApp.navKey.currentState.pushNamed("/preference");
+  void _preferencePressed(BuildContext context,  BluetoothDeviceManager ossManager) {
+     MyApp.navKey.currentState.pushNamed(
+      "/preference",
+      arguments: ossManager,
+    );
   }
 
   void _settingPressed(
@@ -47,19 +48,14 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> buildLayout(BuildContext context) async {
-    await DatabaseProvider.database;
+    await DatabaseHelper.initDatabase();
     await DatabaseHelper.updateCranksets();
     await DatabaseHelper.updateSprockets();
 
     var user = await DatabaseHelper.getSelectedUserProfile();
 
     if (user == null) {
-      await showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return ProfileDialog();
-          });
+      await DatabaseHelper.createUser(Constants.defaultProfileName);
     }
   }
 
@@ -83,55 +79,55 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget scaffold(BuildContext context, BluetoothDeviceManager ossManager) {
-    constants.setAppWidth(MediaQuery.of(context).size.width);
-    constants.setAppHeight(MediaQuery.of(context).size.height);
+    Constants.setAppWidth(MediaQuery.of(context).size.width);
+    Constants.setAppHeight(MediaQuery.of(context).size.height);
 
     return Scaffold(
-      backgroundColor: Color(constants.backGroundBlue),
+      backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
         title: Text(S.of(context).homeScreenAppBarTitle),
-        backgroundColor: Color(constants.blueButtonColor),
+        backgroundColor: Color(Constants.blueButtonColor),
       ),
       body: Container(
           child: GridView.count(
         crossAxisCount: 2,
         padding: const EdgeInsets.all(20.0),
-        mainAxisSpacing: constants.getAppWidth() * 0.05,
-        crossAxisSpacing: constants.getAppWidth() * 0.05,
+        mainAxisSpacing: Constants.getAppWidth() * 0.05,
+        crossAxisSpacing: Constants.getAppWidth() * 0.05,
         children: <Widget>[
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenCalibration,
               "assets/activities.png",
               () => _calibrationPressed(context)),
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenStatistics,
               "assets/stats.png",
               () => _statsPressed(context)),
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenPreferences,
               "assets/specifications.png",
-              () => _preferencePressed(context)),
+              () => _preferencePressed(context, ossManager)),
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenSettings,
               "assets/settings.png",
               () => _settingPressed(context, ossManager)),
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenBatteryLevel,
               "assets/batteryLevel.png",
               () => _batterieLevelPressed(context)),
           NavigationButton(
-              (constants.getAppWidth() * 0.35),
-              (constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
+              (Constants.getAppWidth() * 0.35),
               S.of(context).homeScreenProfile,
               "assets/profile.png",
               () => _profilePressed(context)),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oss_app/databases/db.dart';
 import '../databases/dbHelper.dart';
-import '../databases/preferencesModel.dart';
 import '../constants.dart' as Constants;
 import '../generated/l10n.dart';
 
@@ -48,11 +46,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
             }).toList(),
             onChanged: (String newValue) async {
               currentPreferences.cranksetName = newValue;
-              await DatabaseProvider.updateByPrimaryKey(
-                  PreferencesModel.tableName,
-                  currentPreferences,
-                  PreferencesModel.primaryKeyWhereString,
-                  currentPreferences.preferencesId);
+              await DatabaseHelper.updatePreferences(currentPreferences);
               setState(() {});
               //Navigator.of(context, rootNavigator: true).pop(true);
             },
@@ -79,11 +73,7 @@ class GroupsetDialogDialogState extends State<GroupsetDialog> {
             }).toList(),
             onChanged: (String newValue) async {
               currentPreferences.sprocketName = newValue;
-              await DatabaseProvider.updateByPrimaryKey(
-                  PreferencesModel.tableName,
-                  currentPreferences,
-                  PreferencesModel.primaryKeyWhereString,
-                  currentPreferences.preferencesId);
+              await DatabaseHelper.updatePreferences(currentPreferences);
               setState(() {});
               //Navigator.of(context, rootNavigator: true).pop(true);
             },

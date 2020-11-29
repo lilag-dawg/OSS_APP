@@ -32,7 +32,9 @@ class RouteGenerator {
       case "/profile":
         return MaterialPageRoute(builder: (_) => ProfileScreen());
       case "/preference":
-        return MaterialPageRoute(builder: (_) => PreferencesScreen());
+        return MaterialPageRoute(builder: (_) => PreferencesScreen(
+          ossManager: args
+        ));
       case "/settings/manage":
         return MaterialPageRoute(
             builder: (_) => FindDevicesScreen(ossManager: args));

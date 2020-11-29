@@ -37,8 +37,6 @@ dependencies:
     sdk: flutter
   intl: ^0.16.1 # Used with the internationalizing functions
 
-    geolocator: ^6.1.7 # Speed and position tracking
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -75,18 +73,16 @@ flutter:
    - assets/stats.png
    - assets/batteryLevel.png
    - assets/profile.png
-   - assets/test.png
    # Battery Icons
    - assets/BatteryIconFull.png
    - assets/BatteryIconMed.png
    - assets/BatteryIconLow.png
    - assets/BatteryIconDisc.png
-   # temporaire
-   - assets/lstech_pedal_only.jpg
-   - assets/lstech_bike_only.jpg
-   - assets/lstech_text_only.jpg
-   - assets/lstech_ls_only.jpg
-   - assets/lstech_tech_only.jpg
+
+   - assets/oss_logo.png
+   - assets/oss_logo_blanc.png
+
+
 
 
   #  - images/a_dot_ham.jpeg
