@@ -52,11 +52,25 @@
     "findDeviceScreenCurrentlyLooking":     "Search in progress...",
     "findDeviceScreenSearchLater":          "Search later",
 
+    "manageDeviceScreenNotOSS":             "Device is not OSS",
+    "manageDeviceScreenConnected":          "Connected devices",
+    "manageDeviceScreenPaired":             "Paired devices",
+    "manageDeviceScreenPair":               "Pair",
+    "manageDeviceScreenForget":             "Forget",
+    "manageDeviceScreenListOfFeatures":     "List of supported features",
+    "manageDeviceScreenPower":              "Power",
+    "manageDeviceScreenCadence":            "Cadence",
+    "manageDeviceScreenSpeed":              "Speed",
+    "manageDeviceScreenBattery":            "Battery",
+    "manageDeviceScreenGear":               "Gear",
+    "manageDeviceScreenActive":             "Active - Tap for information",
+
+
     "batteryScreenAppBarTitle":             "Battery Page",
     "batteryScreenDeviceManagement":        "Manage Devices",
-    "batteryScreenConnected":               "CONNECTED",
-    "batteryScreenDisconnected":            "DISCONNECTED",
-    "batteryScreenDeviceUnavailable":       "Device unavailable",
+    "batteryScreenCompatible":              "CONNECTED",
+    "batteryScreenIncompatible":            "INCOMPATIBLE",
+    "batteryScreenDeviceUnavailable":       "Battery unavailable",
 
     "profileScreenAppBarTitle":             "Profile Page",
     "profileScreenBirthday":                "Birthday",

@@ -77,7 +77,7 @@ flutter:
    - assets/BatteryIconFull.png
    - assets/BatteryIconMed.png
    - assets/BatteryIconLow.png
-   - assets/BatteryIconDisc.png
+   - assets/BatteryIconMissing.png
 
    - assets/oss_logo.png
    - assets/oss_logo_blanc.png

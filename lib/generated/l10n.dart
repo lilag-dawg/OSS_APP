@@ -235,6 +235,16 @@ class S {
     );
   }
 
+  /// `Enregistrement`
+  String get preferencesScreenSavePreferences {
+    return Intl.message(
+      'Enregistrement',
+      name: 'preferencesScreenSavePreferences',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Puissance de seuil maximale`
   String get preferencesScreenThresholdPower {
     return Intl.message(
@@ -455,6 +465,126 @@ class S {
     );
   }
 
+  /// `L'appareil n'est pas OSS`
+  String get manageDeviceScreenNotOSS {
+    return Intl.message(
+      'L\'appareil n\'est pas OSS',
+      name: 'manageDeviceScreenNotOSS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Appareils connectés`
+  String get manageDeviceScreenConnected {
+    return Intl.message(
+      'Appareils connectés',
+      name: 'manageDeviceScreenConnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Appareils associés`
+  String get manageDeviceScreenPaired {
+    return Intl.message(
+      'Appareils associés',
+      name: 'manageDeviceScreenPaired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Associer`
+  String get manageDeviceScreenPair {
+    return Intl.message(
+      'Associer',
+      name: 'manageDeviceScreenPair',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Oublier`
+  String get manageDeviceScreenForget {
+    return Intl.message(
+      'Oublier',
+      name: 'manageDeviceScreenForget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Liste des fonctionnalités supportées`
+  String get manageDeviceScreenListOfFeatures {
+    return Intl.message(
+      'Liste des fonctionnalités supportées',
+      name: 'manageDeviceScreenListOfFeatures',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Puissance`
+  String get manageDeviceScreenPower {
+    return Intl.message(
+      'Puissance',
+      name: 'manageDeviceScreenPower',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cadence`
+  String get manageDeviceScreenCadence {
+    return Intl.message(
+      'Cadence',
+      name: 'manageDeviceScreenCadence',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vitesse`
+  String get manageDeviceScreenSpeed {
+    return Intl.message(
+      'Vitesse',
+      name: 'manageDeviceScreenSpeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Batterie`
+  String get manageDeviceScreenBattery {
+    return Intl.message(
+      'Batterie',
+      name: 'manageDeviceScreenBattery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Équipement`
+  String get manageDeviceScreenGear {
+    return Intl.message(
+      'Équipement',
+      name: 'manageDeviceScreenGear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actif - Appuyer pour plus d'informations`
+  String get manageDeviceScreenActive {
+    return Intl.message(
+      'Actif - Appuyer pour plus d\'informations',
+      name: 'manageDeviceScreenActive',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Page de batterie`
   String get batteryScreenAppBarTitle {
     return Intl.message(
@@ -476,29 +606,29 @@ class S {
   }
 
   /// `ACTIF`
-  String get batteryScreenConnected {
+  String get batteryScreenCompatible {
     return Intl.message(
       'ACTIF',
-      name: 'batteryScreenConnected',
+      name: 'batteryScreenCompatible',
       desc: '',
       args: [],
     );
   }
 
-  /// `INACTIF`
-  String get batteryScreenDisconnected {
+  /// `INCOMPATIBLE`
+  String get batteryScreenIncompatible {
     return Intl.message(
-      'INACTIF',
-      name: 'batteryScreenDisconnected',
+      'INCOMPATIBLE',
+      name: 'batteryScreenIncompatible',
       desc: '',
       args: [],
     );
   }
 
-  /// `Appareil non disponible`
+  /// `Batterie indisponible`
   String get batteryScreenDeviceUnavailable {
     return Intl.message(
-      'Appareil non disponible',
+      'Batterie indisponible',
       name: 'batteryScreenDeviceUnavailable',
       desc: '',
       args: [],

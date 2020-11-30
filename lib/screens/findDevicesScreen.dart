@@ -36,7 +36,8 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
       for (ScanResult r in scanResults) {
         bool isDeviceAlreadyAdded =
             devicesConnexionStatus.any((d) => d.getDevice == r.device);
-        if (!isDeviceAlreadyAdded && r.device.name.length != 0) { //added r.device.name.length != 0 to only add named device
+        if (!isDeviceAlreadyAdded && r.device.name.length != 0) {
+          //added r.device.name.length != 0 to only add named device
           devicesConnexionStatus.add(DeviceConnexionStatus(
             device: r.device,
             connexionStatus: DeviceConnexionStatus.disconnected,
@@ -181,10 +182,12 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
     );
   }
 
-  void startAScan() {
+  void startAScan() async {
     isDoneScanning = false;
     if (!Constants.isWorkingOnEmulator) {
-      FlutterBlue.instance.startScan(timeout: Duration(seconds: 4)).then((_) {
+      await FlutterBlue.instance
+          .startScan(timeout: Duration(seconds: 4))
+          .then((_) {
         setState(() {
           isDoneScanning = true;
         });
@@ -220,7 +223,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
     return Scaffold(
         backgroundColor: Color(Constants.backGroundBlue),
         appBar: AppBar(
-          title: Text("Bluetooth Manager"),
+          title: Text(S.of(context).findDeviceScreenAppBarTitle),
           backgroundColor: Color(Constants.blueButtonColor),
         ),
         body: SingleChildScrollView(
@@ -239,12 +242,12 @@ class _FindDevicesScreenState extends State<FindDevicesScreen>
                 : _buildAnimations(),
             (Constants.isWorkingOnEmulator)
                 ? RaisedButton(
-                    child: Text("Remettre à plus tard"),
+                    child: Text(S.of(context).findDeviceScreenCurrentlyLooking),
                     color: Colors.red,
                     onPressed: () {})
                 : _buildScanningButton(),
           ]),
-    ));
+        ));
   }
 }
 

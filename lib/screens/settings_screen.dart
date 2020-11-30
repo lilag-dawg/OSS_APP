@@ -77,11 +77,6 @@ class SettingsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                /*BlueButton("Language", _buttonClicked, Icons.language, 70,
-                    constants.getAppWidth() - 50),*/
-                SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton(S.of(context).settingsScreenShare, _buttonClicked,
-                    Icons.share, 70, constants.getAppWidth() - 50),
                 SizedBox(height: constants.getAppHeight() * 0.03),
                 BlueButton(
                     S.of(context).settingsScreenFacebook,
@@ -89,9 +84,6 @@ class SettingsScreen extends StatelessWidget {
                     Icons.thumb_up,
                     70,
                     constants.getAppWidth() - 50),
-                SizedBox(height: constants.getAppHeight() * 0.03),
-                BlueButton(S.of(context).settingsScreenLogout, _buttonClicked,
-                    Icons.exit_to_app, 70, constants.getAppWidth() - 50),
                 SizedBox(height: constants.getAppHeight() * 0.03),
                 BlueButton(
                     S.of(context).settingsScreenNotifications,

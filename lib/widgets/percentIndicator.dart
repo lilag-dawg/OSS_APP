@@ -7,12 +7,12 @@ import "../generated/l10n.dart";
 class Device {
   String name;
   double batteryLevel;
-  bool status;
+  bool battCompatible;
 
   Device(String name, bool status, double batteryLevel) {
     this.name = name;
     this.batteryLevel = batteryLevel;
-    this.status = status;
+    this.battCompatible = status;
   }
 
   Color _currentProgressColor() {
@@ -27,22 +27,22 @@ class Device {
   }
 
   String _statusText() {
-    if (status) {
-      return S.current.batteryScreenConnected;
+    if (battCompatible) {
+      return S.current.batteryScreenCompatible;
     }
-    return S.current.batteryScreenDisconnected;
+    return S.current.batteryScreenIncompatible;
   }
 
   Color _statusColor() {
-    if (status) {
+    if (battCompatible) {
       return Colors.green;
     }
     return Colors.red;
   }
 
   AssetImage _statusIcon() {
-    if (!status) {
-      return AssetImage("assets/BatteryIconDisc.png");
+    if (!battCompatible) {
+      return AssetImage("assets/BatteryIconMissing.png");
     }
     if (batteryLevel > 20 && batteryLevel <= 50) {
       return AssetImage("assets/BatteryIconMed.png");
@@ -79,7 +79,7 @@ class Device {
                     ),
                   ),
                   Text(
-                    status == true
+                    battCompatible == true
                         ? "$batteryLevel" + "%"
                         : S.of(context).batteryScreenDeviceUnavailable,
                     style: new TextStyle(
@@ -131,7 +131,7 @@ class _RoutinePageState extends State<RoutinePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.device.status == false) {
+    if (widget.device.battCompatible == false) {
       connectedOrNot = "Disconnected";
       progress = 0;
       connectColor = Colors.red;
@@ -163,7 +163,9 @@ class _RoutinePageState extends State<RoutinePage> {
           lineHeight: 30.0,
           percent: progress / 100,
           center: Text(
-            widget.device.status == true ? "$progress" + "%" : "Not connected",
+            widget.device.battCompatible == true
+                ? "$progress" + "%"
+                : "Not connected",
             style: new TextStyle(fontSize: 20.0),
           ),
           linearStrokeCap: LinearStrokeCap.roundAll,
