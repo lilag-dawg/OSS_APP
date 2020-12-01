@@ -29,6 +29,8 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   static const desiredRpmName = 'Desired RPM';
   static const desiredBpmName = 'Desired BPM';
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void updateSlideBarCombo(
       double newParameterValue, String parameterName) async {
     switch (parameterName) {
@@ -66,27 +68,29 @@ class PreferencesScreenState extends State<PreferencesScreen> {
           .getService(BluetoothDeviceManager.cablibrationService)
           .getCharacteristic(BluetoothDeviceManager.calibrationCharact);
 
-          List<int> test = [ 300,2,3];
-
       await calibrationCharact.characteristic.write(dataToSend);
   }
 
   Future<void> saveProfile() async {
-    await DatabaseHelper.updatePreferences(preferences);
-    var crankset = await DatabaseHelper.getSelectedCrankset();
-    var sprocket = await DatabaseHelper.getSelectedSprocket();
-    //var preference = await DatabaseHelper.getCurrentPreferences();
 
-    List<int> result =  BluetoothDeviceManager.sendCalibrationCharact(crankset, sprocket, preferences);
+    
+    if(this.widget.ossManager.ossDevice != null){
+      showInSnackBar("Preferences saved!");
+      await DatabaseHelper.updatePreferences(preferences);
+      var crankset = await DatabaseHelper.getSelectedCrankset();
+      var sprocket = await DatabaseHelper.getSelectedSprocket();
+      //var preference = await DatabaseHelper.getCurrentPreferences();
 
-    await _writeToMCU(this.widget.ossManager, result);
+      List<int> result =  BluetoothDeviceManager.sendCalibrationCharact(crankset, sprocket, preferences);
 
-    // TODO : Alexis
-    //send data from preferences and gear numbers from sprocket and crankset
+      await _writeToMCU(this.widget.ossManager, result);
 
+      setState(() {});
+    }
+    else{
+      showInSnackBar("Error, no device connected");
+    }
 
-
-    setState(() {});
   }
 
   Future<void> resetProfileDb() async {
@@ -222,6 +226,20 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     );
   }
 
+
+void showInSnackBar(String value) {
+    final snackBar = SnackBar(
+      content: Text(value),
+       action: SnackBarAction(
+        label: 'OK',
+          onPressed: () {
+                // Some code to undo the change.
+              },
+            ),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+}
+
   @override
   Widget build(BuildContext context) {
     Constants.setAppWidth(MediaQuery.of(context).size.width);
@@ -230,6 +248,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     //todo faire une verification si aucun device n'est present
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Color(Constants.backGroundBlue),
       appBar: AppBar(
           backgroundColor: Color(Constants.blueButtonColor),

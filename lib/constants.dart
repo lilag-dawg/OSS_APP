@@ -42,12 +42,12 @@ const String defaultSprocketName = null;
 
 const int minFtp = 50;
 const double minShiftingResponsiveness = 0.2;
-const int minDesiredRpm = 40;
+const int minDesiredRpm = 75;
 const int minDesiredBpm = 70;
 
 const int maxFtp = 500;
 const double maxShiftingResponsiveness = 5.0;
-const int maxDesiredRpm = 150;
+const int maxDesiredRpm = 105;
 const int maxDesiredBpm = 220;
 
 Column dialogLoadingWidget = Column(
