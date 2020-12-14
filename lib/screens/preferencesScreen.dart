@@ -72,9 +72,9 @@ class PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> saveProfile() async {
+    await DatabaseHelper.getSize();
 
-    
-    if(this.widget.ossManager.ossDevice != null){
+    if (this.widget.ossManager.ossDevice != null) {
       showInSnackBar("Preferences saved!");
       await DatabaseHelper.updatePreferences(preferences);
       var crankset = await DatabaseHelper.getSelectedCrankset();

@@ -10,7 +10,7 @@ class DatabaseProvider {
   static Database _database;
 
   static int get _version => 1; //onCreate
-  static final String databaseName = 'ossDatabase_test27.db';
+  static final String databaseName = 'ossDatabase_test28.db';
 
   static Future<Database> get database async {
     if (_database != null) return _database;
@@ -105,6 +105,11 @@ class DatabaseProvider {
       gear13 INTEGER
     );
     ''');
+  }
+
+  static Future<void> getSize() async {
+    print(await _database.rawQuery("PRAGMA page_size"));
+    print(await _database.rawQuery("PRAGMA page_count"));
   }
 
   static Future<List<Map<String, dynamic>>> query(String tableName) async =>

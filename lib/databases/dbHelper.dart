@@ -342,4 +342,8 @@ abstract class DatabaseHelper {
     }
     return null;
   }
+
+  static Future<void> getSize() async {
+    await DatabaseProvider.getSize();
+  }
 }
