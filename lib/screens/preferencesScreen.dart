@@ -10,6 +10,7 @@ import '../widgets/userPreferencesModesDialog.dart';
 import '../widgets/groupsetDialog.dart';
 import '../models/bluetoothDeviceManager.dart';
 import '../generated/l10n.dart';
+import '../databases/db.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final BluetoothDeviceManager ossManager;
@@ -73,8 +74,11 @@ class PreferencesScreenState extends State<PreferencesScreen> {
 
   Future<void> saveProfile() async {
 
+    var test = DatabaseProvider.getSize();
+
+    var test2 = test;
     
-    if(this.widget.ossManager.ossDevice != null){
+    /*if(this.widget.ossManager.ossDevice != null){
       showInSnackBar("Preferences saved!");
       await DatabaseHelper.updatePreferences(preferences);
       var crankset = await DatabaseHelper.getSelectedCrankset();
@@ -89,7 +93,7 @@ class PreferencesScreenState extends State<PreferencesScreen> {
     }
     else{
       showInSnackBar("Error, no device connected");
-    }
+    }*/
 
   }
 

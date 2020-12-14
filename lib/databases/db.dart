@@ -107,6 +107,10 @@ class DatabaseProvider {
     ''');
   }
 
+  static Future<List<Map<String, dynamic>>> getSize() async {
+    return await _database.rawQuery("PRAGMA page_size");
+  }
+
   static Future<List<Map<String, dynamic>>> query(String tableName) async =>
       await _database.query(tableName);
 
